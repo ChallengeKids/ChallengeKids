@@ -62,8 +62,6 @@ class ChallengeController extends AbstractController
         if ($form->isSubmitted()) {
             $entityManager->persist($challenge);
             $entityManager->flush();
-
-            //return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return new JsonResponse(true);
@@ -76,7 +74,7 @@ class ChallengeController extends AbstractController
         $challenge = $this->challengeService->challengeToJson($challenge);
         return new JsonResponse($challenge);
     }
-
+    
     #[Route('/{id}/edit', name: 'challenge_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
@@ -107,7 +105,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'challenge_delete', methods: ['DELETE'])]
-    public function delete($id, Request $request, ChallengeRepository $challengeRepository, EntityManagerInterface $entityManager): Response
+    public function delete($id, ChallengeRepository $challengeRepository, EntityManagerInterface $entityManager): Response
     {
         $challenge = $challengeRepository->find($id);
         if (!$challenge) {

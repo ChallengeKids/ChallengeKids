@@ -17,8 +17,7 @@ class QuizType extends AbstractType
             ->add('lesson', EntityType::class, [
                 'class' => Lesson::class,
                 'choice_label' => 'id',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

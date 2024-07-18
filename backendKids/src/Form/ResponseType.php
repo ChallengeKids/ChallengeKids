@@ -16,19 +16,7 @@ class ResponseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('quiz', EntityType::class, [
-                'class' => Quiz::class,
-                'choice_label' => 'id',
-            ])
-            ->add('kid', EntityType::class, [
-                'class' => Kid::class,
-                'choice_label' => 'id',
-            ])
-            ->add('optionResponse', EntityType::class, [
-                'class' => Option::class,
-                'choice_label' => 'id',
-            ]);
+        $builder;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

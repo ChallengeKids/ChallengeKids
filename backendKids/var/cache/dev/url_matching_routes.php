@@ -14,31 +14,30 @@ return [
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
-        '/api/category' => [[['_route' => 'app_category_index', '_controller' => 'App\\Controller\\CategoryController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/category/new' => [[['_route' => 'app_category_new', '_controller' => 'App\\Controller\\CategoryController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/api/category' => [[['_route' => 'category_index', '_controller' => 'App\\Controller\\CategoryController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/category/new' => [[['_route' => 'category_new', '_controller' => 'App\\Controller\\CategoryController::new'], null, ['POST' => 0], null, false, false, null]],
         '/api/challenge' => [[['_route' => 'challenge_index', '_controller' => 'App\\Controller\\ChallengeController::index'], null, ['GET' => 0], null, true, false, null]],
         '/api/challenge/new' => [[['_route' => 'challenge_new', '_controller' => 'App\\Controller\\ChallengeController::new'], null, ['POST' => 0], null, false, false, null]],
-        '/api/chapter' => [[['_route' => 'app_chapter_index', '_controller' => 'App\\Controller\\ChapterController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/chapter/new' => [[['_route' => 'app_chapter_new', '_controller' => 'App\\Controller\\ChapterController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/coach' => [[['_route' => 'app_coach_index', '_controller' => 'App\\Controller\\CoachController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/coach/new' => [[['_route' => 'app_coach_new', '_controller' => 'App\\Controller\\CoachController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/kid' => [[['_route' => 'app_kid_index', '_controller' => 'App\\Controller\\KidController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/kid/new' => [[['_route' => 'app_kid_new', '_controller' => 'App\\Controller\\KidController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/kid/parent/new' => [[['_route' => 'app_kid_parent_new', '_controller' => 'App\\Controller\\KidParentController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/kidResponse' => [[['_route' => 'app_response_index', '_controller' => 'App\\Controller\\KidResponseController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/kidResponse/new' => [[['_route' => 'app_response_new', '_controller' => 'App\\Controller\\KidResponseController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/lesson' => [[['_route' => 'app_lesson_index', '_controller' => 'App\\Controller\\LessonController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/lesson/new' => [[['_route' => 'app_lesson_new', '_controller' => 'App\\Controller\\LessonController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/option' => [[['_route' => 'app_option_index', '_controller' => 'App\\Controller\\OptionController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/option/new' => [[['_route' => 'app_option_new', '_controller' => 'App\\Controller\\OptionController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/post' => [[['_route' => 'app_post_index', '_controller' => 'App\\Controller\\PostController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/post/new' => [[['_route' => 'app_post_new', '_controller' => 'App\\Controller\\PostController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/question' => [[['_route' => 'app_question_index', '_controller' => 'App\\Controller\\QuestionController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/question/new' => [[['_route' => 'app_question_new', '_controller' => 'App\\Controller\\QuestionController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/api/chapter' => [[['_route' => 'chapter_index', '_controller' => 'App\\Controller\\ChapterController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/chapter/new' => [[['_route' => 'chapter_new', '_controller' => 'App\\Controller\\ChapterController::new'], null, ['POST' => 0], null, false, false, null]],
+        '/api/coach' => [[['_route' => 'coach_index', '_controller' => 'App\\Controller\\CoachController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/coach/registration' => [[['_route' => 'coach_new', '_controller' => 'App\\Controller\\CoachController::registration'], null, ['POST' => 0], null, false, false, null]],
+        '/api/kid' => [[['_route' => 'kid_index', '_controller' => 'App\\Controller\\KidController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/kid/registration' => [[['_route' => 'kid_new', '_controller' => 'App\\Controller\\KidController::registration'], null, ['POST' => 0], null, false, false, null]],
+        '/api/kidParent' => [[['_route' => 'kid_parent_index', '_controller' => 'App\\Controller\\KidParentController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/kidParent/registration' => [[['_route' => 'kid_parent_new', '_controller' => 'App\\Controller\\KidParentController::registration'], null, ['POST' => 0], null, false, false, null]],
+        '/api/kidResponse' => [[['_route' => 'response_index', '_controller' => 'App\\Controller\\KidResponseController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/kidResponse/new' => [[['_route' => 'response_new', '_controller' => 'App\\Controller\\KidResponseController::new'], null, ['POST' => 0], null, false, false, null]],
+        '/api/lesson' => [[['_route' => 'lesson_index', '_controller' => 'App\\Controller\\LessonController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/lesson/new' => [[['_route' => 'lesson_new', '_controller' => 'App\\Controller\\LessonController::new'], null, ['POST' => 0], null, false, false, null]],
+        '/api/option' => [[['_route' => 'option_index', '_controller' => 'App\\Controller\\OptionController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/option/new' => [[['_route' => 'option_new', '_controller' => 'App\\Controller\\OptionController::new'], null, ['POST' => 0], null, false, false, null]],
+        '/api/post' => [[['_route' => 'post_index', '_controller' => 'App\\Controller\\PostController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/post/new' => [[['_route' => 'post_new', '_controller' => 'App\\Controller\\PostController::new'], null, ['POST' => 0], null, false, false, null]],
+        '/api/question' => [[['_route' => 'question_index', '_controller' => 'App\\Controller\\QuestionController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/api/question/new' => [[['_route' => 'question_new', '_controller' => 'App\\Controller\\QuestionController::new'], null, ['POST' => 0], null, false, false, null]],
         '/api/quiz' => [[['_route' => 'app_quiz_index', '_controller' => 'App\\Controller\\QuizController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/quiz/new' => [[['_route' => 'app_quiz_new', '_controller' => 'App\\Controller\\QuizController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/user' => [[['_route' => 'app_user_index', '_controller' => 'App\\Controller\\UserController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/api/user/new' => [[['_route' => 'app_user_new', '_controller' => 'App\\Controller\\UserController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/api/quiz/new' => [[['_route' => 'app_quiz_new', '_controller' => 'App\\Controller\\QuizController::new'], null, ['POST' => 0], null, false, false, null]],
         '/api/doc' => [
             [['_route' => 'app.swagger_ui', '_controller' => 'nelmio_api_doc.controller.swagger_ui'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'app.redocly', '_controller' => 'nelmio_api_doc.controller.redocly'], null, ['GET' => 0], null, false, false, null],
@@ -67,84 +66,81 @@ return [
                 .')'
                 .'|/api/(?'
                     .'|c(?'
-                        .'|ategory/([^/]++)(?'
-                            .'|(*:233)'
-                            .'|/edit(*:246)'
-                            .'|(*:254)'
+                        .'|ategory/(?'
+                            .'|([^/]++)(*:233)'
+                            .'|delete/([^/]++)(*:256)'
                         .')'
                         .'|ha(?'
                             .'|llenge/(?'
                                 .'|([^/]++)(?'
-                                    .'|(*:289)'
-                                    .'|/edit(*:302)'
+                                    .'|(*:291)'
+                                    .'|/edit(*:304)'
                                 .')'
-                                .'|delete/([^/]++)(*:326)'
+                                .'|delete/([^/]++)(*:328)'
                             .')'
-                            .'|pter/([^/]++)(?'
-                                .'|(*:351)'
-                                .'|/edit(*:364)'
-                                .'|(*:372)'
+                            .'|pter/(?'
+                                .'|([^/]++)(?'
+                                    .'|(*:356)'
+                                    .'|/edit(*:369)'
+                                .')'
+                                .'|delete/([^/]++)(*:393)'
                             .')'
                         .')'
-                        .'|oach/([^/]++)(?'
-                            .'|(*:398)'
-                            .'|/edit(*:411)'
-                            .'|(*:419)'
+                        .'|oach/(?'
+                            .'|([^/]++)(?'
+                                .'|(*:422)'
+                                .'|/changePassword(*:445)'
+                            .')'
+                            .'|delete/([^/]++)(*:469)'
                         .')'
                     .')'
                     .'|kid(?'
                         .'|/(?'
                             .'|([^/]++)(?'
-                                .'|(*:450)'
-                                .'|/edit(*:463)'
-                                .'|(*:471)'
+                                .'|(*:500)'
+                                .'|/changePassword(*:523)'
                             .')'
-                            .'|parent(?'
-                                .'|(*:489)'
-                                .'|/([^/]++)(?'
-                                    .'|(*:509)'
-                                    .'|/edit(*:522)'
-                                    .'|(*:530)'
-                                .')'
+                            .'|delete/([^/]++)(*:547)'
+                        .')'
+                        .'|Parent/(?'
+                            .'|([^/]++)(?'
+                                .'|(*:577)'
+                                .'|/changePassword(*:600)'
                             .')'
+                            .'|delete/([^/]++)(*:624)'
                         .')'
-                        .'|Response/([^/]++)(?'
-                            .'|(*:561)'
-                            .'|/edit(*:574)'
-                            .'|(*:582)'
+                        .'|Response/([^/]++)(*:650)'
+                    .')'
+                    .'|lesson/(?'
+                        .'|([^/]++)(?'
+                            .'|(*:680)'
+                            .'|/edit(*:693)'
                         .')'
+                        .'|delete/([^/]++)(*:717)'
                     .')'
-                    .'|lesson/([^/]++)(?'
-                        .'|(*:610)'
-                        .'|/edit(*:623)'
-                        .'|(*:631)'
-                    .')'
-                    .'|option/([^/]++)(?'
-                        .'|(*:658)'
-                        .'|/edit(*:671)'
-                        .'|(*:679)'
+                    .'|option/(?'
+                        .'|([^/]++)(?'
+                            .'|(*:747)'
+                            .'|/edit(*:760)'
+                        .')'
+                        .'|delete/([^/]++)(*:784)'
                     .')'
                     .'|post/([^/]++)(?'
-                        .'|(*:704)'
-                        .'|/edit(*:717)'
-                        .'|(*:725)'
+                        .'|(*:809)'
+                        .'|/edit(*:822)'
+                        .'|(*:830)'
                     .')'
                     .'|qu(?'
-                        .'|estion/([^/]++)(?'
-                            .'|(*:757)'
-                            .'|/edit(*:770)'
-                            .'|(*:778)'
+                        .'|estion/(?'
+                            .'|([^/]++)(?'
+                                .'|(*:865)'
+                                .'|/edit(*:878)'
+                            .')'
+                            .'|delete/([^/]++)(*:902)'
                         .')'
                         .'|iz/([^/]++)(?'
-                            .'|(*:801)'
-                            .'|/edit(*:814)'
-                            .'|(*:822)'
+                            .'|(*:925)'
                         .')'
-                    .')'
-                    .'|user/([^/]++)(?'
-                        .'|(*:848)'
-                        .'|/edit(*:861)'
-                        .'|(*:869)'
                     .')'
                 .')'
             .')/?$}sDu',
@@ -158,47 +154,39 @@ return [
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
         191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        233 => [[['_route' => 'app_category_show', '_controller' => 'App\\Controller\\CategoryController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        246 => [[['_route' => 'app_category_edit', '_controller' => 'App\\Controller\\CategoryController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        254 => [[['_route' => 'app_category_delete', '_controller' => 'App\\Controller\\CategoryController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        289 => [[['_route' => 'challenge_show', '_controller' => 'App\\Controller\\ChallengeController::show'], ['title'], ['GET' => 0], null, false, true, null]],
-        302 => [[['_route' => 'challenge_edit', '_controller' => 'App\\Controller\\ChallengeController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
-        326 => [[['_route' => 'challenge_delete', '_controller' => 'App\\Controller\\ChallengeController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
-        351 => [[['_route' => 'app_chapter_show', '_controller' => 'App\\Controller\\ChapterController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        364 => [[['_route' => 'app_chapter_edit', '_controller' => 'App\\Controller\\ChapterController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        372 => [[['_route' => 'app_chapter_delete', '_controller' => 'App\\Controller\\ChapterController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        398 => [[['_route' => 'app_coach_show', '_controller' => 'App\\Controller\\CoachController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        411 => [[['_route' => 'app_coach_edit', '_controller' => 'App\\Controller\\CoachController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        419 => [[['_route' => 'app_coach_delete', '_controller' => 'App\\Controller\\CoachController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        450 => [[['_route' => 'app_kid_show', '_controller' => 'App\\Controller\\KidController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        463 => [[['_route' => 'app_kid_edit', '_controller' => 'App\\Controller\\KidController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        471 => [[['_route' => 'app_kid_delete', '_controller' => 'App\\Controller\\KidController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        489 => [[['_route' => 'app_kid_parent_index', '_controller' => 'App\\Controller\\KidParentController::index'], [], ['GET' => 0], null, true, false, null]],
-        509 => [[['_route' => 'app_kid_parent_show', '_controller' => 'App\\Controller\\KidParentController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        522 => [[['_route' => 'app_kid_parent_edit', '_controller' => 'App\\Controller\\KidParentController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        530 => [[['_route' => 'app_kid_parent_delete', '_controller' => 'App\\Controller\\KidParentController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        561 => [[['_route' => 'app_response_show', '_controller' => 'App\\Controller\\KidResponseController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        574 => [[['_route' => 'app_response_edit', '_controller' => 'App\\Controller\\KidResponseController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        582 => [[['_route' => 'app_response_delete', '_controller' => 'App\\Controller\\KidResponseController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        610 => [[['_route' => 'app_lesson_show', '_controller' => 'App\\Controller\\LessonController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        623 => [[['_route' => 'app_lesson_edit', '_controller' => 'App\\Controller\\LessonController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        631 => [[['_route' => 'app_lesson_delete', '_controller' => 'App\\Controller\\LessonController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        658 => [[['_route' => 'app_option_show', '_controller' => 'App\\Controller\\OptionController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        671 => [[['_route' => 'app_option_edit', '_controller' => 'App\\Controller\\OptionController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        679 => [[['_route' => 'app_option_delete', '_controller' => 'App\\Controller\\OptionController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        704 => [[['_route' => 'app_post_show', '_controller' => 'App\\Controller\\PostController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        717 => [[['_route' => 'app_post_edit', '_controller' => 'App\\Controller\\PostController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        725 => [[['_route' => 'app_post_delete', '_controller' => 'App\\Controller\\PostController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        757 => [[['_route' => 'app_question_show', '_controller' => 'App\\Controller\\QuestionController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        770 => [[['_route' => 'app_question_edit', '_controller' => 'App\\Controller\\QuestionController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        778 => [[['_route' => 'app_question_delete', '_controller' => 'App\\Controller\\QuestionController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        801 => [[['_route' => 'app_quiz_show', '_controller' => 'App\\Controller\\QuizController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        814 => [[['_route' => 'app_quiz_edit', '_controller' => 'App\\Controller\\QuizController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        822 => [[['_route' => 'app_quiz_delete', '_controller' => 'App\\Controller\\QuizController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        848 => [[['_route' => 'app_user_show', '_controller' => 'App\\Controller\\UserController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        861 => [[['_route' => 'app_user_edit', '_controller' => 'App\\Controller\\UserController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        869 => [
-            [['_route' => 'app_user_delete', '_controller' => 'App\\Controller\\UserController::delete'], ['id'], ['POST' => 0], null, false, true, null],
+        233 => [[['_route' => 'category_show', '_controller' => 'App\\Controller\\CategoryController::show'], ['type'], ['GET' => 0], null, false, true, null]],
+        256 => [[['_route' => 'category_delete', '_controller' => 'App\\Controller\\CategoryController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        291 => [[['_route' => 'challenge_show', '_controller' => 'App\\Controller\\ChallengeController::show'], ['title'], ['GET' => 0], null, false, true, null]],
+        304 => [[['_route' => 'challenge_edit', '_controller' => 'App\\Controller\\ChallengeController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        328 => [[['_route' => 'challenge_delete', '_controller' => 'App\\Controller\\ChallengeController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        356 => [[['_route' => 'chapter_show', '_controller' => 'App\\Controller\\ChapterController::show'], ['title'], ['GET' => 0], null, false, true, null]],
+        369 => [[['_route' => 'chapter_edit', '_controller' => 'App\\Controller\\ChapterController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        393 => [[['_route' => 'chapter_delete', '_controller' => 'App\\Controller\\ChapterController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        422 => [[['_route' => 'coach_show', '_controller' => 'App\\Controller\\CoachController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        445 => [[['_route' => 'coach_edit', '_controller' => 'App\\Controller\\CoachController::changePassword'], ['id'], ['PUT' => 0], null, false, false, null]],
+        469 => [[['_route' => 'coach_delete', '_controller' => 'App\\Controller\\CoachController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        500 => [[['_route' => 'kid_show', '_controller' => 'App\\Controller\\KidController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        523 => [[['_route' => 'kid_edit', '_controller' => 'App\\Controller\\KidController::changePassword'], ['id'], ['PUT' => 0], null, false, false, null]],
+        547 => [[['_route' => 'kid_delete', '_controller' => 'App\\Controller\\KidController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        577 => [[['_route' => 'kid_parent_show', '_controller' => 'App\\Controller\\KidParentController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        600 => [[['_route' => 'kid_parent_edit', '_controller' => 'App\\Controller\\KidParentController::changePassword'], ['id'], ['PUT' => 0], null, false, false, null]],
+        624 => [[['_route' => 'kid_parent_delete', '_controller' => 'App\\Controller\\KidParentController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        650 => [[['_route' => 'response_show', '_controller' => 'App\\Controller\\KidResponseController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        680 => [[['_route' => 'lesson_show', '_controller' => 'App\\Controller\\LessonController::show'], ['title'], ['GET' => 0], null, false, true, null]],
+        693 => [[['_route' => 'lesson_edit', '_controller' => 'App\\Controller\\LessonController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        717 => [[['_route' => 'lesson_delete', '_controller' => 'App\\Controller\\LessonController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        747 => [[['_route' => 'option_show', '_controller' => 'App\\Controller\\OptionController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        760 => [[['_route' => 'option_edit', '_controller' => 'App\\Controller\\OptionController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        784 => [[['_route' => 'option_delete', '_controller' => 'App\\Controller\\OptionController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        809 => [[['_route' => 'post_show', '_controller' => 'App\\Controller\\PostController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        822 => [[['_route' => 'post_edit', '_controller' => 'App\\Controller\\PostController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        830 => [[['_route' => 'post_delete', '_controller' => 'App\\Controller\\PostController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        865 => [[['_route' => 'question_show', '_controller' => 'App\\Controller\\QuestionController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        878 => [[['_route' => 'question_edit', '_controller' => 'App\\Controller\\QuestionController::edit'], ['id'], ['PUT' => 0], null, false, false, null]],
+        902 => [[['_route' => 'question_delete', '_controller' => 'App\\Controller\\QuestionController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        925 => [
+            [['_route' => 'app_quiz_show', '_controller' => 'App\\Controller\\QuizController::show'], ['id'], ['GET' => 0], null, false, true, null],
+            [['_route' => 'app_quiz_delete', '_controller' => 'App\\Controller\\QuizController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

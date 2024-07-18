@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\KidParentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: KidParentRepository::class)]
 class KidParent extends User
 {

@@ -36,7 +36,7 @@ class Kid extends User
     private Collection $interests;
 
     #[ORM\Column(length: 255)]
-    private ?string $level = null;
+    private ?string $level = 'first class';
 
     public function __construct()
     {

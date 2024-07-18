@@ -14,7 +14,7 @@ class PostService
             'content' => $post->getContent(),
             'mediaPath' => $post->getMediaPath(),
             'addedDate' => $post->getAddedDate()->format('Y-m-d H:i:s'),
-            'category' => $post->getCategory(),
+            'category' => $post->getCategories(),
             'postType' => $post->getPostType(),
             'lesson' => $post->getLesson(),
             'user' => $post->getUser(),

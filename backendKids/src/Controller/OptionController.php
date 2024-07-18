@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Option;
+use App\Entity\Question;
 use App\Form\OptionType;
 use App\Repository\OptionRepository;
 use App\Service\OptionService;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/option')]
 #[OA\Tag(name: 'Option')]
@@ -25,7 +27,7 @@ class OptionController extends AbstractController
         $this->optionService = $optionService;
     }
 
-    #[Route('/', name: 'app_option_index', methods: ['GET'])]
+    #[Route('/', name: 'option_index', methods: ['GET'])]
     public function index(OptionRepository $optionRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +38,88 @@ class OptionController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_option_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'option_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "type" => "true",
+                "content" => "this is the content of the first option",
+                "question_id" => 1
+            ]
+        )
+    )]
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
+        $question = $entityManager->getRepository(Question::class)->find($data['question_id']);
+        if (!$question) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $option = new Option();
         $form = $this->createForm(OptionType::class, $option);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $option->setQuestion($question);
+            $entityManager->persist($option);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{id}', name: 'option_show', methods: ['GET'])]
+    public function show($id, OptionRepository $optionRepository): JsonResponse
+    {
+        $option = $optionRepository->find($id);
+        $option = $this->optionService->optionToJson($option);
+        return new JsonResponse($option);
+    }
+
+    #[Route('/{id}/edit', name: 'option_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "type" => "false",
+                "content" => "this is the content of the first option"
+            ]
+        )
+    )]
+    public function edit($id, Request $request, OptionRepository $optionRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $option = $optionRepository->find($id);
+
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(OptionType::class, $option);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
             $entityManager->persist($option);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_option_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(['status' => 'Option updated successfully']);
         }
 
-        return $this->render('option/new.html.twig', [
-            'option' => $option,
-            'form' => $form,
-        ]);
+        return new JsonResponse(['error' => 'An error has occured']);
     }
 
-    #[Route('/{id}', name: 'app_option_show', methods: ['GET'])]
-    public function show(Option $option): Response
+    #[Route('/delete/{id}', name: 'option_delete', methods: ['DELETE'])]
+    public function delete($id, OptionRepository $optionRepository, EntityManagerInterface $entityManager): JsonResponse
     {
-        return $this->render('option/show.html.twig', [
-            'option' => $option,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_option_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Option $option, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(OptionType::class, $option);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_option_index', [], Response::HTTP_SEE_OTHER);
+        $option = $optionRepository->find($id);
+        if (!$option) {
+            throw new NotFoundHttpException('Option not found');
         }
 
-        return $this->render('option/edit.html.twig', [
-            'option' => $option,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($option);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_option_delete', methods: ['POST'])]
-    public function delete(Request $request, Option $option, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $option->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($option);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_option_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The Option has been deleted']);
     }
 }

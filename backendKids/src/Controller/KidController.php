@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Kid;
 use App\Form\KidType;
+use App\Form\UserPasswordType;
 use App\Repository\KidRepository;
 use App\Service\KidService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,19 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/api/kid')]
 #[OA\Tag(name: 'Kid')]
 class KidController extends AbstractController
 {
     private $kidService;
-
-    public function __construct(KidService $kidService)
+    private $passwordHasher;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, KidService $kidService)
     {
+        $this->passwordHasher = $passwordHasher;
         $this->kidService = $kidService;
     }
 
-    #[Route('/', name: 'app_kid_index', methods: ['GET'])]
+    #[Route('/', name: 'kid_index', methods: ['GET'])]
     public function index(KidRepository $kidRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +40,91 @@ class KidController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_kid_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/registration', name: 'kid_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "firstName" => "test",
+                "secondName" => "test",
+                "email" => "test.test@example.com",
+                "password" => "teeeeeeessst",
+                "birthDate" => "2001-01-20",
+            ]
+        )
+    )]
+    public function registration(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
         $kid = new Kid();
         $form = $this->createForm(KidType::class, $kid);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
+            $kid->setPassword($hashedPassword);
+            $kid->setRegistrationDate(new \DateTime());
+
+            $birthDateString = $data['birthDate'];
+            $birthDate = \DateTimeImmutable::createFromFormat('Y-m-d', $birthDateString);
+            $kid->setBirthDate($birthDate);
+
             $entityManager->persist($kid);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_kid_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('kid/new.html.twig', [
-            'kid' => $kid,
-            'form' => $form,
-        ]);
+        return new JsonResponse(true);
     }
 
-    #[Route('/{id}', name: 'app_kid_show', methods: ['GET'])]
-    public function show(Kid $kid): Response
+    #[Route('/{id}', name: 'kid_show', methods: ['GET'])]
+    public function show($id, KidRepository $kidRepository): JsonResponse
     {
-        return $this->render('kid/show.html.twig', [
-            'kid' => $kid,
-        ]);
+        $kid = $kidRepository->find($id);
+        $kid = $this->kidService->kidToJson($kid);
+        return new JsonResponse($kid);
     }
 
-    #[Route('/{id}/edit', name: 'app_kid_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Kid $kid, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/changePassword', name: 'kid_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "password" => "securepassword",
+            ]
+        )
+    )]
+    public function changePassword($id, Request $request, KidRepository $kidRepository, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(KidType::class, $kid);
-        $form->handleRequest($request);
+        $kid = $kidRepository->find($id);
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(UserPasswordType::class, $kid);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
 
-            return $this->redirectToRoute('app_kid_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('kid/edit.html.twig', [
-            'kid' => $kid,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_kid_delete', methods: ['POST'])]
-    public function delete(Request $request, Kid $kid, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $kid->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($kid);
+            $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
+            $kid->setPassword($hashedPassword);
+            $entityManager->persist($kid);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_kid_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(true);
+    }
+
+    #[Route('/delete/{id}', name: 'kid_delete', methods: ['DELETE'])]
+    public function delete($id, KidRepository $kidRepository, EntityManagerInterface $entityManager): Response
+    {
+        $kid = $kidRepository->find($id);
+        if (!$kid) {
+            throw new NotFoundHttpException('Kid not found');
+        }
+
+        $entityManager->remove($kid);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'The Kid has been deleted']);
     }
 }

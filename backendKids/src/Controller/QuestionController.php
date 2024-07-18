@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Entity\Quiz;
 use App\Form\QuestionType;
 use App\Repository\QuestionRepository;
 use App\Service\QuestionService;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/question')]
 #[OA\Tag(name: 'Question')]
@@ -25,7 +27,7 @@ class QuestionController extends AbstractController
         $this->questionService = $questionService;
     }
 
-    #[Route('/', name: 'app_question_index', methods: ['GET'])]
+    #[Route('/', name: 'question_index', methods: ['GET'])]
     public function index(QuestionRepository $questionRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +38,90 @@ class QuestionController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_question_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'question_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "questionNumber" => 1,
+                "type" => "multi answer",
+                "question" => "teeeeeeeeeest",
+                "quiz_id" => 1
+            ]
+        )
+    )]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $data = json_decode($request->getContent(), true);
+
+        $quiz = $entityManager->getRepository(Quiz::class)->find($data['quiz_id']);
+        if (!$quiz) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $question = new Question();
         $form = $this->createForm(QuestionType::class, $question);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $question->setQuiz($quiz);
+            $entityManager->persist($question);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{id}', name: 'question_show', methods: ['GET'])]
+    public function show($id, QuestionRepository $questionRepository): Response
+    {
+        $question = $questionRepository->find($id);
+        $question = $this->questionService->questionToJson($question);
+        return new JsonResponse($question);
+    }
+
+    #[Route('/{id}/edit', name: 'question_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "questionNumber" => 1,
+                "type" => "multi answer",
+                "question" => "teeeeeeeeeest"
+            ]
+        )
+    )]
+    public function edit($id, Request $request, QuestionRepository $questionRepository, EntityManagerInterface $entityManager): Response
+    {
+        $question = $questionRepository->find($id);
+
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(QuestionType::class, $question);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
             $entityManager->persist($question);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_question_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(['status' => 'question updated successfully']);
         }
 
-        return $this->render('question/new.html.twig', [
-            'question' => $question,
-            'form' => $form,
-        ]);
+        return new JsonResponse(['error' => 'An error has occured']);
     }
 
-    #[Route('/{id}', name: 'app_question_show', methods: ['GET'])]
-    public function show(Question $question): Response
+    #[Route('/delete/{id}', name: 'question_delete', methods: ['DELETE'])]
+    public function delete($id, QuestionRepository $questionRepository, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('question/show.html.twig', [
-            'question' => $question,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Question $question, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(QuestionType::class, $question);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_question_index', [], Response::HTTP_SEE_OTHER);
+        $question = $questionRepository->find($id);
+        if (!$question) {
+            throw new NotFoundHttpException('Question not found');
         }
 
-        return $this->render('question/edit.html.twig', [
-            'question' => $question,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($question);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_question_delete', methods: ['POST'])]
-    public function delete(Request $request, Question $question, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($question);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_question_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The Question has been deleted']);
     }
 }

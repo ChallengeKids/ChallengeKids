@@ -2,10 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Coach;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use App\Entity\Coach;
 
 class CoachType extends AbstractType
 {
@@ -16,13 +17,12 @@ class CoachType extends AbstractType
             ->add('secondName')
             ->add('email')
             ->add('password')
-            ->add('registrationDate', null, [
+            ->add('birthDate', DateType::class, [
+                'input' => 'datetime',
                 'widget' => 'single_text',
-            ])
-            ->add('birthDate', null, [
-                'widget' => 'single_text',
-            ])
-        ;
+                'format' => 'yyyy-MM-dd',
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

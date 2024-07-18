@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\User;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Service\PostService;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/post')]
 #[OA\Tag(name: 'Post')]
@@ -25,7 +27,7 @@ class PostController extends AbstractController
         $this->postService = $postService;
     }
 
-    #[Route('/', name: 'app_post_index', methods: ['GET'])]
+    #[Route('/', name: 'post_index', methods: ['GET'])]
     public function index(PostRepository $postRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +38,93 @@ class PostController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'post_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Post",
+                "content" => "This is the description for the first post",
+                "mediaPath" => "teeeeeest",
+                "postType" => "test",
+                "user_id" => 7,
+            ]
+        )
+    )]
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
+        $user = $entityManager->getRepository(User::class)->find($data['user_id']);
+        if (!$user) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $post->setAddedDate(new \DateTime());
+            $post->setUser($user);
+            $entityManager->persist($post);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{id}', name: 'post_show', methods: ['GET'])]
+    public function show($id, PostRepository $postRepository): Response
+    {
+        $post = $postRepository->find($id);
+        $post = $this->postService->postToJson($post);
+        return new JsonResponse($post);
+    }
+
+    #[Route('/{id}/edit', name: 'post_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Post222",
+                "content" => "This is the description for the first post222",
+                "mediaPath" => "teeeeeest222",
+                "postType" => "test"
+            ]
+        )
+    )]
+    public function edit($id, Request $request, PostRepository $postRepository, EntityManagerInterface $entityManager): Response
+    {
+        $post = $postRepository->find($id);
+
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(PostRepository::class, $post);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
             $entityManager->persist($post);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(['status' => 'Challenge updated successfully']);
         }
 
-        return $this->render('post/new.html.twig', [
-            'post' => $post,
-            'form' => $form,
-        ]);
+        return new JsonResponse(['error' => 'An error has occured']);
     }
 
-    #[Route('/{id}', name: 'app_post_show', methods: ['GET'])]
-    public function show(Post $post): Response
+    #[Route('/{id}', name: 'post_delete', methods: ['DELETE'])]
+    public function delete($id, PostRepository $postRepository, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('post/show.html.twig', [
-            'post' => $post,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Post $post, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(PostType::class, $post);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+        $post = $postRepository->find($id);
+        if (!$post) {
+            throw new NotFoundHttpException('Post not found');
         }
 
-        return $this->render('post/edit.html.twig', [
-            'post' => $post,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($post);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
-    public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($post);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The Post has been deleted']);
     }
 }

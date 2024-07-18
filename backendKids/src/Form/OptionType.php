@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\KidResponse;
 use App\Entity\Option;
 use App\Entity\Question;
-use App\Entity\Response;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,14 +16,7 @@ class OptionType extends AbstractType
     {
         $builder
             ->add('type')
-            ->add('question', EntityType::class, [
-                'class' => Question::class,
-                'choice_label' => 'id',
-            ])
-            ->add('response', EntityType::class, [
-                'class' => KidResponse::class,
-                'choice_label' => 'id',
-            ]);
+            ->add('content');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -24,6 +24,9 @@ class Option
     #[ORM\OneToOne(inversedBy: 'optionResponse', cascade: ['persist', 'remove'])]
     private ?KidResponse $response = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $content = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class Option
     public function setResponse(?kidResponse $response): static
     {
         $this->response = $response;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): static
+    {
+        $this->content = $content;
 
         return $this;
     }

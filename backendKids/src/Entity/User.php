@@ -37,8 +37,8 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected ?\DateTimeInterface $registrationDate = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    protected ?\DateTimeInterface $birthDate = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    protected ?\DateTimeImmutable $birthDate = null;
 
     /**
      * @var Collection<int, Post>

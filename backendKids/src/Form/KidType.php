@@ -6,6 +6,7 @@ use App\Entity\Kid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class KidType extends AbstractType
 {
@@ -16,16 +17,12 @@ class KidType extends AbstractType
             ->add('secondName')
             ->add('email')
             ->add('password')
-            ->add('registrationDate', null, [
+            ->add('birthDate', DateType::class, [
+                'input' => 'datetime',
                 'widget' => 'single_text',
-            ])
-            ->add('birthDate', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('friends')
-            ->add('points')
-            ->add('level')
-        ;
+                'format' => 'yyyy-MM-dd',
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

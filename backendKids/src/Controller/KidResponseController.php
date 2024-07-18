@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Kid;
 use App\Entity\KidResponse;
+use App\Entity\Quiz;
 use App\Form\ResponseType;
 use App\Repository\KidResponseRepository;
 use App\Service\KidResponseService;
@@ -25,7 +27,7 @@ class KidResponseController extends AbstractController
         $this->kidResponseService = $kidResponseService;
     }
 
-    #[Route('/', name: 'app_response_index', methods: ['GET'])]
+    #[Route('/', name: 'response_index', methods: ['GET'])]
     public function index(KidResponseRepository $responseRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +38,46 @@ class KidResponseController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_response_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'response_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "quiz_id" => 1,
+                "kid_id" => 7
+            ]
+        )
+    )]
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $response = new Response();
-        $form = $this->createForm(ResponseType::class, $response);
-        $form->handleRequest($request);
+        $data = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($response);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_response_index', [], Response::HTTP_SEE_OTHER);
+        $quiz = $entityManager->getRepository(Quiz::class)->find($data['quiz_id']);
+        if (!$quiz) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->render('response/new.html.twig', [
-            'response' => $response,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_response_show', methods: ['GET'])]
-    public function show(Response $response): Response
-    {
-        return $this->render('response/show.html.twig', [
-            'response' => $response,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_response_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Response $response, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(ResponseType::class, $response);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_response_index', [], Response::HTTP_SEE_OTHER);
+        $kid = $entityManager->getRepository(Kid::class)->find($data['kid_id']);
+        if (!$quiz) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->render('response/edit.html.twig', [
-            'response' => $response,
-            'form' => $form,
-        ]);
+        $kidResponse = new KidResponse();
+
+        $kidResponse->setQuiz($quiz);
+        $kidResponse->setKid($kid);
+        $entityManager->persist($kidResponse);
+        $entityManager->flush();
+
+        return new JsonResponse(true);
     }
 
-    #[Route('/{id}', name: 'app_response_delete', methods: ['POST'])]
-    public function delete(Request $request, KidResponse $response, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'response_show', methods: ['GET'])]
+    public function show($id, KidResponseRepository $kidResponseRepository): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete' . $response->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($response);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_response_index', [], Response::HTTP_SEE_OTHER);
+        $kidResponse = $kidResponseRepository->find($id);
+        $kidResponse = $this->kidResponseService->kidResponseToJson($kidResponse);
+        return new JsonResponse($kidResponse);
     }
 }

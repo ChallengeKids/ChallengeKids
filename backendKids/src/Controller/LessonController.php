@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/lesson')]
 #[OA\Tag(name: 'Lesson')]
@@ -25,7 +26,7 @@ class LessonController extends AbstractController
         $this->lessonService = $lessonService;
     }
 
-    #[Route('/', name: 'app_lesson_index', methods: ['GET'])]
+    #[Route('/', name: 'lesson_index', methods: ['GET'])]
     public function index(LessonRepository $lessonRepository): JsonResponse
     {
         $listJson = [];
@@ -36,60 +37,83 @@ class LessonController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_lesson_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'lesson_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Lesson",
+                "description" => "This is the description of the first lesson",
+                "LessonNumber" => 1,
+            ]
+        )
+    )]
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
         $lesson = new Lesson();
         $form = $this->createForm(LessonType::class, $lesson);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $entityManager->persist($lesson);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{title}', name: 'lesson_show', methods: ['GET'])]
+    public function show($title, LessonRepository $lessonRepository): Response
+    {
+        $lesson = $lessonRepository->findOneBy(['title' => $title]);
+        $lesson = $this->lessonService->lessonToJson($lesson);
+        return new JsonResponse($lesson);
+    }
+
+    #[Route('/{id}/edit', name: 'lesson_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Lesson Changed",
+                "description" => "This is the changed description of the first lesson",
+                "LessonNumber" => 1,
+            ]
+        )
+    )]
+    public function edit($id, Request $request, LessonRepository $lessonRepository, EntityManagerInterface $entityManager): Response
+    {
+        $lesson = $lessonRepository->find($id);
+
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(LessonType::class, $lesson);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
             $entityManager->persist($lesson);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_lesson_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(['status' => 'Lesson updated successfully']);
         }
 
-        return $this->render('lesson/new.html.twig', [
-            'lesson' => $lesson,
-            'form' => $form,
-        ]);
+        return new JsonResponse(['error' => 'An error has occured']);
     }
 
-    #[Route('/{id}', name: 'app_lesson_show', methods: ['GET'])]
-    public function show(Lesson $lesson): Response
+    #[Route('/delete/{id}', name: 'lesson_delete', methods: ['DELETE'])]
+    public function delete($id, LessonRepository $lessonRepository, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('lesson/show.html.twig', [
-            'lesson' => $lesson,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_lesson_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Lesson $lesson, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(LessonType::class, $lesson);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_lesson_index', [], Response::HTTP_SEE_OTHER);
+        $lesson = $lessonRepository->find($id);
+        if (!$lesson) {
+            throw new NotFoundHttpException('Lesson not found');
         }
 
-        return $this->render('lesson/edit.html.twig', [
-            'lesson' => $lesson,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($lesson);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_lesson_delete', methods: ['POST'])]
-    public function delete(Request $request, Lesson $lesson, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $lesson->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($lesson);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_lesson_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The Lesson has been deleted']);
     }
 }

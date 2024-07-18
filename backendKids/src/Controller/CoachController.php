@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Coach;
 use App\Form\CoachType;
+use App\Form\UserPasswordType;
 use App\Repository\CoachRepository;
 use App\Service\CoachService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,19 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/api/coach')]
 #[OA\Tag(name: 'Coach')]
 class CoachController extends AbstractController
 {
     private $coachService;
-
-    public function __construct(CoachService $coachService)
+    private $passwordHasher;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService)
     {
+        $this->passwordHasher = $passwordHasher;
         $this->coachService = $coachService;
     }
 
-    #[Route('/', name: 'app_coach_index', methods: ['GET'])]
+    #[Route('/', name: 'coach_index', methods: ['GET'])]
     public function index(CoachRepository $coachRepository): JsonResponse
     {
         $listJson = [];
@@ -37,60 +41,91 @@ class CoachController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_coach_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/registration', name: 'coach_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "firstName" => "John",
+                "secondName" => "Doe",
+                "email" => "john.doe@example.com",
+                "password" => "securepassword",
+                "birthDate" => "2001-01-20",
+            ]
+        )
+    )]
+    public function registration(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
         $coach = new Coach();
         $form = $this->createForm(CoachType::class, $coach);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
+            $coach->setPassword($hashedPassword);
+            $coach->setRegistrationDate(new \DateTime());
+
+            $birthDateString = $data['birthDate'];
+            $birthDate = \DateTimeImmutable::createFromFormat('Y-m-d', $birthDateString);
+            $coach->setBirthDate($birthDate);
+
             $entityManager->persist($coach);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_coach_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('coach/new.html.twig', [
-            'coach' => $coach,
-            'form' => $form,
-        ]);
+        return new JsonResponse(true);
     }
 
-    #[Route('/{id}', name: 'app_coach_show', methods: ['GET'])]
-    public function show(Coach $coach): Response
+    #[Route('/{id}', name: 'coach_show', methods: ['GET'])]
+    public function show(CoachRepository $coachRepository, $id): Response
     {
-        return $this->render('coach/show.html.twig', [
-            'coach' => $coach,
-        ]);
+        $coach = $coachRepository->find($id);
+        $coach = $this->coachService->coachToJson($coach);
+        return new JsonResponse($coach);
     }
 
-    #[Route('/{id}/edit', name: 'app_coach_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Coach $coach, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/changePassword', name: 'coach_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "password" => "securepassword",
+            ]
+        )
+    )]
+    public function changePassword($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(CoachType::class, $coach);
-        $form->handleRequest($request);
+        $coach = $coachRepository->find($id);
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(UserPasswordType::class, $coach);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
 
-            return $this->redirectToRoute('app_coach_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('coach/edit.html.twig', [
-            'coach' => $coach,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_coach_delete', methods: ['POST'])]
-    public function delete(Request $request, Coach $coach, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $coach->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($coach);
+            $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
+            $coach->setPassword($hashedPassword);
+            $entityManager->persist($coach);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_coach_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(true);
+    }
+
+    #[Route('/delete/{id}', name: 'coach_delete', methods: ['DELETE'])]
+    public function delete($id, CoachRepository $coachRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $coach = $coachRepository->find($id);
+        if (!$coach) {
+            throw new NotFoundHttpException('Coach not found');
+        }
+
+        $entityManager->remove($coach);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'The Coach has been deleted']);
     }
 }

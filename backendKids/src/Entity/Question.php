@@ -16,7 +16,7 @@ class Question
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $QuestionNumber = null;
+    private ?int $questionNumber = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
@@ -26,6 +26,13 @@ class Question
      */
     #[ORM\OneToMany(targetEntity: Option::class, mappedBy: 'question')]
     private Collection $options;
+
+    #[ORM\Column(length: 255)]
+    private ?string $question = null;
+
+    #[ORM\ManyToOne(inversedBy: 'questions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Quiz $quiz = null;
 
     public function __construct()
     {
@@ -39,12 +46,12 @@ class Question
 
     public function getQuestionNumber(): ?int
     {
-        return $this->QuestionNumber;
+        return $this->questionNumber;
     }
 
-    public function setQuestionNumber(int $QuestionNumber): static
+    public function setQuestionNumber(int $questionNumber): static
     {
-        $this->QuestionNumber = $QuestionNumber;
+        $this->questionNumber = $questionNumber;
 
         return $this;
     }
@@ -87,6 +94,30 @@ class Question
                 $option->setQuestion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getQuestion(): ?string
+    {
+        return $this->question;
+    }
+
+    public function setQuestion(string $question): static
+    {
+        $this->question = $question;
+
+        return $this;
+    }
+
+    public function getQuiz(): ?Quiz
+    {
+        return $this->quiz;
+    }
+
+    public function setQuiz(?Quiz $quiz): static
+    {
+        $this->quiz = $quiz;
 
         return $this;
     }

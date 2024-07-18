@@ -12,9 +12,9 @@ class QuestionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('QuestionNumber')
+            ->add('questionNumber')
             ->add('type')
-        ;
+            ->add('question');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\KidResponse;
+use App\Entity\Lesson;
+use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Form\QuizType;
 use App\Repository\QuizRepository;
@@ -13,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/quiz')]
 #[OA\Tag(name: 'Quiz')]
@@ -36,60 +40,56 @@ class QuizController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_quiz_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "lesson_id" => 2,
+            ]
+        )
+    )]
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $quiz = new Quiz();
-        $form = $this->createForm(QuizType::class, $quiz);
-        $form->handleRequest($request);
+        $data = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($quiz);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+        if (!isset($data['lesson_id'])) {
+            return $this->json(['error' => 'Lesson ID is required'], Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->render('quiz/new.html.twig', [
-            'quiz' => $quiz,
-            'form' => $form,
-        ]);
+        $lesson = $entityManager->getRepository(Lesson::class)->find($data['lesson_id']);
+        if (!$lesson) {
+            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $quiz = new Quiz();
+        $quiz->setLesson($lesson);
+        $entityManager->persist($quiz);
+        $entityManager->flush();
+
+        return new JsonResponse(true);
     }
 
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
-    public function show(Quiz $quiz): Response
+    public function show($id, QuizRepository $quizRepository): JsonResponse
     {
-        return $this->render('quiz/show.html.twig', [
-            'quiz' => $quiz,
-        ]);
+        $quiz = $quizRepository->find($id);
+        $quiz = $this->quizService->quizToJson($quiz);
+        return new JsonResponse($quiz);
     }
 
-    #[Route('/{id}/edit', name: 'app_quiz_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_quiz_delete', methods: ['DELETE'])]
+    public function delete($id, QuizRepository $quizRepository, EntityManagerInterface $entityManager): JsonResponse
     {
-        $form = $this->createForm(QuizType::class, $quiz);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+        $quiz = $quizRepository->find($id);
+        if (!$quiz) {
+            throw new NotFoundHttpException('Quiz not found');
         }
 
-        return $this->render('quiz/edit.html.twig', [
-            'quiz' => $quiz,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($quiz);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_quiz_delete', methods: ['POST'])]
-    public function delete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $quiz->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($quiz);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The Quiz has been deleted']);
     }
 }

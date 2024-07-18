@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api/chapter')]
 #[OA\Tag(name: 'Chapter')]
@@ -24,7 +25,7 @@ class ChapterController extends AbstractController
     {
         $this->chapterService = $chapterService;
     }
-    #[Route('/', name: 'app_chapter_index', methods: ['GET'])]
+    #[Route('/', name: 'chapter_index', methods: ['GET'])]
     public function index(ChapterRepository $chapterRepository): JsonResponse
     {
         $listJson = [];
@@ -35,60 +36,83 @@ class ChapterController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_chapter_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'chapter_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "Chapter1",
+                "description" => "This is a description for the 1st Chapter",
+                "chapterNumber" => 3
+            ]
+        )
+    )]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $data = json_decode($request->getContent(), true);
+
         $chapter = new Chapter();
         $form = $this->createForm(ChapterType::class, $chapter);
-        $form->handleRequest($request);
+        $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            $entityManager->persist($chapter);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{title}', name: 'chapter_show', methods: ['GET'])]
+    public function show(ChapterRepository $chapterRepository, $title): Response
+    {
+        $chapter = $chapterRepository->findOneBy(['title' => $title]);
+        $chapter = $this->chapterService->chapterToJson($chapter);
+        return new JsonResponse($chapter);
+    }
+
+    #[Route('/{id}/edit', name: 'chapter_edit', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "Chapter111",
+                "description" => "This is a description for the 111th Chapter",
+                "chapterNumber" => 6
+            ]
+        )
+    )]
+    public function edit($id, Request $request, ChapterRepository $chapterRepository, EntityManagerInterface $entityManager): Response
+    {
+        $chapter = $chapterRepository->find($id);
+
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(ChapterType::class, $chapter);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
             $entityManager->persist($chapter);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_chapter_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(['status' => 'Chapter updated successfully']);
         }
 
-        return $this->render('chapter/new.html.twig', [
-            'chapter' => $chapter,
-            'form' => $form,
-        ]);
+        return new JsonResponse(['error' => 'An error has occured']);
     }
 
-    #[Route('/{id}', name: 'app_chapter_show', methods: ['GET'])]
-    public function show(Chapter $chapter): Response
+    #[Route('/delete/{id}', name: 'chapter_delete', methods: ['DELETE'])]
+    public function delete($id, ChapterRepository $chapterRepository, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('chapter/show.html.twig', [
-            'chapter' => $chapter,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_chapter_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Chapter $chapter, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(ChapterType::class, $chapter);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_chapter_index', [], Response::HTTP_SEE_OTHER);
+        $chapter = $chapterRepository->find($id);
+        if (!$chapter) {
+            throw new NotFoundHttpException('chapter$chapter not found');
         }
 
-        return $this->render('chapter/edit.html.twig', [
-            'chapter' => $chapter,
-            'form' => $form,
-        ]);
-    }
+        $entityManager->remove($chapter);
+        $entityManager->flush();
 
-    #[Route('/{id}', name: 'app_chapter_delete', methods: ['POST'])]
-    public function delete(Request $request, Chapter $chapter, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $chapter->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($chapter);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_chapter_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(['status' => 'The chapter$chapter has been deleted']);
     }
 }

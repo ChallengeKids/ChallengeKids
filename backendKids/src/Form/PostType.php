@@ -18,9 +18,6 @@ class PostType extends AbstractType
             ->add('title')
             ->add('content')
             ->add('mediaPath')
-            ->add('addedDate', null, [
-                'widget' => 'single_text',
-            ])
             ->add('postType')
             ->add('lesson', EntityType::class, [
                 'class' => Lesson::class,
@@ -29,8 +26,7 @@ class PostType extends AbstractType
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'id',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
