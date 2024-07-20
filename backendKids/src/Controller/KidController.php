@@ -40,43 +40,6 @@ class KidController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/registration', name: 'kid_new', methods: ['POST'])]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            type: Object::class,
-            example: [
-                "firstName" => "test",
-                "secondName" => "test",
-                "email" => "test.test@example.com",
-                "password" => "teeeeeeessst",
-                "birthDate" => "2001-01-20",
-            ]
-        )
-    )]
-    public function registration(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $kid = new Kid();
-        $form = $this->createForm(KidType::class, $kid);
-        $form->submit($data);
-
-        if ($form->isSubmitted()) {
-            $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
-            $kid->setPassword($hashedPassword);
-            $kid->setRegistrationDate(new \DateTime());
-
-            $birthDateString = $data['birthDate'];
-            $birthDate = \DateTimeImmutable::createFromFormat('Y-m-d', $birthDateString);
-            $kid->setBirthDate($birthDate);
-
-            $entityManager->persist($kid);
-            $entityManager->flush();
-        }
-
-        return new JsonResponse(true);
-    }
 
     #[Route('/{id}', name: 'kid_show', methods: ['GET'])]
     public function show($id, KidRepository $kidRepository): JsonResponse

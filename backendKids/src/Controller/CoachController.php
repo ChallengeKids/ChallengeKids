@@ -41,44 +41,6 @@ class CoachController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/registration', name: 'coach_new', methods: ['POST'])]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            type: Object::class,
-            example: [
-                "firstName" => "John",
-                "secondName" => "Doe",
-                "email" => "john.doe@example.com",
-                "password" => "securepassword",
-                "birthDate" => "2001-01-20",
-            ]
-        )
-    )]
-    public function registration(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $coach = new Coach();
-        $form = $this->createForm(CoachType::class, $coach);
-        $form->submit($data);
-
-        if ($form->isSubmitted()) {
-            $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
-            $coach->setPassword($hashedPassword);
-            $coach->setRegistrationDate(new \DateTime());
-
-            $birthDateString = $data['birthDate'];
-            $birthDate = \DateTimeImmutable::createFromFormat('Y-m-d', $birthDateString);
-            $coach->setBirthDate($birthDate);
-
-            $entityManager->persist($coach);
-            $entityManager->flush();
-        }
-
-        return new JsonResponse(true);
-    }
-
     #[Route('/{id}', name: 'coach_show', methods: ['GET'])]
     public function show(CoachRepository $coachRepository, $id): Response
     {
