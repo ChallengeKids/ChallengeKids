@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Lesson;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,18 +29,45 @@ class PostController extends AbstractController
         $this->postService = $postService;
     }
 
-    #[Route('/', name: 'post_index', methods: ['GET'])]
-    public function index(PostRepository $postRepository): JsonResponse
+    #[Route('/{lesson}', name: 'post_index_lesson', methods: ['GET'])]
+    public function getPostsByLesson(Lesson $lesson, PostRepository $postRepository): JsonResponse
     {
         $listJson = [];
-        $list = $postRepository->findAll();
+        $list = $postRepository->findBy(["lesson" => $lesson]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->postService->postToJson($value);
         }
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'post_new', methods: ['POST'])]
+    #[Route('/{user}', name: 'post_index_user', methods: ['GET'])]
+    public function getPostsByUser(User $user, PostRepository $postRepository, UserRepository $userRepository): JsonResponse
+    {
+        $userEntity = $userRepository->find($user);
+        if (!$userEntity) {
+            throw new NotFoundHttpException('User not found');
+        }
+
+        $listJson = [];
+        $list = $postRepository->findBy(["user" => $userEntity]);
+        foreach ($list as $key => $value) {
+            $listJson[$key] = $this->postService->postToJson($value);
+        }
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/{user}/{lesson}', name: 'post_index_user_lesson', methods: ['GET'])]
+    public function getPostsByUserAndLesson(User $user, Lesson $lesson, PostRepository $postRepository): JsonResponse
+    {
+        $listJson = [];
+        $list = $postRepository->findBy(["user" => $user, 'lesson' => $lesson]);
+        foreach ($list as $key => $value) {
+            $listJson[$key] = $this->postService->postToJson($value);
+        }
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/{user}/{lesson}/new', name: 'post_new_lesson', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -48,18 +77,44 @@ class PostController extends AbstractController
                 "content" => "This is the description for the first post",
                 "mediaPath" => "teeeeeest",
                 "postType" => "test",
-                "user_id" => 7,
             ]
         )
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function LessonPost(User $user, Lesson $lesson, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $user = $entityManager->getRepository(User::class)->find($data['user_id']);
-        if (!$user) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
+            $post->setAddedDate(new \DateTime());
+            $post->setUser($user);
+            $post->setLesson($lesson);
+            $entityManager->persist($post);
+            $entityManager->flush();
         }
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{user}/new', name: 'post_new_user', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Post",
+                "content" => "This is the description for the first post",
+                "mediaPath" => "teeeeeest",
+                "postType" => "test",
+            ]
+        )
+    )]
+    public function UserPost(User $user, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
 
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);

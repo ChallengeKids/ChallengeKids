@@ -38,30 +38,9 @@ class KidResponseController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'response_new', methods: ['POST'])]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            type: Object::class,
-            example: [
-                "quiz_id" => 1,
-                "kid_id" => 7
-            ]
-        )
-    )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/{kid}/{quiz}/new', name: 'response_new', methods: ['POST'])]
+    public function new(Request $request, Kid $kid, Quiz $quiz, EntityManagerInterface $entityManager): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        $quiz = $entityManager->getRepository(Quiz::class)->find($data['quiz_id']);
-        if (!$quiz) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        $kid = $entityManager->getRepository(Kid::class)->find($data['kid_id']);
-        if (!$quiz) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
-        }
 
         $kidResponse = new KidResponse();
 

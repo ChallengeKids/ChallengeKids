@@ -27,18 +27,18 @@ class QuestionController extends AbstractController
         $this->questionService = $questionService;
     }
 
-    #[Route('/', name: 'question_index', methods: ['GET'])]
-    public function index(QuestionRepository $questionRepository): JsonResponse
+    #[Route('/{quiz}', name: 'question_index', methods: ['GET'])]
+    public function index(Quiz $quiz, QuestionRepository $questionRepository): JsonResponse
     {
         $listJson = [];
-        $list = $questionRepository->findAll();
+        $list = $questionRepository->findBy(["quiz" => $quiz]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->questionService->questionToJson($value);
         }
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'question_new', methods: ['POST'])]
+    #[Route('/{quiz}/new', name: 'question_new', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -47,18 +47,12 @@ class QuestionController extends AbstractController
                 "questionNumber" => 1,
                 "type" => "multi answer",
                 "question" => "teeeeeeeeeest",
-                "quiz_id" => 1
             ]
         )
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Quiz $quiz, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
-
-        $quiz = $entityManager->getRepository(Quiz::class)->find($data['quiz_id']);
-        if (!$quiz) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
-        }
 
         $question = new Question();
         $form = $this->createForm(QuestionType::class, $question);

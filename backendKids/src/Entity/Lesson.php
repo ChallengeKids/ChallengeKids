@@ -21,7 +21,7 @@ class Lesson
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     private ?int $LessonNumber = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessons')]

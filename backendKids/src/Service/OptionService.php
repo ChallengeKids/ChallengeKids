@@ -13,6 +13,7 @@ class OptionService
             'question' => $option->getQuestion(),
             'type' => $option->isType(),
             'response' => $option->getResponse(),
+            'content' => $option->getContent(),
         ];
     }
 }

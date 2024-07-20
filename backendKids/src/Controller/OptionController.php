@@ -27,18 +27,18 @@ class OptionController extends AbstractController
         $this->optionService = $optionService;
     }
 
-    #[Route('/', name: 'option_index', methods: ['GET'])]
-    public function index(OptionRepository $optionRepository): JsonResponse
+    #[Route('/{question}', name: 'option_index', methods: ['GET'])]
+    public function index(Question $question, OptionRepository $optionRepository): JsonResponse
     {
         $listJson = [];
-        $list = $optionRepository->findAll();
+        $list = $optionRepository->findBy(['question' => $question]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->optionService->optionToJson($value);
         }
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'option_new', methods: ['POST'])]
+    #[Route('/{question}/new', name: 'option_new', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -46,18 +46,12 @@ class OptionController extends AbstractController
             example: [
                 "type" => "true",
                 "content" => "this is the content of the first option",
-                "question_id" => 1
             ]
         )
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Question $question, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
-        $question = $entityManager->getRepository(Question::class)->find($data['question_id']);
-        if (!$question) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
-        }
 
         $option = new Option();
         $form = $this->createForm(OptionType::class, $option);

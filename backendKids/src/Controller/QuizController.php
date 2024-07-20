@@ -29,45 +29,39 @@ class QuizController extends AbstractController
         $this->quizService = $quizService;
     }
 
-    #[Route('/', name: 'app_quiz_index', methods: ['GET'])]
-    public function index(QuizRepository $quizRepository): JsonResponse
+    #[Route('/{lesson}', name: 'app_quiz_index', methods: ['GET'])]
+    public function index(Lesson $lesson, QuizRepository $quizRepository): JsonResponse
     {
         $listJson = [];
-        $list = $quizRepository->findAll();
+        $list = $quizRepository->findBy(["lesson" => $lesson]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->quizService->quizToJson($value);
         }
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'app_quiz_new', methods: ['POST'])]
+    #[Route('/{lesson}/new', name: 'app_quiz_new', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "lesson_id" => 2,
+                "title" => "quiz1",
             ]
         )
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Lesson $lesson, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['lesson_id'])) {
-            return $this->json(['error' => 'Lesson ID is required'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $lesson = $entityManager->getRepository(Lesson::class)->find($data['lesson_id']);
-        if (!$lesson) {
-            return $this->json(['error' => 'Lesson not found'], Response::HTTP_NOT_FOUND);
-        }
-
         $quiz = new Quiz();
-        $quiz->setLesson($lesson);
-        $entityManager->persist($quiz);
-        $entityManager->flush();
-
+        $form = $this->createForm(QuizType::class, $quiz);
+        $form->submit($data);
+        if ($form->isSubmitted()) {
+            $quiz->setLesson($lesson);
+            $entityManager->persist($quiz);
+            $entityManager->flush();
+        }
         return new JsonResponse(true);
     }
 

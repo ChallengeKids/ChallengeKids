@@ -21,8 +21,7 @@ class UserType extends AbstractType
             ])
             ->add('birthDate', null, [
                 'widget' => 'single_text',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
