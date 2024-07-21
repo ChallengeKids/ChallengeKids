@@ -48,38 +48,59 @@ class RegistrationController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $form = $this->createForm(RegistrationFormType::class);
-        $form->submit($data);
-
-        if ($form->isSubmitted()) {
-            $userType = $form->get('userType')->getData();
-            if ($userType === 'kid') {
-                $user = new Kid();
-            } elseif ($userType === 'coach') {
-                $user = new Coach();
-            } else {
-                throw new \Exception('Invalid user type');
-            }
-
-            $user->setFirstName($form->get('firstName')->getData());
-            $user->setSecondName($form->get('secondName')->getData());
-            $user->setEmail($form->get('email')->getData());
-            $user->setBirthDate($form->get('birthDate')->getData());
-
-            // Encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-
-            $user->setRegistrationDate(new \DateTime());
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-            return new JsonResponse(true);
+        if ($data === null) {
+            return new JsonResponse(['message' => 'Invalid JSON data'], JsonResponse::HTTP_BAD_REQUEST);
         }
+
+        $requiredFields = ['userType', 'firstName', 'secondName', 'email', 'birthDate', 'plainPassword'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field]) || empty($data[$field])) {
+                return new JsonResponse(['message' => "Field '$field' is required"], JsonResponse::HTTP_BAD_REQUEST);
+            }
+        }
+        $userType = strtolower($data['userType']);
+        switch ($userType) {
+            case 'kid':
+                $user = new Kid();
+                break;
+            case 'coach':
+                $user = new Coach();
+                break;
+            default:
+                return new JsonResponse(['message' => 'Invalid user type'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $userType = strtolower($data['userType']);
+        if ($userType === 'kid') {
+            $user = new Kid();
+        } elseif ($userType === 'coach') {
+            $user = new Coach();
+        } else {
+            throw new \Exception('Invalid user type');
+        }
+
+        // $user->setFirstName($form->get('firstName')->getData());
+        // $user->setSecondName($form->get('secondName')->getData());
+        // $user->setEmail($form->get('email')->getData());
+        // $user->setBirthDate($form->get('birthDate')->getData() ? new \DateTimeImmutable($form->get('birthDate')->getData()) : null);
+        $user->setFirstName($data['firstName']);
+        $user->setSecondName($data['secondName']);
+        $user->setEmail($data['email']);
+        $user->setBirthDate(!empty($data['birthDate']) ? new \DateTimeImmutable($data['birthDate']) : null);
+        // Encode the plain password
+        $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                $user,
+                $data['plainPassword']
+            )
+        );
+
+        $user->setRegistrationDate(new \DateTime());
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new JsonResponse(true);
+
 
         return new JsonResponse(false);
 

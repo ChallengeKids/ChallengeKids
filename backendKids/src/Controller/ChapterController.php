@@ -14,9 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/chapter')]
 #[OA\Tag(name: 'Chapter')]
+// #[IsGranted('ROLE_KID')]
 class ChapterController extends AbstractController
 {
     private $chapterService;

@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,6 +19,15 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('userType', ChoiceType::class, [
+                'choices' => [
+                    'Kid' => 'kid',
+                    'Coach' => 'coach',
+                ],
+                'mapped' => false,
+                'label' => 'Register as',
+                'placeholder' => 'Choose an option',
+            ])
             ->add('firstName')
             ->add('secondName')
             ->add('email')
@@ -46,16 +56,11 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('birthDate', null, [
+            ->add('birthDate', DateType::class, [
+                'input' => 'datetime',
                 'widget' => 'single_text',
-            ])->add('userType', ChoiceType::class, [
-                'choices' => [
-                    'Kid' => 'kid',
-                    'Coach' => 'coach',
-                ],
-                'mapped' => false,
-                'label' => 'Register as',
-                'placeholder' => 'Choose an option',
+                'format' => 'yyyy-MM-dd',
+                'required' => false,
             ]);
     }
 
