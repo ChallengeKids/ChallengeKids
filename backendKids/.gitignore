@@ -5,10 +5,8 @@
 # Symfony directories
 /var/
 /vendor/
-# Symfony cache and logs
-/var/cache/
-/var/logs/
 # Composer
-/composer.lock
+composer.lock
 # Environment configuration
-/.env
+.env
+.env.test
