@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Challenge;
 use App\Entity\Coach;
 use App\Entity\Kid;
@@ -24,6 +25,11 @@ class ChallengeType extends AbstractType
             ->add('coach', EntityType::class, [
                 'class' => Coach::class,
                 'choice_label' => 'id',
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'id',
+                'multiple' => true,
             ]);
     }
 

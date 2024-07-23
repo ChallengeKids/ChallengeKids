@@ -59,6 +59,7 @@ class KidController extends AbstractController
             ]
         )
     )]
+
     public function changePassword($id, Request $request, KidRepository $kidRepository, EntityManagerInterface $entityManager): Response
     {
         $kid = $kidRepository->find($id);
@@ -89,5 +90,23 @@ class KidController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'The Kid has been deleted']);
+    }
+
+    #[Route('/{id}/addInterests', name: 'kid_interests_new', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "categoryTitles" => ["Art", "Science", "Music"],
+            ]
+        )
+    )]
+    public function addInterests($id, Request $request): JsonResponse
+    {
+        $data = $request->toArray();
+        $categoryTitles = $data['categoryTitles'];
+        $this->kidService->updateCategories($id, $categoryTitles);
+        return new JsonResponse(['status' => 'Categories updated successfully']);
     }
 }

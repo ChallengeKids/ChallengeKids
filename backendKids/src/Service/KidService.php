@@ -2,10 +2,19 @@
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\Kid;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class KidService
 {
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function kidToJson(Kid $kid)
     {
         $challenges = $kid->getChallenges()->toArray();
@@ -25,5 +34,20 @@ class KidService
             'challenges' => $challenges,
             'responses' => $responses,
         ];
+    }
+
+    public function updateCategories(int $kidId, array $categoryTitles)
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
+        if (!$kidId) {
+            throw new Exception("kid not found");
+        }
+
+        foreach ($categoryTitles as $categoryTitle) {
+            $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+            $kid->addInterest($category);
+        }
+        $this->entityManager->persist($kid);
+        $this->entityManager->flush();
     }
 }

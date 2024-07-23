@@ -29,14 +29,14 @@ class Kid extends User
     #[ORM\OneToMany(targetEntity: KidResponse::class, mappedBy: 'kid')]
     private Collection $responses;
 
+    #[ORM\Column(length: 255)]
+    private ?string $level = 'first class';
+
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'kid')]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'kids')]
     private Collection $interests;
-
-    #[ORM\Column(length: 255)]
-    private ?string $level = 'first class';
 
     public function __construct()
     {
@@ -139,6 +139,18 @@ class Kid extends User
         return $this;
     }
 
+    public function getLevel(): ?string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(string $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Category>
      */
@@ -151,7 +163,6 @@ class Kid extends User
     {
         if (!$this->interests->contains($interest)) {
             $this->interests->add($interest);
-            $interest->setKid($this);
         }
 
         return $this;
@@ -159,24 +170,7 @@ class Kid extends User
 
     public function removeInterest(Category $interest): static
     {
-        if ($this->interests->removeElement($interest)) {
-            // set the owning side to null (unless already changed)
-            if ($interest->getKid() === $this) {
-                $interest->setKid(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getLevel(): ?string
-    {
-        return $this->level;
-    }
-
-    public function setLevel(string $level): static
-    {
-        $this->level = $level;
+        $this->interests->removeElement($interest);
 
         return $this;
     }

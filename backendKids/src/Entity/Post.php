@@ -41,7 +41,7 @@ class Post
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'post')]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'posts')]
     private Collection $categories;
 
     public function __construct()
@@ -150,7 +150,6 @@ class Post
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->setPost($this);
         }
 
         return $this;
@@ -158,12 +157,7 @@ class Post
 
     public function removeCategory(Category $category): static
     {
-        if ($this->categories->removeElement($category)) {
-            // set the owning side to null (unless already changed)
-            if ($category->getPost() === $this) {
-                $category->setPost(null);
-            }
-        }
+        $this->categories->removeElement($category);
 
         return $this;
     }

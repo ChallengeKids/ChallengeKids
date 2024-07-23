@@ -36,7 +36,7 @@ class Challenge
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'challenge')]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'challenges')]
     private Collection $categories;
 
     public function __construct()
@@ -140,7 +140,6 @@ class Challenge
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->setChallenge($this);
         }
 
         return $this;
@@ -148,12 +147,7 @@ class Challenge
 
     public function removeCategory(Category $category): static
     {
-        if ($this->categories->removeElement($category)) {
-            // set the owning side to null (unless already changed)
-            if ($category->getChallenge() === $this) {
-                $category->setChallenge(null);
-            }
-        }
+        $this->categories->removeElement($category);
 
         return $this;
     }

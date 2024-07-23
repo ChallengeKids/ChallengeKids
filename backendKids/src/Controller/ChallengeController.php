@@ -47,7 +47,7 @@ class ChallengeController extends AbstractController
             type: Object::class,
             example: [
                 "title" => "Challenge1",
-                "description" => "This is a description for the 1st Challenge",
+                "description" => "This is a description for the 1st Challenge"
             ]
         )
     )]
@@ -74,7 +74,7 @@ class ChallengeController extends AbstractController
         $challenge = $this->challengeService->challengeToJson($challenge);
         return new JsonResponse($challenge);
     }
-    
+
     #[Route('/{id}/edit', name: 'challenge_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
@@ -83,6 +83,7 @@ class ChallengeController extends AbstractController
             example: [
                 "title" => "Challenge1",
                 "description" => "This is a description for the 1st Challenge",
+                "categories" => ["Art", "Science", "Music"],
             ]
         )
     )]

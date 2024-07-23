@@ -44,7 +44,8 @@ class CategoryController extends AbstractController
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "type" => "Painting",
+                "title" => "Painting",
+                "description" => "teeeeest"
             ]
         )
     )]
