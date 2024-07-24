@@ -12,9 +12,6 @@ class Kid extends User
 {
 
     #[ORM\Column(nullable: true)]
-    private ?array $friends = null;
-
-    #[ORM\Column(nullable: true)]
     private ?int $points = null;
 
     /**
@@ -38,23 +35,14 @@ class Kid extends User
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'kids')]
     private Collection $interests;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $friends = null;
+
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->responses = new ArrayCollection();
         $this->interests = new ArrayCollection();
-    }
-
-    public function getFriends(): ?array
-    {
-        return $this->friends;
-    }
-
-    public function setFriends(?array $friends): static
-    {
-        $this->friends = $friends;
-
-        return $this;
     }
 
     public function getPoints(): ?int
@@ -171,6 +159,18 @@ class Kid extends User
     public function removeInterest(Category $interest): static
     {
         $this->interests->removeElement($interest);
+
+        return $this;
+    }
+
+    public function getFriends(): ?array
+    {
+        return $this->friends;
+    }
+
+    public function setFriends(?array $friends): static
+    {
+        $this->friends = $friends;
 
         return $this;
     }

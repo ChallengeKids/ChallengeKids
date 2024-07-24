@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Lesson;
 use App\Entity\Post;
 use App\Entity\User;
@@ -77,18 +78,23 @@ class PostController extends AbstractController
                 "content" => "This is the description for the first post",
                 "mediaPath" => "teeeeeest",
                 "postType" => "test",
+                "categories" => ["Art", "Science", "Music"]
             ]
         )
     )]
     public function LessonPost(User $user, Lesson $lesson, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
+        $categoryTitles = $data['categories'];
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
         $form->submit($data);
 
         if ($form->isSubmitted()) {
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+                $post->addCategory($category);
+            }
             $post->setAddedDate(new \DateTime());
             $post->setUser($user);
             $post->setLesson($lesson);
@@ -109,18 +115,23 @@ class PostController extends AbstractController
                 "content" => "This is the description for the first post",
                 "mediaPath" => "teeeeeest",
                 "postType" => "test",
+                "categories" => ["Art", "Science", "Music"]
             ]
         )
     )]
     public function UserPost(User $user, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
+        $categoryTitles = $data['categories'];
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
         $form->submit($data);
 
         if ($form->isSubmitted()) {
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+                $post->addCategory($category);
+            }
             $post->setAddedDate(new \DateTime());
             $post->setUser($user);
             $entityManager->persist($post);

@@ -11,7 +11,7 @@ class QuestionService
     {
         $this->optionService = $optionService;
     }
-    
+
     public function questionToJson(Question $question)
     {
         $options = $question->getOptions()->toArray();

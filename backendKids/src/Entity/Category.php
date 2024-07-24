@@ -48,11 +48,9 @@ class Category
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'categories')]
     private Collection $posts;
 
-    public function __construct()
+    public function __construct($title)
     {
-        $this->kids = new ArrayCollection();
-        $this->challenges = new ArrayCollection();
-        $this->posts = new ArrayCollection();
+        $this->title = $title;
     }
 
     public function getId(): ?int

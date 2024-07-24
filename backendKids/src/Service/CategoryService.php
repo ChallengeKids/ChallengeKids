@@ -9,7 +9,8 @@ class CategoryService
     public function categoryToJson(Category $category)
     {
         return [
-            'type' => $category->getType(),
+            'title' => $category->getTitle(),
+            'description' => $category->getDescription()
         ];
     }
 }

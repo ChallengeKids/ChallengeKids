@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category as EntityCategory;
 use App\Entity\Challenge;
 use App\Enum\Category;
 use App\Form\ChallengeType;
@@ -47,19 +48,24 @@ class ChallengeController extends AbstractController
             type: Object::class,
             example: [
                 "title" => "Challenge1",
-                "description" => "This is a description for the 1st Challenge"
+                "description" => "This is a description for the 1st Challenge",
+                "categories" => ["Art", "Science", "Music"]
             ]
         )
     )]
     public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
+        $categoryTitles = $data['categories'];
         $challenge = new Challenge();
         $form = $this->createForm(ChallengeType::class, $challenge);
         $form->submit($data);
 
         if ($form->isSubmitted()) {
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $entityManager->getRepository(EntityCategory::class)->findOneBy(['title' => $categoryTitle]);
+                $challenge->addCategory($category);
+            }
             $entityManager->persist($challenge);
             $entityManager->flush();
         }

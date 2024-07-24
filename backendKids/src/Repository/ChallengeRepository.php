@@ -16,28 +16,43 @@ class ChallengeRepository extends ServiceEntityRepository
         parent::__construct($registry, Challenge::class);
     }
 
-//    /**
-//     * @return Challenge[] Returns an array of Challenge objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findChallengesForKid($kidId, $limit = 10)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.categories', 'cat')
+            ->leftJoin('App\Entity\Kid', 'k', 'WITH', 'k MEMBER OF c.categories')
+            ->where('k.id = :kidId')
+            ->setParameter('kidId', $kidId)
+            ->addSelect('COUNT(cat.id) as HIDDEN relevance_score')
+            ->groupBy('c.id')
+            ->orderBy('relevance_score', 'DESC')
+            ->setMaxResults($limit);
 
-//    public function findOneBySomeField($value): ?Challenge
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $qb->getQuery()->getResult();
+    }
+
+    //    /**
+    //     * @return Challenge[] Returns an array of Challenge objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('c.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Challenge
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

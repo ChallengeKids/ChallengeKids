@@ -3,14 +3,18 @@
 namespace App\Service;
 
 use App\Entity\Category;
+use App\Entity\Challenge;
 use App\Entity\Kid;
+use App\Entity\User;
+use App\Repository\ChallengeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use phpDocumentor\Reflection\Types\Integer;
 
 class KidService
 {
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager = null)
     {
         $this->entityManager = $entityManager;
     }
@@ -36,6 +40,15 @@ class KidService
         ];
     }
 
+    public function serializeFriendData(User $friendData)
+    {
+        return [
+            'firstName' => $friendData->getFirstName(),
+            'secondName' => $friendData->getSecondName(),
+            'email' => $friendData->getEmail(),
+        ];
+    }
+
     public function updateCategories(int $kidId, array $categoryTitles)
     {
         $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
@@ -49,5 +62,43 @@ class KidService
         }
         $this->entityManager->persist($kid);
         $this->entityManager->flush();
+    }
+
+    public function scoreChallenge(Kid $kid, Challenge $challenge): int
+    {
+        $score = 0;
+
+        // get interests titles from the kid
+        $interests = array_map(fn ($category) => $category->getTitle(), $kid->getInterests()->toArray());
+
+        // get category titles from the challenge
+        $categories = array_map(fn ($category) => $category->getTitle(), $challenge->getCategories()->toArray());
+
+        foreach ($categories as $category) {
+            if (in_array($category, $interests))
+                $score++;
+        }
+
+        return $score;
+    }
+
+    public function getChallengesForKid(int $kidId, int $limit = 10): array
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
+        if (!$kid) {
+            throw new Exception("kid not found");
+        }
+
+        $challenges = $this->entityManager->getRepository(Challenge::class)->findAll();
+
+        $scores = [];
+        foreach ($challenges as $challenge) {
+            $score = $this->scoreChallenge($kid, $challenge);
+            $scores[$score][] = $challenge;
+        }
+
+        krsort($scores);
+
+        return array_slice($scores, 0, $limit, true);
     }
 }

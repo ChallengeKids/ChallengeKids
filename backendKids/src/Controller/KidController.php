@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Kid;
+use App\Entity\User;
 use App\Form\KidType;
 use App\Form\UserPasswordType;
 use App\Repository\KidRepository;
@@ -23,10 +24,12 @@ class KidController extends AbstractController
 {
     private $kidService;
     private $passwordHasher;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, KidService $kidService)
+    private $entityManager;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, KidService $kidService, EntityManagerInterface $entityManager)
     {
         $this->passwordHasher = $passwordHasher;
         $this->kidService = $kidService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/', name: 'kid_index', methods: ['GET'])]
@@ -60,7 +63,7 @@ class KidController extends AbstractController
         )
     )]
 
-    public function changePassword($id, Request $request, KidRepository $kidRepository, EntityManagerInterface $entityManager): Response
+    public function changePassword($id, Request $request, KidRepository $kidRepository): Response
     {
         $kid = $kidRepository->find($id);
         $data = json_decode($request->getContent(), true);
@@ -71,23 +74,44 @@ class KidController extends AbstractController
 
             $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
             $kid->setPassword($hashedPassword);
-            $entityManager->persist($kid);
-            $entityManager->flush();
+            $this->entityManager->persist($kid);
+            $this->entityManager->flush();
         }
 
         return new JsonResponse(true);
     }
 
     #[Route('/delete/{id}', name: 'kid_delete', methods: ['DELETE'])]
-    public function delete($id, KidRepository $kidRepository, EntityManagerInterface $entityManager): Response
+    public function delete($id, KidRepository $kidRepository): Response
     {
         $kid = $kidRepository->find($id);
         if (!$kid) {
             throw new NotFoundHttpException('Kid not found');
         }
 
-        $entityManager->remove($kid);
-        $entityManager->flush();
+        $this->entityManager->remove($kid);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'The Kid has been deleted']);
+    }
+
+    #[Route('/{idKid}/{idUserToAdd}', name: 'kid_add_friend', methods: ['Post'])]
+    public function addFriend($idKid, $idUserToAdd, KidRepository $kidRepository): Response
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($idKid);
+        if (!$kid) {
+            throw new NotFoundHttpException('Kid not found');
+        }
+        $user = $this->entityManager->getRepository(User::class)->find($idUserToAdd);
+
+        $friendData = $this->kidService->serializeFriendData($user);
+
+        $friends = $kid->getFriends();
+        $friends[] = $friendData;
+        $kid->setFriends($friends);
+
+        $this->entityManager->persist($kid);
+        $this->entityManager->flush();
 
         return new JsonResponse(['status' => 'The Kid has been deleted']);
     }
@@ -108,5 +132,16 @@ class KidController extends AbstractController
         $categoryTitles = $data['categoryTitles'];
         $this->kidService->updateCategories($id, $categoryTitles);
         return new JsonResponse(['status' => 'Categories updated successfully']);
+    }
+
+    #[Route('/{id}/challenges', name: 'get_challenges_for_kid', methods: ['GET'])]
+    public function getChallenges(int $id): JsonResponse
+    {
+        $test = $this->kidService->getChallengesForKid($id, 10);
+
+        // Output the result for debugging
+        dd($test);
+
+        return new JsonResponse(true);
     }
 }
