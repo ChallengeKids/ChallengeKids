@@ -144,4 +144,15 @@ class KidController extends AbstractController
 
         return new JsonResponse(true);
     }
+
+    #[Route('/{id}/posts', name: 'get_posts_for_kid', methods: ['GET'])]
+    public function getPosts(int $id): JsonResponse
+    {
+        $test = $this->kidService->getPostsForKid($id, 10);
+
+        // Output the result for debugging
+        dd($test);
+
+        return new JsonResponse(true);
+    }
 }

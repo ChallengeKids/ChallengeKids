@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Category;
 use App\Entity\Challenge;
 use App\Entity\Kid;
+use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\ChallengeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -82,6 +83,24 @@ class KidService
         return $score;
     }
 
+    public function scorePost(Kid $kid, Post $post): int
+    {
+        $score = 0;
+
+        // get interests titles from the kid
+        $interests = array_map(fn ($category) => $category->getTitle(), $kid->getInterests()->toArray());
+
+        // get category titles from the post
+        $categories = array_map(fn ($category) => $category->getTitle(), $post->getCategories()->toArray());
+
+        foreach ($categories as $category) {
+            if (in_array($category, $interests))
+                $score++;
+        }
+
+        return $score;
+    }
+
     public function getChallengesForKid(int $kidId, int $limit = 10): array
     {
         $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
@@ -99,6 +118,38 @@ class KidService
 
         krsort($scores);
 
-        return array_slice($scores, 0, $limit, true);
+        return $scores;
+    }
+
+    public function getPostsForKid(int $kidId, int $limit = 10): array
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
+        if (!$kid) {
+            throw new Exception("kid not found");
+        }
+
+        $posts = $this->entityManager->getRepository(Post::class)->findAll();
+
+        $scores = [];
+        foreach ($posts as $post) {
+            $score = $this->scorePost($kid, $post);
+            $scores[$score][] = $post;
+        }
+
+        krsort($scores);
+
+        return $scores;
+    }
+
+    public function getFriends(int $kidId): array
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($kidId);
+        if (!$kid) {
+            throw new Exception("kid not found");
+        }
+
+        $friends = $kid->getFriends();
+
+        return $friends;
     }
 }

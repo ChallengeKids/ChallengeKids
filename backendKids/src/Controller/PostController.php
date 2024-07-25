@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Kid;
 use App\Entity\Lesson;
 use App\Entity\Post;
 use App\Entity\User;
@@ -10,6 +11,7 @@ use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\PostService;
+use App\Service\Reactionservice;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,10 +26,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PostController extends AbstractController
 {
     private $postService;
-
-    public function __construct(PostService $postService)
+    private $reactionService;
+    private $entityManager;
+    public function __construct(PostService $postService, Reactionservice $reactionService, EntityManagerInterface $entityManager)
     {
         $this->postService = $postService;
+        $this->reactionService = $reactionService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/{lesson}', name: 'post_index_lesson', methods: ['GET'])]
@@ -192,5 +197,59 @@ class PostController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'The Post has been deleted']);
+    }
+
+    #[Route('/{id}/react', name: 'post_react', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            example: [
+                'reaction_name' => 'LIKE',
+                'user_id' => 14
+            ]
+        )
+    )]
+    public function react(int $id, Request $request): JsonResponse
+    {
+        $reactionName = $request->request->get('reaction_name');
+        $userId = $request->request->get('user_id');
+
+        $this->reactionService->reactToPost($id, $reactionName, $userId);
+
+        return new JsonResponse("Reaction Added!");
+    }
+
+    #[Route('/{id}/new', name: 'post_upload', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Post",
+                "content" => "This is the description for the first post",
+                "mediaPath" => "teeeeeest",
+                "postType" => "test",
+                "categories" => ["Art", "Science", "Music"]
+            ]
+        )
+    )]
+    public function KidPost(int $id, Request $request): JsonResponse
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($id);
+        if (!$kid) {
+            return $this->json(['error' => 'Kid not found'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        try {
+            $post = $this->postService->createPost($kid, $data);
+            return $this->json([
+                'message' => 'Post created successfully',
+                'postId' => $post->getId()
+            ], 201);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
     }
 }

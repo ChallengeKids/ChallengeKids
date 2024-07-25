@@ -44,6 +44,9 @@ class Post
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'posts')]
     private Collection $categories;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $reactions = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -158,6 +161,18 @@ class Post
     public function removeCategory(Category $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getReactions(): ?array
+    {
+        return $this->reactions;
+    }
+
+    public function setReactions(?array $reactions): static
+    {
+        $this->reactions = $reactions;
 
         return $this;
     }
