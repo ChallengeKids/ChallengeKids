@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,15 +12,18 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use OpenApi\Attributes as OA;
+use OpenApi\Examples\Polymorphism\Request;
 
 #[Route('/api')]
 class SecurityController extends AbstractController
 {
     private $jwtManager;
+    private $refreshTokenManager;
 
-    public function __construct(JWTTokenManagerInterface $jwtManager)
+    public function __construct(JWTTokenManagerInterface $jwtManager, RefreshTokenManagerInterface $refreshTokenManager)
     {
         $this->jwtManager = $jwtManager;
+        $this->refreshTokenManager = $refreshTokenManager;
     }
 
     #[Route(path: '/login_check', name: 'app_login_check', methods: ['POST'])]
@@ -48,8 +53,8 @@ class SecurityController extends AbstractController
         }
 
         $token = $this->jwtManager->create($user);
-
-        return new JsonResponse(['token' => $token]);
+        $refreshToken = $this->refreshTokenManager->create($user);
+        return new JsonResponse(['token' => $token, 'refresh_token' => $refreshToken]);
     }
 
     #[Route(path: '/logout', name: 'app_logout', methods: ['POST'])]

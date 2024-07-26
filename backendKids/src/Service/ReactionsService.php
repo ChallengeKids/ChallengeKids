@@ -17,7 +17,7 @@ class Reactionservice
     public const SAD = 'SAD';
     public const ANGRY = 'ANGRY';
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager = null)
     {
         $this->entityManager = $entityManager;
     }

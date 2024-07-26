@@ -52,18 +52,21 @@ class KidController extends AbstractController
         return new JsonResponse($kid);
     }
 
-    #[Route('/{id}/changePassword', name: 'kid_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit', name: 'kid_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
+                "firstName" => "test",
+                "secondName" => "test",
+                "email" => "test@test.test",
                 "password" => "securepassword",
             ]
         )
     )]
 
-    public function changePassword($id, Request $request, KidRepository $kidRepository): Response
+    public function edit($id, Request $request, KidRepository $kidRepository): Response
     {
         $kid = $kidRepository->find($id);
         $data = json_decode($request->getContent(), true);
@@ -74,11 +77,15 @@ class KidController extends AbstractController
 
             $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
             $kid->setPassword($hashedPassword);
+            $kid->setFirstName($data["firstName"]);
+            $kid->setSecondName($data["secondName"]);
+            $kid->setEmail($data["email"]);
             $this->entityManager->persist($kid);
             $this->entityManager->flush();
+            return new JsonResponse(true);
         }
 
-        return new JsonResponse(true);
+        return new JsonResponse(false);
     }
 
     #[Route('/delete/{id}', name: 'kid_delete', methods: ['DELETE'])]
@@ -95,28 +102,9 @@ class KidController extends AbstractController
         return new JsonResponse(['status' => 'The Kid has been deleted']);
     }
 
-    #[Route('/{idKid}/{idUserToAdd}', name: 'kid_add_friend', methods: ['Post'])]
-    public function addFriend($idKid, $idUserToAdd, KidRepository $kidRepository): Response
-    {
-        $kid = $this->entityManager->getRepository(Kid::class)->find($idKid);
-        if (!$kid) {
-            throw new NotFoundHttpException('Kid not found');
-        }
-        $user = $this->entityManager->getRepository(User::class)->find($idUserToAdd);
 
-        $friendData = $this->kidService->serializeFriendData($user);
 
-        $friends = $kid->getFriends();
-        $friends[] = $friendData;
-        $kid->setFriends($friends);
-
-        $this->entityManager->persist($kid);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['status' => 'The Kid has been deleted']);
-    }
-
-    #[Route('/{id}/addInterests', name: 'kid_interests_new', methods: ['POST'])]
+    #[Route('/{id}/addInterests', name: 'kid_add_interests', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -154,5 +142,26 @@ class KidController extends AbstractController
         dd($test);
 
         return new JsonResponse(true);
+    }
+
+    #[Route('/{idKid}/{idUserToAdd}', name: 'kid_add_friend', methods: ['Post'])]
+    public function addFriend($idKid, $idUserToAdd, KidRepository $kidRepository): Response
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($idKid);
+        if (!$kid) {
+            throw new NotFoundHttpException('Kid not found');
+        }
+        $user = $this->entityManager->getRepository(User::class)->find($idUserToAdd);
+
+        $friendData = $this->kidService->serializeFriendData($user);
+
+        $friends = $kid->getFriends();
+        $friends[] = $friendData;
+        $kid->setFriends($friends);
+
+        $this->entityManager->persist($kid);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'The Kid has been deleted']);
     }
 }
