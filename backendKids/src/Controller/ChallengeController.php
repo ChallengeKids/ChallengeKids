@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Category as EntityCategory;
 use App\Entity\Challenge;
-use App\Enum\Category;
 use App\Form\ChallengeType;
 use App\Repository\ChallengeRepository;
 use App\Service\ChallengeService;
@@ -14,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
-use PHPUnit\Util\Json;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,10 +22,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ChallengeController extends AbstractController
 {
     private $challengeService;
+    private $entityManager;
 
-    public function __construct(ChallengeService $challengeService)
+    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager)
     {
         $this->challengeService = $challengeService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/', name: 'challenge_index', methods: ['GET'])]
@@ -123,5 +124,55 @@ class ChallengeController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'The Challenge has been deleted']);
+    }
+    #[Route('/{challengeId}/addImage', name: 'challenge_add_image', methods: ['POST'])]
+    #[OA\Post(
+        summary: 'Add a new Challenge Image',
+        description: 'Add Challenge Image',
+        requestBody: new OA\RequestBody(
+            description: 'Request body for adding a new Image Challenge',
+            required: true,
+            content: [
+                'multipart/form-data' => new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(
+                                property: 'imageFileName',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'File to upload'
+                            )
+                        ]
+                    )
+                )
+            ]
+        )
+    )]
+    public function addChallengeImage(Request $request, $challengeId): JsonResponse
+    {
+        $challenge = $this->entityManager->getRepository(Challenge::class)->find($challengeId);
+
+        $imageFile = $request->files->get('imageFileName');
+
+        if ($imageFile instanceof UploadedFile) {
+
+            $fileName = uniqid() . '.' . $imageFile->guessExtension();
+
+            $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/images';
+
+            $imageFile->move($uploadsDirectory, $fileName);
+
+            $challenge->setImageFileName($fileName);
+        } else {
+
+            return new JsonResponse(['message' => 'File upload failed or not recognized.']);
+        }
+
+        $this->entityManager->persist($challenge);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Image Added successfully.']);
     }
 }
