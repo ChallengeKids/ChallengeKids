@@ -17,6 +17,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/kid')]
 #[OA\Tag(name: 'Kid')]
@@ -25,11 +26,13 @@ class KidController extends AbstractController
     private $kidService;
     private $passwordHasher;
     private $entityManager;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, KidService $kidService, EntityManagerInterface $entityManager)
+    private $security;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, KidService $kidService, EntityManagerInterface $entityManager, Security $security)
     {
         $this->passwordHasher = $passwordHasher;
         $this->kidService = $kidService;
         $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     #[Route('/', name: 'kid_index', methods: ['GET'])]
@@ -44,12 +47,27 @@ class KidController extends AbstractController
     }
 
 
-    #[Route('/{id}', name: 'kid_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'kid_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show($id, KidRepository $kidRepository): JsonResponse
     {
         $kid = $kidRepository->find($id);
         $kid = $this->kidService->kidToJson($kid);
         return new JsonResponse($kid);
+    }
+
+    #[Route('/profile', name: 'kid_profile', methods: ['GET'])]
+    public function showProfile(KidRepository $kidRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
+        $kid = $kidRepository->find($user->getId());
+        if (!$kid) {
+            return new JsonResponse(['error' => 'Kid not found']);
+        }
+        $kidData = $this->kidService->kidToJson($kid);
+        return new JsonResponse($kidData);
     }
 
     #[Route('/{id}/edit', name: 'kid_edit', methods: ['PUT'])]
