@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+
 class Post
 {
     #[ORM\Id]
@@ -22,14 +24,8 @@ class Post
     #[ORM\Column(length: 255)]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $mediaPath = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $addedDate = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $postType = null;
 
     #[ORM\OneToOne(inversedBy: 'post', cascade: ['persist', 'remove'])]
     private ?Lesson $lesson = null;
@@ -44,12 +40,19 @@ class Post
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'posts')]
     private Collection $categories;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $reactions = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mediaFileName = null;
+
+    /**
+     * @var Collection<int, Reaction>
+     */
+    #[ORM\OneToMany(targetEntity: Reaction::class, mappedBy: 'post')]
+    private Collection $reactions;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->reactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,18 +84,6 @@ class Post
         return $this;
     }
 
-    public function getMediaPath(): ?string
-    {
-        return $this->mediaPath;
-    }
-
-    public function setMediaPath(string $mediaPath): static
-    {
-        $this->mediaPath = $mediaPath;
-
-        return $this;
-    }
-
     public function getAddedDate(): ?\DateTimeInterface
     {
         return $this->addedDate;
@@ -101,18 +92,6 @@ class Post
     public function setAddedDate(\DateTimeInterface $addedDate): static
     {
         $this->addedDate = $addedDate;
-
-        return $this;
-    }
-
-    public function getPostType(): ?string
-    {
-        return $this->postType;
-    }
-
-    public function setPostType(string $postType): static
-    {
-        $this->postType = $postType;
 
         return $this;
     }
@@ -165,14 +144,44 @@ class Post
         return $this;
     }
 
-    public function getReactions(): ?array
+    public function getMediaFileName(): ?string
+    {
+        return $this->mediaFileName;
+    }
+
+    public function setMediaFileName(?string $mediaFileName): static
+    {
+        $this->mediaFileName = $mediaFileName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reaction>
+     */
+    public function getReactions(): Collection
     {
         return $this->reactions;
     }
 
-    public function setReactions(?array $reactions): static
+    public function addReaction(Reaction $reaction): static
     {
-        $this->reactions = $reactions;
+        if (!$this->reactions->contains($reaction)) {
+            $this->reactions->add($reaction);
+            $reaction->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReaction(Reaction $reaction): static
+    {
+        if ($this->reactions->removeElement($reaction)) {
+            // set the owning side to null (unless already changed)
+            if ($reaction->getPost() === $this) {
+                $reaction->setPost(null);
+            }
+        }
 
         return $this;
     }

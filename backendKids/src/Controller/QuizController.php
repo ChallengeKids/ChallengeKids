@@ -53,7 +53,6 @@ class QuizController extends AbstractController
     public function new(Lesson $lesson, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
         $quiz = new Quiz();
         $form = $this->createForm(QuizType::class, $quiz);
         $form->submit($data);

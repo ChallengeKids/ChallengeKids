@@ -6,14 +6,22 @@ use App\Entity\Category;
 use App\Entity\Kid;
 use App\Entity\Post;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PostService
 {
     private $entityManager;
+    private $slugger;
+    private $params;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $params)
     {
         $this->entityManager = $entityManager;
+        $this->slugger = $slugger;
+        $this->params = $params;
     }
     public function postToJson(Post $post)
     {
@@ -30,28 +38,13 @@ class PostService
         ];
     }
 
-    public function createPost(Kid $kid, array $data): Post
+    public function handleFileUpload(Post $post, ?UploadedFile $mediaFile): void
     {
-        $post = new Post();
-        $post->setTitle($data['title']);
-        $post->setContent($data['content']);
-        $post->setMediaPath($data['mediaPath'] ?? null);
-        $post->setAddedDate(new \DateTime());
-        $post->setPostType($data['postType']);
-        $post->setUser($kid);
-        $this->handleCategories($post, $data['categories'] ?? []);
-        $this->entityManager->persist($post);
-        $this->entityManager->flush();
-        return $post;
-    }
-    public function handleCategories(Post $post, array $categoryIds): void
-    {
-        $categoryRepository = $this->entityManager->getRepository(Category::class);
-        foreach ($categoryIds as $categoryId) {
-            $category = $this->$categoryRepository->find($categoryId);
-            if ($category) {
-                $post->addCategory($category);
-            }
-        }
+
+        $fileName = $post->getId() . '-' . uniqid() . '.' . $mediaFile->getClientOriginalExtension();
+
+        $mediaFile->move($this->params->get('kernel.project_dir') . '/public/uploads', $fileName);
+
+        $post->setMediaPath($fileName);
     }
 }

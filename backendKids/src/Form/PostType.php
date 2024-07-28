@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Lesson;
 use App\Entity\Post;
 use App\Entity\User;
@@ -17,8 +18,7 @@ class PostType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
-            ->add('mediaPath')
-            ->add('postType')
+            ->add('mediaFileName')
             ->add('lesson', EntityType::class, [
                 'class' => Lesson::class,
                 'choice_label' => 'id',
@@ -26,6 +26,11 @@ class PostType extends AbstractType
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'id',
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'id',
+                'multiple' => true,
             ]);
     }
 

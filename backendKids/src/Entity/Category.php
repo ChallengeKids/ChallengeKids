@@ -48,7 +48,7 @@ class Category
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'categories')]
     private Collection $posts;
 
-    public function __construct($title)
+    public function __construct($title = null)
     {
         $this->title = $title;
     }
