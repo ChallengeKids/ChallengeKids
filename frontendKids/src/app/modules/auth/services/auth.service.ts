@@ -81,6 +81,7 @@ export class AuthService implements OnDestroy {
         } else {
           this.logout();
         }
+        console.log('done');
         return user;
       }),
       finalize(() => this.isLoadingSubject.next(false))
@@ -93,6 +94,7 @@ export class AuthService implements OnDestroy {
     return this.authHttpService.createUser(user).pipe(
       map(() => {
         this.isLoadingSubject.next(false);
+        console.log('doingthejob');
       }),
       switchMap(() => this.login(user.email, user.password)),
       catchError((err) => {

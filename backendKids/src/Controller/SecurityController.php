@@ -54,7 +54,7 @@ class SecurityController extends AbstractController
 
         $token = $this->jwtManager->create($user);
         $refreshToken = $this->refreshTokenManager->create($user);
-        return new JsonResponse(['token' => $token, 'refresh_token' => $refreshToken]);
+        return new JsonResponse(['authToken' => $token, 'refreshToken' => $refreshToken]);
     }
 
     #[Route(path: '/logout', name: 'app_logout', methods: ['POST'])]

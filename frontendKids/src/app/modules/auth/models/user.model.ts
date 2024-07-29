@@ -4,6 +4,7 @@ import { SocialNetworksModel } from './social-networks.model';
 
 export class UserModel extends AuthModel {
   id: number;
+  usertype: string;
   username: string;
   password: string;
   fullname: string;
@@ -15,9 +16,11 @@ export class UserModel extends AuthModel {
   phone: string;
   address?: AddressModel;
   socialNetworks?: SocialNetworksModel;
+  birthDate: string;
+  _token: string;
   // personal information
   firstname: string;
-  lastname: string;
+  secondname: string;
   website: string;
   // account information
   language: string;
@@ -62,5 +65,8 @@ export class UserModel extends AuthModel {
     this.phone = user.phone || '';
     this.address = user.address;
     this.socialNetworks = user.socialNetworks;
+    this.birthDate = user.birthDate || '';
+    this.firstname = user.firstname || '';
+    this.secondname = user.secondname || '';
   }
 }
