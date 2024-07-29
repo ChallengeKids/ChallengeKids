@@ -4,17 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Coach;
 use App\Entity\Kid;
-use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
-use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/api')]
@@ -32,16 +29,6 @@ class RegistrationController extends AbstractController
             ]
         )
     )]
-    #[OA\Response(
-        response: 400,
-        description: 'Invalid input',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'message', type: 'string')
-            ]
-        )
-    )]
     #[OA\Tag(name: 'Registration')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -49,45 +36,17 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if ($data === null) {
-            return new JsonResponse(['message' => 'Invalid JSON data'], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => 'Invalid JSON data']);
         }
 
-        $requiredFields = ['userType', 'firstName', 'secondName', 'email', 'birthDate', 'plainPassword'];
-        foreach ($requiredFields as $field) {
-            if (!isset($data[$field]) || empty($data[$field])) {
-                return new JsonResponse(['message' => "Field '$field' is required"], JsonResponse::HTTP_BAD_REQUEST);
-            }
-        }
-        $userType = strtolower($data['userType']);
-        switch ($userType) {
-            case 'kid':
-                $user = new Kid();
-                break;
-            case 'coach':
-                $user = new Coach();
-                break;
-            default:
-                return new JsonResponse(['message' => 'Invalid user type'], JsonResponse::HTTP_BAD_REQUEST);
-        }
+        $user = new Kid();
 
-        $userType = strtolower($data['userType']);
-        if ($userType === 'kid') {
-            $user = new Kid();
-        } elseif ($userType === 'coach') {
-            $user = new Coach();
-        } else {
-            throw new \Exception('Invalid user type');
-        }
-
-        // $user->setFirstName($form->get('firstName')->getData());
-        // $user->setSecondName($form->get('secondName')->getData());
-        // $user->setEmail($form->get('email')->getData());
-        // $user->setBirthDate($form->get('birthDate')->getData() ? new \DateTimeImmutable($form->get('birthDate')->getData()) : null);
-        $user->setFirstName($data['firstName']);
-        $user->setSecondName($data['secondName']);
+        $user->setFullName($data['fullName']);
         $user->setEmail($data['email']);
-        $user->setBirthDate(!empty($data['birthDate']) ? new \DateTimeImmutable($data['birthDate']) : null);
-        // Encode the plain password
+        if ($data['plainPassword'] != $data['confirmPassword']) {
+            return new JsonResponse(['message' => 'Passwords dont match']);
+        }
+
         $user->setPassword(
             $userPasswordHasher->hashPassword(
                 $user,
@@ -101,11 +60,6 @@ class RegistrationController extends AbstractController
         $entityManager->flush();
         return new JsonResponse(true);
 
-
         return new JsonResponse(false);
-
-        // return $this->render('registration/register.html.twig', [
-        //     'registrationForm' => $form->createView(),
-        // ]);
     }
 }

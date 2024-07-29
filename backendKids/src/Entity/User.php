@@ -25,10 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    protected ?string $firstName = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $secondName = null;
+    protected ?string $fullName = null;
 
     #[ORM\Column(length: 255)]
     protected ?string $email = null;
@@ -39,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected ?\DateTimeInterface $registrationDate = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     protected ?\DateTimeImmutable $birthDate = null;
 
     /**
@@ -65,29 +62,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getFirstName(): ?string
+    public function getFullName(): ?string
     {
-        return $this->firstName;
+        return $this->fullName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFullName(string $fullName): static
     {
-        $this->firstName = $firstName;
+        $this->fullName = $fullName;
 
         return $this;
     }
 
-    public function getSecondName(): ?string
-    {
-        return $this->secondName;
-    }
-
-    public function setSecondName(string $secondName): static
-    {
-        $this->secondName = $secondName;
-
-        return $this;
-    }
 
     public function getEmail(): ?string
     {
