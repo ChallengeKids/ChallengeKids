@@ -20,31 +20,7 @@ class CategoryType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('description')
-            ->add('kid', EntityType::class, [
-                'class' => Kid::class,
-                'choice_label' => 'id',
-            ])
-            ->add('coach', EntityType::class, [
-                'class' => Coach::class,
-                'choice_label' => 'id',
-            ])
-            ->add('challenge', EntityType::class, [
-                'class' => Challenge::class,
-                'choice_label' => 'id',
-            ])
-            ->add('chapter', EntityType::class, [
-                'class' => Chapter::class,
-                'choice_label' => 'id',
-            ])
-            ->add('lesson', EntityType::class, [
-                'class' => Lesson::class,
-                'choice_label' => 'id',
-            ])
-            ->add('post', EntityType::class, [
-                'class' => Post::class,
-                'choice_label' => 'id',
-            ]);
+            ->add('description');
     }
 
     public function configureOptions(OptionsResolver $resolver): void
