@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Category as EntityCategory;
+use App\Entity\Category;
 use App\Entity\Challenge;
+use App\Entity\Coach;
 use App\Form\ChallengeType;
 use App\Repository\ChallengeRepository;
 use App\Service\ChallengeService;
@@ -64,7 +65,7 @@ class ChallengeController extends AbstractController
 
         if ($form->isSubmitted()) {
             foreach ($categoryTitles as $categoryTitle) {
-                $category = $entityManager->getRepository(EntityCategory::class)->findOneBy(['title' => $categoryTitle]);
+                $category = $entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
                 $challenge->addCategory($category);
             }
             $entityManager->persist($challenge);
@@ -125,7 +126,7 @@ class ChallengeController extends AbstractController
 
         return new JsonResponse(['status' => 'The Challenge has been deleted']);
     }
-    #[Route('/{challengeId}/addImage', name: 'challenge_add_image', methods: ['POST'])]
+    #[Route('/{coachId}/addImage', name: 'challenge_add_image', methods: ['POST'])]
     #[OA\Post(
         summary: 'Add a new Challenge Image',
         description: 'Add Challenge Image',
@@ -139,10 +140,29 @@ class ChallengeController extends AbstractController
                         type: 'object',
                         properties: [
                             new OA\Property(
+                                property: 'title',
+                                type: 'string',
+                                example: 'hadil'
+                            ),
+                            new OA\Property(
+                                property: 'description',
+                                type: 'string',
+                                example: 'tahki yasser'
+                            ),
+                            new OA\Property(
                                 property: 'imageFileName',
                                 type: 'string',
                                 format: 'binary',
                                 description: 'File to upload'
+                            ),
+                            new OA\Property(
+                                property: 'categories',
+                                type: 'array',
+                                items: new OA\Items(
+                                    type: 'string',
+                                    example: 'Category1'
+                                ),
+                                description: 'List of category titles'
                             )
                         ]
                     )
@@ -150,11 +170,20 @@ class ChallengeController extends AbstractController
             ]
         )
     )]
-    public function addChallengeImage(Request $request, $challengeId): JsonResponse
+    public function addChallengeImage(Request $request, $coachId): JsonResponse
     {
-        $challenge = $this->entityManager->getRepository(Challenge::class)->find($challengeId);
+        $user = $this->entityManager->getRepository(Coach::class)->find($coachId);
 
+        $title = $request->request->get('title');
+        $description = $request->request->get('description');
         $imageFile = $request->files->get('imageFileName');
+        $categoryTitles = $request->request->get('categories');
+
+        $challenge = new Challenge();
+
+        $challenge->setTitle($title);
+        $challenge->setDescription($description);
+
 
         if ($imageFile instanceof UploadedFile) {
 
@@ -168,6 +197,17 @@ class ChallengeController extends AbstractController
         } else {
 
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
+        }
+
+        if ($categoryTitles) {
+            $categoryTitlesArray = explode(',', $categoryTitles);
+
+            foreach ($categoryTitlesArray as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => trim($categoryTitle)]);
+                if ($category) {
+                    $challenge->addCategory($category);
+                }
+            }
         }
 
         $this->entityManager->persist($challenge);

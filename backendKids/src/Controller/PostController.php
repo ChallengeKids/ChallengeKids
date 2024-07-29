@@ -3,30 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\Kid;
 use App\Entity\Lesson;
 use App\Entity\Post;
 use App\Entity\User;
-use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\PostService;
-use App\Service\Reactionservice;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/post')]
 #[OA\Tag(name: 'Post')]
@@ -147,12 +138,12 @@ class PostController extends AbstractController
                             new OA\Property(
                                 property: 'title',
                                 type: 'string',
-                                example: 'Sample Post Title'
+                                example: 'hadil'
                             ),
                             new OA\Property(
                                 property: 'content',
                                 type: 'string',
-                                example: 'This is the content of the post.'
+                                example: 'tahki yasser'
                             ),
                             new OA\Property(
                                 property: 'mediaFileName',
@@ -160,67 +151,21 @@ class PostController extends AbstractController
                                 format: 'binary',
                                 description: 'File to upload'
                             ),
-                            // new OA\Property(
-                            //     property: 'categories',
-                            //     type: 'array',
-                            //     items: new OA\Items(
-                            //         type: 'string',
-                            //         example: 'Category1'
-                            //     ),
-                            //     description: 'List of category titles'
-                            // )
+                            new OA\Property(
+                                property: 'categories',
+                                type: 'array',
+                                items: new OA\Items(
+                                    type: 'string',
+                                    example: 'Category1'
+                                ),
+                                description: 'List of category titles'
+                            )
                         ],
                         required: ['title', 'content']
                     )
                 )
             ]
         ),
-        responses: [
-            new OA\Response(
-                response: '200',
-                description: 'Post created successfully.',
-                content: [
-                    'application/json' => new OA\MediaType(
-                        mediaType: 'application/json',
-                        schema: new OA\Schema(
-                            type: 'object',
-                            properties: [
-                                new OA\Property(
-                                    property: 'success',
-                                    type: 'boolean'
-                                ),
-                                new OA\Property(
-                                    property: 'message',
-                                    type: 'string'
-                                )
-                            ]
-                        )
-                    )
-                ]
-            ),
-            new OA\Response(
-                response: '400',
-                description: 'Invalid input.',
-                content: [
-                    'application/json' => new OA\MediaType(
-                        mediaType: 'application/json',
-                        schema: new OA\Schema(
-                            type: 'object',
-                            properties: [
-                                new OA\Property(
-                                    property: 'success',
-                                    type: 'boolean'
-                                ),
-                                new OA\Property(
-                                    property: 'message',
-                                    type: 'string'
-                                )
-                            ]
-                        )
-                    )
-                ]
-            )
-        ]
     )]
     public function addPost(Request $request, $userId): JsonResponse
     {
@@ -228,11 +173,10 @@ class PostController extends AbstractController
 
         $post = new Post();
         $post->setUser($user);
-        $categoryTitles = [];
         $title = $request->request->get('title');
         $content = $request->request->get('content');
         $mediaFile = $request->files->get('mediaFileName');
-        // $categoryTitles = $request->request->get('categories', []);
+        $categoryTitles = $request->request->get('categories');
 
         if (!$title || !$content) {
             return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
@@ -256,14 +200,16 @@ class PostController extends AbstractController
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
         }
 
-        // if (is_array($categoryTitles)) {
-        //     foreach ($categoryTitles as $categoryTitle) {
-        //         $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
-        //         if ($category) {
-        //             $post->addCategory($category);
-        //         }
-        //     }
-        // }
+        if ($categoryTitles) {
+            $categoryTitlesArray = explode(',', $categoryTitles);
+
+            foreach ($categoryTitlesArray as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => trim($categoryTitle)]);
+                if ($category) {
+                    $post->addCategory($category);
+                }
+            }
+        }
 
 
         $this->entityManager->persist($post);
