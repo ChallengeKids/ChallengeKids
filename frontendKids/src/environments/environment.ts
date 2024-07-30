@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  backednUrl: 'https://127.0.0.1:8000',
+  backednUrl: 'http://127.0.0.1:8000',
   production: false,
   appVersion: 'v8.2.4',
   USERDATA_KEY: 'authf649fc9a5f55',

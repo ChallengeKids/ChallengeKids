@@ -27,11 +27,9 @@ class KidService
 
         return [
             'id' => $kid->getId(),
-            'firstName' => $kid->getFirstName(),
-            'secondName' => $kid->getSecondName(),
+            'fullName' => $kid->getFullName(),
             'email' => $kid->getEmail(),
             'registrationDate' => $kid->getRegistrationDate()->format('Y-m-d H:i:s'),
-            'birthDate' => $kid->getBirthDate()->format('Y-m-d'),
             'interests' => $kid->getInterests(),
             'friends' => $kid->getFriends(),
             'points' => $kid->getPoints(),
@@ -44,8 +42,7 @@ class KidService
     public function serializeFriendData(User $friendData)
     {
         return [
-            'firstName' => $friendData->getFirstName(),
-            'secondName' => $friendData->getSecondName(),
+            'fullName' => $friendData->getFullName(),
             'email' => $friendData->getEmail(),
         ];
     }
