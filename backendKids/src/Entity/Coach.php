@@ -21,13 +21,13 @@ class Coach extends User
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'coach')]
-    private Collection $teachingDomain;
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'coaches')]
+    private Collection $teachingDomains;
 
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
-        $this->teachingDomain = new ArrayCollection();
+        $this->teachingDomains = new ArrayCollection();
     }
 
     public function getRoles(): array
@@ -73,16 +73,15 @@ class Coach extends User
     /**
      * @return Collection<int, Category>
      */
-    public function getTeachingDomain(): Collection
+    public function getTeachingDomains(): Collection
     {
-        return $this->teachingDomain;
+        return $this->teachingDomains;
     }
 
     public function addTeachingDomain(Category $teachingDomain): static
     {
-        if (!$this->teachingDomain->contains($teachingDomain)) {
-            $this->teachingDomain->add($teachingDomain);
-            $teachingDomain->setCoach($this);
+        if (!$this->teachingDomains->contains($teachingDomain)) {
+            $this->teachingDomains->add($teachingDomain);
         }
 
         return $this;
@@ -90,12 +89,7 @@ class Coach extends User
 
     public function removeTeachingDomain(Category $teachingDomain): static
     {
-        if ($this->teachingDomain->removeElement($teachingDomain)) {
-            // set the owning side to null (unless already changed)
-            if ($teachingDomain->getCoach() === $this) {
-                $teachingDomain->setCoach(null);
-            }
-        }
+        $this->teachingDomains->removeElement($teachingDomain);
 
         return $this;
     }
