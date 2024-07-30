@@ -2,24 +2,47 @@
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\Coach;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class CoachService
 {
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
     public function coachToJson(Coach $coach)
     {
         $challenges = $coach->getChallenges()->toArray();
         $posts = $coach->getPosts()->toArray();
         return [
             'id' => $coach->getId(),
-            'firstName' => $coach->getFirstName(),
-            'secondName' => $coach->getSecondName(),
+            'fullName' => $coach->getFullName(),
             'email' => $coach->getEmail(),
             'registrationDate' => $coach->getRegistrationDate()->format('Y-m-d H:i:s'),
-            'birthDate' => $coach->getBirthDate()->format('Y-m-d'),
-            'teachingDomain' => $coach->getTeachingDomain(),
+            'teachingDomain' => $coach->getTeachingDomains(),
             'challenges' => $challenges,
             'posts' => $posts,
         ];
+    }
+
+    public function updateCategories(int $coachId, array $categoryTitles)
+    {
+        $coach = $this->entityManager->getRepository(Coach::class)->find($coachId);
+        if (!$coachId) {
+            throw new Exception("kid not found");
+        }
+
+        foreach ($categoryTitles as $categoryTitle) {
+            $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+            $coach->addTeachingDomain($category);
+        }
+        $this->entityManager->persist($coach);
+        $this->entityManager->flush();
     }
 }
