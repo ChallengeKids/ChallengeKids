@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpserviceService } from 'src/app/modules/auth/services/httpservice.service';
 import { lastValueFrom, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,7 @@ export class TablesWidget13Component implements OnInit {
   desc = '';
   categories: any;
   constructor(private httpservice: HttpserviceService) {}
-  @Output() addCategoryEvent = new EventEmitter<void>();
+
   async ngOnInit() {
     try {
       const response = await lastValueFrom(
@@ -24,18 +24,16 @@ export class TablesWidget13Component implements OnInit {
       console.error('Error fetching categories:', error);
     }
   }
-  async delete(id: any) {
+  delete() {}
+  async add() {
     try {
       const response = await lastValueFrom(
-        this.httpservice.delete(`/api/category/delete/${id}`)
+        this.httpservice.post('/api/category', {})
       );
-      window.location.reload();
+      this.categories = response;
+      console.log('Categories loaded:', this.categories);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
-  }
-  add() {
-    console.log('emitting');
-    this.addCategoryEvent.emit();
   }
 }

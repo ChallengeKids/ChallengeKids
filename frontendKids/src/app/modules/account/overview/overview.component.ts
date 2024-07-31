@@ -7,7 +7,7 @@ import { HttpserviceService } from '../../auth/services/httpservice.service';
   templateUrl: './overview.component.html',
 })
 export class OverviewComponent implements OnInit {
-  FirstName: 'hadil';
+  FullName: 'hadil';
   SecondName: 'jojo';
   email: 'jhdgjqsgd';
   interests: 'ddddddddd';
@@ -21,9 +21,7 @@ export class OverviewComponent implements OnInit {
     const response = await lastValueFrom(this.httpservice.get('/api/kid/'));
     this.response = response;
     this.data = this.response[0];
-    this.FirstName = this.data.firstName;
-    console.log(this.data.firstName);
-    this.SecondName = this.data.secondName;
+    this.FullName = this.data.fullName;
     this.email = this.data.email;
     this.birthdDate = this.data.birthdDate;
     this.interests = this.data.interests;

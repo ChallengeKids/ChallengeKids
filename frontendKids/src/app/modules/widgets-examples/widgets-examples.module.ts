@@ -9,6 +9,11 @@ import { MixedComponent } from './mixed/mixed.component';
 import { TablesComponent } from './tables/tables.component';
 import { FeedsComponent } from './feeds/feeds.component';
 import { WidgetsModule } from '../../_metronic/partials';
+import { CategoryComponent } from './category/category.component';
+import { FormsModule } from '@angular/forms';
+import { lastValueFrom } from 'rxjs';
+import { HttpserviceService } from '../auth/services/httpservice.service';
+import { ChallengeComponent } from './challenge/challenge.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +24,14 @@ import { WidgetsModule } from '../../_metronic/partials';
     MixedComponent,
     TablesComponent,
     FeedsComponent,
+    CategoryComponent,
+    ChallengeComponent,
   ],
-  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule],
+  imports: [
+    CommonModule,
+    WidgetsExamplesRoutingModule,
+    WidgetsModule,
+    FormsModule,
+  ],
 })
 export class WidgetsExamplesModule {}

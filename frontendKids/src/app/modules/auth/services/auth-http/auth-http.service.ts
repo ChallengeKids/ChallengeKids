@@ -36,13 +36,10 @@ export class AuthHTTPService {
   // CREATE =>  POST: add a new user to the server
   createUser(user: UserModel) {
     const newUser = {
-      userType: 'kid',
-      firstName: user.fullname,
-      secondName: user.fullname,
+      fullName: user.fullName,
       email: user.email,
-      agreeTerms: true,
       plainPassword: user.password,
-      birthDate: '02-09-2003',
+      confirmPassword: user.password,
       _token: 'string',
     };
     console.log('we we');

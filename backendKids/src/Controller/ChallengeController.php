@@ -183,6 +183,7 @@ class ChallengeController extends AbstractController
 
         $challenge->setTitle($title);
         $challenge->setDescription($description);
+        $challenge->setCoach($user);
 
 
         if ($imageFile instanceof UploadedFile) {
