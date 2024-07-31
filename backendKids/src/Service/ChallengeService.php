@@ -15,12 +15,13 @@ class ChallengeService
     public function challengeToJson(Challenge $challenge)
     {
         $categories = $challenge->getCategories()->toArray();
+        $coach = $challenge->getCoach();
         return [
             'title' => $challenge->getTitle(),
             'description' => $challenge->getDescription(),
             'category' => $challenge->getCategories(),
             'kid' => $challenge->getKid(),
-            'coach' => $challenge->getCoach(),
+            'coach' => $coach->getId(),
             'categories' => array_map(function ($category) {
                 return $this->categoryService->categoryToJson($category);
             }, $categories)

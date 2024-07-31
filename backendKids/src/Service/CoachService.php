@@ -11,21 +11,26 @@ class CoachService
 {
 
     private $entityManager;
+    private $categoryService;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, CategoryService $categoryService)
     {
         $this->entityManager = $entityManager;
+        $this->categoryService = $categoryService;
     }
     public function coachToJson(Coach $coach)
     {
         $challenges = $coach->getChallenges()->toArray();
+        $categories = $coach->getTeachingDomains()->toArray();
         $posts = $coach->getPosts()->toArray();
         return [
             'id' => $coach->getId(),
             'fullName' => $coach->getFullName(),
             'email' => $coach->getEmail(),
             'registrationDate' => $coach->getRegistrationDate()->format('Y-m-d H:i:s'),
-            'teachingDomain' => $coach->getTeachingDomains(),
+            'teachingDomain' => array_map(function ($category) {
+                return $this->categoryService->categoryToJson($category);
+            }, $categories),
             'challenges' => $challenges,
             'posts' => $posts,
         ];

@@ -9,6 +9,8 @@ import { MixedComponent } from './mixed/mixed.component';
 import { TablesComponent } from './tables/tables.component';
 import { FeedsComponent } from './feeds/feeds.component';
 import { WidgetsModule } from '../../_metronic/partials';
+import { CoachComponent } from './coach/coach.component';
+import { AccountModule } from '../account/account.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { WidgetsModule } from '../../_metronic/partials';
     MixedComponent,
     TablesComponent,
     FeedsComponent,
+    CoachComponent,
+
   ],
-  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule],
+  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule, AccountModule],
 })
 export class WidgetsExamplesModule {}

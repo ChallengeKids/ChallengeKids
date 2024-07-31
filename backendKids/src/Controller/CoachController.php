@@ -24,10 +24,12 @@ class CoachController extends AbstractController
 {
     private $coachService;
     private $passwordHasher;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService)
+    private $entityManager;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService, EntityManagerInterface $entityManager)
     {
         $this->passwordHasher = $passwordHasher;
         $this->coachService = $coachService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/', name: 'coach_index', methods: ['GET'])]
@@ -95,32 +97,42 @@ class CoachController extends AbstractController
         return new JsonResponse(false);
     }
 
-    #[Route('/{id}/changePassword', name: 'coach_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit', name: 'coach_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "password" => "securepassword",
+                "fullName" => "Coach11",
+                "email" => "Coach11@gmail.com",
+                "password" => "12345",
+                "confirmPassword" => "12345"
             ]
         )
     )]
-    public function changePassword($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
+    public function edit($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
     {
         $coach = $coachRepository->find($id);
         $data = json_decode($request->getContent(), true);
         $form = $this->createForm(UserPasswordType::class, $coach);
         $form->submit($data);
 
+        if ($data["password"] != $data["confirmPassword"]) {
+            return new JsonResponse("passwords dont match");
+        }
+
         if ($form->isSubmitted()) {
 
             $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
             $coach->setPassword($hashedPassword);
-            $entityManager->persist($coach);
-            $entityManager->flush();
+            $coach->setFullName($data["fullName"]);
+            $coach->setEmail($data["email"]);
+            $this->entityManager->persist($coach);
+            $this->entityManager->flush();
+            return new JsonResponse(true);
         }
 
-        return new JsonResponse(true);
+        return new JsonResponse(false);
     }
 
     #[Route('/delete/{id}', name: 'coach_delete', methods: ['DELETE'])]
