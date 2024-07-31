@@ -33,8 +33,7 @@ class CoachType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
-            ])
-            ->add('confirmPassword');
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -7,7 +7,8 @@ import { CoachService } from './services/coach.service';
 })
 export class TablesWidget9Component implements OnInit {
   public coaches;
-  public selectedCoach;
+  public selectedCoach  = null; 
+  public isEditing = false;
 
   constructor(private coachService: CoachService) {}
 
@@ -51,28 +52,14 @@ export class TablesWidget9Component implements OnInit {
   }
 
   // Set the coach to be edited
-  editCoach(coach) {
-    this.selectedCoach = { ...coach }; // Make a copy of the coach object
+  editCoach(coach: any) {
+    this.selectedCoach = { ...coach }; // Clone the coach object
+    this.isEditing = true;
   }
 
-  updateCoach() {
-    if (!this.selectedCoach) return;
-
-    this.coachService.updateCoach(this.selectedCoach)
-      .subscribe(
-        () => {
-          // Show success alert
-          alert('Coach updated successfully!');
-
-          // Reload coaches data
-          this.loadCoaches();
-        },
-        err => {
-          console.log('Error updating coach:', err);
-
-          // Show error alert
-          alert('Error updating coach. Please try again later.');
-        }
-      );
+  // Method to hide the edit form
+  cancelEdit() {
+    this.selectedCoach = null;
+    this.isEditing = false;
   }
 }

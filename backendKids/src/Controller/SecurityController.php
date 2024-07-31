@@ -32,8 +32,8 @@ class SecurityController extends AbstractController
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "email" => "zayoud.ahmed@gmail.com",
-                "password" => "24032003"
+                "email" => "test.test@test.com",
+                "password" => "test"
             ]
         )
     )]

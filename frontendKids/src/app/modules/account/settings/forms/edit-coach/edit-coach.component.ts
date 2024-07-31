@@ -1,33 +1,24 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-edit-coach',
   templateUrl: './edit-coach.component.html',
 })
-export class EditCoachComponent implements OnInit, OnDestroy {
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isLoading: boolean;
-  private unsubscribe: Subscription[] = [];
+export class EditCoachComponent {
+  @Input() coach: any; // Receives the coach to be edited
+  @Output() cancel = new EventEmitter<void>(); // Event to cancel editing
 
-  constructor(private cdr: ChangeDetectorRef) {
-    const loadingSubscr = this.isLoading$
-      .asObservable()
-      .subscribe((res) => (this.isLoading = res));
-    this.unsubscribe.push(loadingSubscr);
+  // Method to handle form submission
+  updateCoach() {
+    // Implement update logic here
+    console.log('Updated coach:', this.coach);
+
+    // Hide the edit form after update
+    this.cancel.emit();
   }
 
-  ngOnInit(): void {}
-
-  saveSettings() {
-    this.isLoading$.next(true);
-    setTimeout(() => {
-      this.isLoading$.next(false);
-      this.cdr.detectChanges();
-    }, 1500);
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe.forEach((sb) => sb.unsubscribe());
+  // Method to cancel editing
+  cancelEdit() {
+    this.cancel.emit();
   }
 }

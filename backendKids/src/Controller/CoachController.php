@@ -106,7 +106,6 @@ class CoachController extends AbstractController
                 "fullName" => "Coach11",
                 "email" => "Coach11@gmail.com",
                 "password" => "12345",
-                "confirmPassword" => "12345"
             ]
         )
     )]
@@ -114,12 +113,8 @@ class CoachController extends AbstractController
     {
         $coach = $coachRepository->find($id);
         $data = json_decode($request->getContent(), true);
-        $form = $this->createForm(UserPasswordType::class, $coach);
+        $form = $this->createForm(CoachType::class, $coach);
         $form->submit($data);
-
-        if ($data["password"] != $data["confirmPassword"]) {
-            return new JsonResponse("passwords dont match");
-        }
 
         if ($form->isSubmitted()) {
 

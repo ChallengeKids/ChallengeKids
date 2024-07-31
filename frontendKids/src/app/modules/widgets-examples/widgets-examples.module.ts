@@ -16,6 +16,7 @@ import { HttpserviceService } from '../auth/services/httpservice.service';
 import { ChallengeComponent } from './challenge/challenge.component';
 import { CoachComponent } from './coach/coach.component';
 import { AccountModule } from '../account/account.module';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,6 @@ import { AccountModule } from '../account/account.module';
     ChallengeComponent,
     CoachComponent,
   ],
-  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule,FormsModule, AccountModule],
+  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule,FormsModule, AccountModule, InlineSVGModule],
 })
 export class WidgetsExamplesModule {}

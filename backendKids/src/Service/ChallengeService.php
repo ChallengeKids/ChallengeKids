@@ -17,9 +17,11 @@ class ChallengeService
         $categories = $challenge->getCategories()->toArray();
         $coach = $challenge->getCoach();
         return [
+            'id' => $challenge->getId(),
             'title' => $challenge->getTitle(),
             'description' => $challenge->getDescription(),
             'category' => $challenge->getCategories(),
+            'imageFileName' => $challenge->getImageFileName(),
             'kid' => $challenge->getKid(),
             'coach' => $coach->getId(),
             'categories' => array_map(function ($category) {

@@ -8,7 +8,7 @@
     <!-- begin::Menu -->
     <button
       type="button"
-      class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+      class="btn btn-sm btn-light-primary"
       data-kt-menu-trigger="click"
       data-kt-menu-placement="bottom-end"
       data-kt-menu-flip="top-end"
@@ -54,10 +54,7 @@
       </thead>
       <!-- end::Table head -->
       <!-- begin::Table body -->
-      <tbody>
-        {{
-          categories[0].title
-        }}
+      <tbody *ngIf="categories.length > 0">
         <tr *ngFor="let category of categories">
           <td>
             <div
@@ -71,46 +68,50 @@
             </div>
           </td>
           <td>
-            <a href="#" class="text-900 fw-bolder text-hover-primary fs-6">
+            <a href="#" class="text-gray-900 fw-bolder text-hover-primary fs-6">
               {{ category.title }}
             </a>
           </td>
           <td>
-            <a
-              href="#"
-              class="text-900 fw-bolder text-hover-primary d-block mb-1 fs-6"
+            <a href="#" class="text-muted me-2 fs-7 fw-bold"
               >{{ category.description }}
             </a>
             <span class="text-muted fw-bold text-muted d-block fs-7"></span>
           </td>
-          <td class="text-end">
-            <a
-              href="#"
-              class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-            >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/general/gen019.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
-            </a>
-            <a
-              href="#"
-              class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-            >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
-            </a>
-            <button
-              class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-              (click)="delete(category.id)"
-            >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/general/gen027.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
-            </button>
+          <td>
+            <div class="d-flex justify-content-end flex-shrink-0">
+              <a
+                href="#"
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+              >
+                <span
+                  [inlineSVG]="
+                    './assets/media/icons/duotune/general/gen019.svg'
+                  "
+                  class="svg-icon svg-icon-3"
+                ></span>
+              </a>
+              <a
+                href="#"
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+              >
+                <span
+                  [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
+                  class="svg-icon svg-icon-3"
+                ></span>
+              </a>
+              <button
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
+                (click)="delete(category.id)"
+              >
+                <span
+                  [inlineSVG]="
+                    './assets/media/icons/duotune/general/gen027.svg'
+                  "
+                  class="svg-icon svg-icon-3"
+                ></span>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

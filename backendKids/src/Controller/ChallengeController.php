@@ -8,6 +8,7 @@ use App\Entity\Coach;
 use App\Form\ChallengeType;
 use App\Repository\ChallengeRepository;
 use App\Service\ChallengeService;
+use App\Service\CoachService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,12 +24,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ChallengeController extends AbstractController
 {
     private $challengeService;
+    private $coachService;
     private $entityManager;
 
-    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager)
+    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager, CoachService $coachService)
     {
         $this->challengeService = $challengeService;
         $this->entityManager = $entityManager;
+        $this->coachService = $coachService;
     }
 
     #[Route('/', name: 'challenge_index', methods: ['GET'])]
@@ -43,42 +46,10 @@ class ChallengeController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/new', name: 'challenge_new', methods: ['POST'])]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            type: Object::class,
-            example: [
-                "title" => "Challenge1",
-                "description" => "This is a description for the 1st Challenge",
-                "categories" => ["Art", "Science", "Music"]
-            ]
-        )
-    )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/{id}', name: 'challenge_show', methods: ['GET'])]
+    public function show(ChallengeRepository $challengeRepository, $id): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $categoryTitles = $data['categories'];
-        $challenge = new Challenge();
-        $form = $this->createForm(ChallengeType::class, $challenge);
-        $form->submit($data);
-
-        if ($form->isSubmitted()) {
-            foreach ($categoryTitles as $categoryTitle) {
-                $category = $entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
-                $challenge->addCategory($category);
-            }
-            $entityManager->persist($challenge);
-            $entityManager->flush();
-        }
-
-        return new JsonResponse(true);
-    }
-
-    #[Route('/{title}', name: 'challenge_show', methods: ['GET'])]
-    public function show(ChallengeRepository $challengeRepository, $title): JsonResponse
-    {
-        $challenge = $challengeRepository->findOneBy(['title' => $title]);
+        $challenge = $challengeRepository->find($id);
         $challenge = $this->challengeService->challengeToJson($challenge);
         return new JsonResponse($challenge);
     }
@@ -126,7 +97,7 @@ class ChallengeController extends AbstractController
 
         return new JsonResponse(['status' => 'The Challenge has been deleted']);
     }
-    #[Route('/{coachId}/addImage', name: 'challenge_add_image', methods: ['POST'])]
+    #[Route('/{coachId}/addChalleneg', name: 'challenge_add_image', methods: ['POST'])]
     #[OA\Post(
         summary: 'Add a new Challenge Image',
         description: 'Add Challenge Image',
@@ -170,7 +141,7 @@ class ChallengeController extends AbstractController
             ]
         )
     )]
-    public function addChallengeImage(Request $request, $coachId): JsonResponse
+    public function addChallenge(Request $request, $coachId): JsonResponse
     {
         $user = $this->entityManager->getRepository(Coach::class)->find($coachId);
 
@@ -214,5 +185,14 @@ class ChallengeController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['success' => true, 'message' => 'Image Added successfully.']);
+    }
+
+    #[Route('/{challengeId}/coach', name: 'challenge_get_coach', methods: ['GET'])]
+    public function getCoach($challengeId)
+    {
+        $challenge = $this->entityManager->getRepository(Challenge::class)->find($challengeId);
+        $coach = $challenge->getCoach();
+        $coach = $this->coachService->coachToJson($coach);
+        return new JsonResponse($coach);
     }
 }
