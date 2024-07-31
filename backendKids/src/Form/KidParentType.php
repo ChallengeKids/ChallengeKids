@@ -13,16 +13,10 @@ class KidParentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstName')
-            ->add('secondName')
+            ->add('fullName')
             ->add('email')
             ->add('password')
-            ->add('birthDate', DateType::class, [
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'required' => false,
-            ]);
+            ->add('confirmPassword');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -15,9 +15,6 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teachingDomain')]
-    private ?Coach $coach = null;
-
     #[ORM\ManyToOne(inversedBy: 'categories')]
     private ?Chapter $chapter = null;
 
@@ -48,26 +45,21 @@ class Category
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'categories')]
     private Collection $posts;
 
+    /**
+     * @var Collection<int, Coach>
+     */
+    #[ORM\ManyToMany(targetEntity: Coach::class, mappedBy: 'teachingDomains')]
+    private Collection $coaches;
+
     public function __construct($title = null)
     {
         $this->title = $title;
+        $this->coaches = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCoach(): ?Coach
-    {
-        return $this->coach;
-    }
-
-    public function setCoach(?Coach $coach): static
-    {
-        $this->coach = $coach;
-
-        return $this;
     }
 
     public function getChapter(): ?Chapter
@@ -194,6 +186,33 @@ class Category
     {
         if ($this->posts->removeElement($post)) {
             $post->removeCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Coach>
+     */
+    public function getCoaches(): Collection
+    {
+        return $this->coaches;
+    }
+
+    public function addCoach(Coach $coach): static
+    {
+        if (!$this->coaches->contains($coach)) {
+            $this->coaches->add($coach);
+            $coach->addTeachingDomain($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoach(Coach $coach): static
+    {
+        if ($this->coaches->removeElement($coach)) {
+            $coach->removeTeachingDomain($this);
         }
 
         return $this;

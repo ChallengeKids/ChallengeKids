@@ -9,6 +9,7 @@ import { TablesComponent } from './tables/tables.component';
 import { WidgetsExamplesComponent } from './widgets-examples.component';
 import { CategoryComponent } from './category/category.component';
 import { ChallengeComponent } from './challenge/challenge.component';
+import { CoachComponent } from './coach/coach.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
       {
         path: 'feeds',
         component: FeedsComponent,
+      },
+      {
+        path: 'coach',
+        component: CoachComponent,
       },
       { path: '', redirectTo: 'lists', pathMatch: 'full' },
       { path: '**', redirectTo: 'lists', pathMatch: 'full' },

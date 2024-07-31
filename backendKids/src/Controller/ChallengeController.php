@@ -178,7 +178,6 @@ class ChallengeController extends AbstractController
         $description = $request->request->get('description');
         $imageFile = $request->files->get('imageFileName');
         $categoryTitles = $request->request->get('categories');
-
         $challenge = new Challenge();
 
         $challenge->setTitle($title);

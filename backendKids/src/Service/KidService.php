@@ -42,8 +42,7 @@ class KidService
     public function serializeFriendData(User $friendData)
     {
         return [
-            'firstName' => $friendData->getFirstName(),
-            'secondName' => $friendData->getSecondName(),
+            'fullName' => $friendData->getFullName(),
             'email' => $friendData->getEmail(),
         ];
     }

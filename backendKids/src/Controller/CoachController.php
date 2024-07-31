@@ -8,6 +8,7 @@ use App\Form\UserPasswordType;
 use App\Repository\CoachRepository;
 use App\Service\CoachService;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +24,12 @@ class CoachController extends AbstractController
 {
     private $coachService;
     private $passwordHasher;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService)
+    private $entityManager;
+    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService, EntityManagerInterface $entityManager)
     {
         $this->passwordHasher = $passwordHasher;
         $this->coachService = $coachService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/', name: 'coach_index', methods: ['GET'])]
@@ -49,32 +52,87 @@ class CoachController extends AbstractController
         return new JsonResponse($coach);
     }
 
-    #[Route('/{id}/changePassword', name: 'coach_edit', methods: ['PUT'])]
+    #[Route('/register', name: 'coach_register', methods: ['POST'])]
+    #[OA\RequestBody(content: new Model(type: CoachType::class))]
+    #[OA\Response(
+        response: 200,
+        description: 'User successfully registered',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string')
+            ]
+        )
+    )]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): JsonResponse
+    {
+
+        $data = json_decode($request->getContent(), true);
+
+        if ($data === null) {
+            return new JsonResponse(['message' => 'Invalid JSON data']);
+        }
+
+        $user = new Coach();
+
+        $user->setFullName($data['fullName']);
+        $user->setEmail($data['email']);
+        if ($data['plainPassword'] != $data['confirmPassword']) {
+            return new JsonResponse(['message' => 'Passwords dont match']);
+        }
+
+        $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                $user,
+                $data['plainPassword']
+            )
+        );
+
+        $user->setRegistrationDate(new \DateTime());
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new JsonResponse(true);
+
+        return new JsonResponse(false);
+    }
+
+    #[Route('/{id}/edit', name: 'coach_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "password" => "securepassword",
+                "fullName" => "Coach11",
+                "email" => "Coach11@gmail.com",
+                "password" => "12345",
+                "confirmPassword" => "12345"
             ]
         )
     )]
-    public function changePassword($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
+    public function edit($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
     {
         $coach = $coachRepository->find($id);
         $data = json_decode($request->getContent(), true);
         $form = $this->createForm(UserPasswordType::class, $coach);
         $form->submit($data);
 
+        if ($data["password"] != $data["confirmPassword"]) {
+            return new JsonResponse("passwords dont match");
+        }
+
         if ($form->isSubmitted()) {
 
             $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
             $coach->setPassword($hashedPassword);
-            $entityManager->persist($coach);
-            $entityManager->flush();
+            $coach->setFullName($data["fullName"]);
+            $coach->setEmail($data["email"]);
+            $this->entityManager->persist($coach);
+            $this->entityManager->flush();
+            return new JsonResponse(true);
         }
 
-        return new JsonResponse(true);
+        return new JsonResponse(false);
     }
 
     #[Route('/delete/{id}', name: 'coach_delete', methods: ['DELETE'])]
@@ -89,5 +147,23 @@ class CoachController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'The Coach has been deleted']);
+    }
+
+    #[Route('/{id}/addTeachingDomains', name: 'coach_add_teachingDomains', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "categoryTitles" => ["Art", "Science", "Music"],
+            ]
+        )
+    )]
+    public function addInterests($id, Request $request): JsonResponse
+    {
+        $data = $request->toArray();
+        $categoryTitles = $data['categoryTitles'];
+        $this->coachService->updateCategories($id, $categoryTitles);
+        return new JsonResponse(['status' => 'Categories updated successfully']);
     }
 }

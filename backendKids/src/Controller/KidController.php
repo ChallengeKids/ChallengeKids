@@ -76,10 +76,10 @@ class KidController extends AbstractController
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "firstName" => "test",
-                "secondName" => "test",
-                "email" => "test@test.test",
-                "password" => "securepassword",
+                "fullName" => "Coach11",
+                "email" => "Coach11@gmail.com",
+                "password" => "12345",
+                "confirmPassword" => "12345"
             ]
         )
     )]
@@ -91,12 +91,15 @@ class KidController extends AbstractController
         $form = $this->createForm(UserPasswordType::class, $kid);
         $form->submit($data);
 
+        if ($data["password"] != $data["confirmPassword"]) {
+            return new JsonResponse("passwords dont match");
+        }
+
         if ($form->isSubmitted()) {
 
             $hashedPassword = $this->passwordHasher->hashPassword($kid, $kid->getPassword());
             $kid->setPassword($hashedPassword);
-            $kid->setFirstName($data["firstName"]);
-            $kid->setSecondName($data["secondName"]);
+            $kid->setFullName($data["fullName"]);
             $kid->setEmail($data["email"]);
             $this->entityManager->persist($kid);
             $this->entityManager->flush();
