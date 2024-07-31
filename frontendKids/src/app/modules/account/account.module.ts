@@ -13,6 +13,7 @@ import { NotificationsComponent } from './settings/forms/notifications/notificat
 import { SignInMethodComponent } from './settings/forms/sign-in-method/sign-in-method.component';
 import { DropdownMenusModule, WidgetsModule } from '../../_metronic/partials';
 import {SharedModule} from "../../_metronic/shared/shared.module";
+import { EditCoachComponent } from './settings/forms/edit-coach/edit-coach.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import {SharedModule} from "../../_metronic/shared/shared.module";
     EmailPreferencesComponent,
     NotificationsComponent,
     SignInMethodComponent,
+    EditCoachComponent,
   ],
   imports: [
     CommonModule,
@@ -33,5 +35,10 @@ import {SharedModule} from "../../_metronic/shared/shared.module";
     WidgetsModule,
     SharedModule,
   ],
+  exports: [
+    AccountComponent,
+    ProfileDetailsComponent,
+    EditCoachComponent  // Export components if you want to use them in other modules
+  ]
 })
 export class AccountModule {}
