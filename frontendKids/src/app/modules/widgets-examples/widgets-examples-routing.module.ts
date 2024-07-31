@@ -7,6 +7,8 @@ import { MixedComponent } from './mixed/mixed.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { TablesComponent } from './tables/tables.component';
 import { WidgetsExamplesComponent } from './widgets-examples.component';
+import { CategoryComponent } from './category/category.component';
+import { ChallengeComponent } from './challenge/challenge.component';
 import { CoachComponent } from './coach/coach.component';
 
 const routes: Routes = [
@@ -17,6 +19,14 @@ const routes: Routes = [
       {
         path: 'lists',
         component: ListsComponent,
+      },
+      {
+        path: 'challenges',
+        component: ChallengeComponent,
+      },
+      {
+        path: 'category',
+        component: CategoryComponent,
       },
       {
         path: 'statistics',

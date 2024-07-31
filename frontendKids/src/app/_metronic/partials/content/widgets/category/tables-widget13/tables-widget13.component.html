@@ -14,10 +14,10 @@
       data-kt-menu-flip="top-end"
       (click)="add()"
     >
-      +add category
+      <span class="svg-icon svg-icon-2">+add category</span>
     </button>
     <!-- begin::Menu 2 -->
-    <app-dropdown-menu2></app-dropdown-menu2>
+
     <!-- end::Menu 2 -->
     <!-- end::Menu -->
   </div>
@@ -88,29 +88,21 @@
               href="#"
               class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
             >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/general/gen019.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
+              <span class="svg-icon svg-icon-3"></span>
             </a>
             <a
               href="#"
               class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
             >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
+              <span class="svg-icon svg-icon-3"></span>
             </a>
-            <button
+            <a
+              href="#"
               class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-              (click)="delete(category.id)"
+              (click)="delete()"
             >
-              <span
-                [inlineSVG]="'./assets/media/icons/duotune/general/gen027.svg'"
-                class="svg-icon svg-icon-3"
-              ></span>
-            </button>
+              <span class="svg-icon svg-icon-3"></span>
+            </a>
           </td>
         </tr>
       </tbody>

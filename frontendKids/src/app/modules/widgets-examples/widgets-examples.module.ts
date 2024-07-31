@@ -9,6 +9,11 @@ import { MixedComponent } from './mixed/mixed.component';
 import { TablesComponent } from './tables/tables.component';
 import { FeedsComponent } from './feeds/feeds.component';
 import { WidgetsModule } from '../../_metronic/partials';
+import { CategoryComponent } from './category/category.component';
+import { FormsModule } from '@angular/forms';
+import { lastValueFrom } from 'rxjs';
+import { HttpserviceService } from '../auth/services/httpservice.service';
+import { ChallengeComponent } from './challenge/challenge.component';
 import { CoachComponent } from './coach/coach.component';
 import { AccountModule } from '../account/account.module';
 
@@ -21,9 +26,10 @@ import { AccountModule } from '../account/account.module';
     MixedComponent,
     TablesComponent,
     FeedsComponent,
+    CategoryComponent,
+    ChallengeComponent,
     CoachComponent,
-
   ],
-  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule, AccountModule],
+  imports: [CommonModule, WidgetsExamplesRoutingModule, WidgetsModule,FormsModule, AccountModule],
 })
 export class WidgetsExamplesModule {}

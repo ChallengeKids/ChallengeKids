@@ -36,7 +36,7 @@ export class AuthHTTPService {
   // CREATE =>  POST: add a new user to the server
   createUser(user: UserModel) {
     const newUser = {
-      fullName: user.fullname,
+      fullName: user.fullName,
       email: user.email,
       plainPassword: user.password,
       confirmPassword: user.password,
