@@ -3,6 +3,7 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 # Symfony directories
+.env
 /var/
 /vendor/
 # Composer
