@@ -25,26 +25,15 @@ class PostService
     }
     public function postToJson(Post $post)
     {
+        $lesson = $post->getLesson() ?? null;
         return [
             'id' => $post->getId(),
             'title' => $post->getTitle(),
             'content' => $post->getContent(),
-            'mediaPath' => $post->getMediaPath(),
             'addedDate' => $post->getAddedDate()->format('Y-m-d H:i:s'),
             'category' => $post->getCategories(),
-            'postType' => $post->getPostType(),
-            'lesson' => $post->getLesson(),
+            'lesson' => $lesson,
             'user' => $post->getUser(),
         ];
-    }
-
-    public function handleFileUpload(Post $post, ?UploadedFile $mediaFile): void
-    {
-
-        $fileName = $post->getId() . '-' . uniqid() . '.' . $mediaFile->getClientOriginalExtension();
-
-        $mediaFile->move($this->params->get('kernel.project_dir') . '/public/uploads', $fileName);
-
-        $post->setMediaPath($fileName);
     }
 }

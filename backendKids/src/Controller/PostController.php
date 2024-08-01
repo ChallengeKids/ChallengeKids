@@ -31,6 +31,17 @@ class PostController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+    #[Route('/', name: 'post_show_all', methods: ['GET'])]
+    public function getAllPosts(PostRepository $postRepository): JsonResponse
+    {
+        $listJson = [];
+        $list = $postRepository->findAll();
+        foreach ($list as $key => $value) {
+            $listJson[$key] = $this->postService->postToJson($value);
+        }
+        return new JsonResponse($listJson);
+    }
+
     #[Route('/{lesson}', name: 'post_index_lesson', methods: ['GET'])]
     public function getPostsByLesson(Lesson $lesson, PostRepository $postRepository): JsonResponse
     {
