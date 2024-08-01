@@ -126,7 +126,7 @@
                   ></span>
                 </a>
                 <a
-                  (click)="editCoach(coach)"
+                  (click)="open(content, coach)"
                   class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                 >
                   <span
@@ -157,9 +157,10 @@
   </div>
   <!-- begin::Body -->
 </div>
-<div *ngIf="isEditing" class="card mb-5 mb-xl-10">
+<ng-template #content let-modal class="card mb-5 mb-xl-10">
   <div
-    class="card-header border-0 cursor-pointer"
+    class="modal-title card-header border-0 cursor-pointer"
+    id="modal-basic-title"
     role="button"
     data-bs-toggle="collapse"
     data-bs-target="#kt_account_profile_details"
@@ -167,10 +168,13 @@
     aria-controls="kt_account_profile_details"
   >
     <div class="card-title m-0">
-      <h3 class="fw-bolder m-0">Profile Details</h3>
+      <h3 class="fw-bolder m-0 p-5">Profile Details</h3>
     </div>
   </div>
-  <div id="kt_account_profile_details" class="collapse show">
+  <div
+    id="kt_account_profile_details"
+    class="collapse show modal-body modal-xl"
+  >
     <form novalidate="" class="form" (ngSubmit)="saveCoach()">
       <div class="card-body border-top p-9">
         <div class="row mb-6">
@@ -181,7 +185,7 @@
             <input
               type="text"
               id="fullname"
-              [(ngModel)]="selectedCoach.fullname"
+              [(ngModel)]="selectedCoach.fullName"
               name="fullname"
               class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
               required
@@ -233,10 +237,18 @@
         </div>
       </div>
       <div class="card-footer d-flex justify-content-end py-6 px-9">
-        <button type="submit" class="btn btn-primary m-2">Save Changes</button>
+        <button
+          type="submit"
+          class="btn btn-primary m-2"
+          (click)="modal.close('Save click')"
+        >
+          Save Changes
+        </button>
         <button
           type="button"
-          (click)="cancelEdit()"
+          class="btn-close"
+          aria-label="Close"
+          (click)="modal.dismiss('Cross click')"
           class="btn btn-primary m-2"
         >
           Cancel
@@ -244,4 +256,4 @@
       </div>
     </form>
   </div>
-</div>
+</ng-template>

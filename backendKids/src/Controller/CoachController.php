@@ -77,9 +77,6 @@ class CoachController extends AbstractController
 
         $user->setFullName($data['fullName']);
         $user->setEmail($data['email']);
-        if ($data['plainPassword'] != $data['confirmPassword']) {
-            return new JsonResponse(['message' => 'Passwords dont match']);
-        }
 
         $user->setPassword(
             $userPasswordHasher->hashPassword(
@@ -109,7 +106,7 @@ class CoachController extends AbstractController
             ]
         )
     )]
-    public function edit($id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): Response
+    public function edit($id, Request $request, CoachRepository $coachRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $coach = $coachRepository->find($id);
         $data = json_decode($request->getContent(), true);
@@ -118,8 +115,12 @@ class CoachController extends AbstractController
 
         if ($form->isSubmitted()) {
 
-            $hashedPassword = $this->passwordHasher->hashPassword($coach, $coach->getPassword());
-            $coach->setPassword($hashedPassword);
+            $coach->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $coach,
+                    $data['password']
+                )
+            );
             $coach->setFullName($data["fullName"]);
             $coach->setEmail($data["email"]);
             $this->entityManager->persist($coach);

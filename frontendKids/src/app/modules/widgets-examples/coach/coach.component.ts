@@ -1,17 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject  } from '@angular/core';
 import { CoachService } from './services/coach.service';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-coach',
   templateUrl: './coach.component.html',
+
 })
+
+
 export class CoachComponent implements OnInit {
   public coaches;
   public isEditing: boolean = false;
   public selectedCoach: any = null;
   public confirmPassword: string = '';
+  private modalService = inject(NgbModal);
+	closeResult = '';
 
   constructor(private coachService: CoachService) {}
+
+  open(content: TemplateRef<any>, coach: any) {
+    this.selectedCoach = { ...coach };
+    this.confirmPassword = '';
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered':true, 'size':'lg' }).result.then(
+			(result) => {
+				this.closeResult = `Closed with: ${result}`;
+			},
+			(reason) => {
+				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+			},
+		);
+	}
+  private getDismissReason(reason: any): string {
+		switch (reason) {
+			case ModalDismissReasons.ESC:
+				return 'by pressing ESC';
+			case ModalDismissReasons.BACKDROP_CLICK:
+				return 'by clicking on a backdrop';
+			default:
+				return `with: ${reason}`;
+		}
+	}
 
   ngOnInit() {
     this.loadCoaches();
@@ -52,12 +82,6 @@ export class CoachComponent implements OnInit {
       );
   }
 
-  editCoach(coach: any) {
-    this.selectedCoach = { ...coach }; // Create a copy of the coach object to edit
-    this.isEditing = true; // Show the edit form
-    this.confirmPassword = ''; // Clear the confirm password field
-  }
-
   saveCoach() {
     if (this.selectedCoach.password !== this.confirmPassword) {
       alert('Passwords do not match!');
@@ -73,10 +97,10 @@ export class CoachComponent implements OnInit {
           if (index > -1) {
             this.coaches[index] = this.selectedCoach;
           }
-          this.isEditing = false;
           this.selectedCoach = null;
           this.confirmPassword = '';
           alert('Coach updated successfully!');
+          window.location.reload();
         },
         err => {
           console.error('Error updating coach:', err);
@@ -85,10 +109,5 @@ export class CoachComponent implements OnInit {
       );
   }
   
-  cancelEdit() {
-    this.isEditing = false;
-    this.selectedCoach = null;
-    this.confirmPassword = '';
-  }
 
 }
