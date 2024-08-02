@@ -7,6 +7,7 @@ declare var $: any;
   selector: "app-coach",
   templateUrl: "./coach.component.html",
 })
+
 export class CoachComponent implements OnInit, AfterViewInit {
   public coaches: any;
   public isEditing: boolean = false;
