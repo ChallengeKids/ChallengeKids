@@ -1,16 +1,12 @@
-import { Component, OnInit, TemplateRef, inject, PipeTransform  } from "@angular/core";
-import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, TemplateRef, inject } from "@angular/core";
 import { CoachService } from "./services/coach.service";
-import { ModalDismissReasons, NgbModal, NgbHighlight  } from "@ng-bootstrap/ng-bootstrap";
+import { ModalDismissReasons, NgbModal  } from "@ng-bootstrap/ng-bootstrap";
+declare var $: any;  
 
 @Component({
   selector: "app-coach",
   templateUrl: "./coach.component.html",
 })
-
-
 
 export class CoachComponent implements OnInit {
   public coaches: any;
@@ -20,39 +16,16 @@ export class CoachComponent implements OnInit {
   private modalService = inject(NgbModal);
   closeResult = "";
 
-  constructor(private coachService: CoachService) {}
+  @ViewChild('dataTable', { static: false }) tableElement: ElementRef;
 
-  open(content: TemplateRef<any>, coach: any) {
-    this.selectedCoach = { ...coach };
-    this.confirmPassword = "";
-    this.modalService
-      .open(content, {
-        ariaLabelledBy: "modal-basic-title",
-        centered: true,
-        size: "lg",
-      })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
-  }
-  private getDismissReason(reason: any): string {
-    switch (reason) {
-      case ModalDismissReasons.ESC:
-        return "by pressing ESC";
-      case ModalDismissReasons.BACKDROP_CLICK:
-        return "by clicking on a backdrop";
-      default:
-        return `with: ${reason}`;
-    }
-  }
+  constructor(private coachService: CoachService) {}
 
   ngOnInit() {
     this.loadCoaches();
+  }
+
+  ngAfterViewInit() {
+    $(this.tableElement.nativeElement).DataTable();
   }
 
   loadCoaches() {
@@ -112,5 +85,35 @@ export class CoachComponent implements OnInit {
         alert("Error updating coach. Please try again later.");
       }
     );
+  }
+
+  open(content: TemplateRef<any>, coach: any) {
+    this.selectedCoach = { ...coach };
+    this.confirmPassword = "";
+    this.modalService
+      .open(content, {
+        ariaLabelledBy: "modal-basic-title",
+        centered: true,
+        size: "lg",
+      })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        }
+      );
+  }
+
+  private getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return "by pressing ESC";
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return "by clicking on a backdrop";
+      default:
+        return `with: ${reason}`;
+    }
   }
 }

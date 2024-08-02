@@ -28,7 +28,9 @@
     <div class="table-responsive">
       <!-- begin::Table -->
       <table
-        class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4"
+        #dataTable
+        id="example"
+        class="table table-row-gray-300 align-middle gs-0 gy-4"
       >
         <!-- begin::Table head -->
         <thead>
@@ -171,7 +173,10 @@
       <h3 class="fw-bolder m-0 p-5">Profile Details</h3>
     </div>
   </div>
-  <div id="kt_account_profile_details" class="collapse show modal-body">
+  <div
+    id="kt_account_profile_details"
+    class="collapse show modal-body modal-xl"
+  >
     <form novalidate="" class="form" (ngSubmit)="saveCoach()">
       <div class="card-body border-top p-9">
         <div class="row mb-6">
