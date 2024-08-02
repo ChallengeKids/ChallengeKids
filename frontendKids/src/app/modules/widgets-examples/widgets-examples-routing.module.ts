@@ -10,6 +10,7 @@ import { WidgetsExamplesComponent } from './widgets-examples.component';
 import { CategoryComponent } from './category/category.component';
 import { ChallengeComponent } from './challenge/challenge.component';
 import { CoachComponent } from './coach/coach.component';
+import { PostComponent } from './post/post.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
       {
         path: 'lists',
         component: ListsComponent,
+      },
+      {
+        path: 'posts',
+        component: PostComponent,
       },
       {
         path: 'challenges',
