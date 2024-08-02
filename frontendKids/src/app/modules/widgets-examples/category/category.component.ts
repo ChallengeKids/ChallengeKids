@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { TablesWidget13Component } from 'src/app/_metronic/partials/content/widgets/tables/tables-widget13/tables-widget13.component';
+import { Component, TemplateRef, inject } from '@angular/core';
 import { HttpserviceService } from '../../auth/services/httpservice.service';
 import { lastValueFrom } from 'rxjs';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-category',
@@ -11,6 +11,30 @@ export class CategoryComponent {
   showForm = false;
   title = '';
   desc = '';
+  private modalService = inject(NgbModal);
+	closeResult = '';
+
+  open(content: TemplateRef<any>) {
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered':true, 'size':'lg' }).result.then(
+			(result) => {
+				this.closeResult = `Closed with: ${result}`;
+			},
+			(reason) => {
+				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+			},
+		);
+	}
+  private getDismissReason(reason: any): string {
+		switch (reason) {
+			case ModalDismissReasons.ESC:
+				return 'by pressing ESC';
+			case ModalDismissReasons.BACKDROP_CLICK:
+				return 'by clicking on a backdrop';
+			default:
+				return `with: ${reason}`;
+		}
+	}
+
   constructor(private httpservice: HttpserviceService) {}
   onAddCategory() {
     this.showForm = true;
@@ -25,7 +49,7 @@ export class CategoryComponent {
         })
       );
       if (response) {
-        alert('ajout avec succe!');
+        alert('The Category has been added');
         this.showForm = false;
         window.location.reload();
       }
