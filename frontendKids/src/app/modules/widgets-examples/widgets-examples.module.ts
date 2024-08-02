@@ -11,13 +11,12 @@ import { FeedsComponent } from "./feeds/feeds.component";
 import { WidgetsModule } from "../../_metronic/partials";
 import { CategoryComponent } from "./category/category.component";
 import { FormsModule } from "@angular/forms";
-import { lastValueFrom } from "rxjs";
-import { HttpserviceService } from "../auth/services/httpservice.service";
 import { ChallengeComponent } from "./challenge/challenge.component";
 import { CoachComponent } from "./coach/coach.component";
 import { AccountModule } from "../account/account.module";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { PostComponent } from "./post/post.component";
+import { ChapterComponent } from "./chapter/chapter.component";
 
 @NgModule({
   declarations: [
@@ -32,6 +31,7 @@ import { PostComponent } from "./post/post.component";
     ChallengeComponent,
     CoachComponent,
     PostComponent,
+    ChapterComponent,
   ],
   imports: [
     CommonModule,
