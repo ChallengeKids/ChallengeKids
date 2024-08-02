@@ -13,6 +13,7 @@ import { CoachComponent } from "./coach/coach.component";
 import { PostComponent } from "./post/post.component";
 import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
+import { KidComponent } from "./kid/kid.component";
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
       {
         path: "lists",
         component: ListsComponent,
+      },
+      {
+        path: "kids",
+        component: KidComponent,
       },
       {
         path: "lessons",

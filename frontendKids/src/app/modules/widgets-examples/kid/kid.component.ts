@@ -10,42 +10,41 @@ import {
   inject,
 } from "@angular/core";
 declare var $: any;
-
 @Component({
-  selector: "app-lesson",
+  selector: "app-kid",
 
-  templateUrl: "./lesson.component.html",
+  templateUrl: "./kid.component.html",
 })
-export class LessonComponent {
-  selectedlesson: any;
+export class KidComponent implements OnInit {
+  kids: any;
+  selectedkid: any;
   confirmPassword: any;
-  savelesson() {
-    throw new Error("Method not implemented.");
-  }
-  lessons: any;
   constructor(private httpservice: HttpserviceService) {}
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
+
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
   }
 
   async ngOnInit() {
     try {
-      const response = await lastValueFrom(this.httpservice.get("/api/lesson"));
-      this.lessons = response;
-      console.log("Categories loaded:", this.lessons);
+      const response = await lastValueFrom(this.httpservice.get("/api/kid"));
+      this.kids = response;
+      console.log("Categories loaded:", this.kids);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   }
+
   async delete(id: any) {
     try {
       const response = await lastValueFrom(
-        this.httpservice.delete(`/api/lesson/delete/${id}`)
+        this.httpservice.delete(`/api/kid/delete/${id}`)
       );
       window.location.reload();
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   }
+  savekid() {}
 }
