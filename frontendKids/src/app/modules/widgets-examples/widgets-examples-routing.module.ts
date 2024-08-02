@@ -1,64 +1,74 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ChartsComponent } from './charts/charts.component';
-import { FeedsComponent } from './feeds/feeds.component';
-import { ListsComponent } from './lists/lists.component';
-import { MixedComponent } from './mixed/mixed.component';
-import { StatisticsComponent } from './statistics/statistics.component';
-import { TablesComponent } from './tables/tables.component';
-import { WidgetsExamplesComponent } from './widgets-examples.component';
-import { CategoryComponent } from './category/category.component';
-import { ChallengeComponent } from './challenge/challenge.component';
-import { CoachComponent } from './coach/coach.component';
-import { PostComponent } from './post/post.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { ChartsComponent } from "./charts/charts.component";
+import { FeedsComponent } from "./feeds/feeds.component";
+import { ListsComponent } from "./lists/lists.component";
+import { MixedComponent } from "./mixed/mixed.component";
+import { StatisticsComponent } from "./statistics/statistics.component";
+import { TablesComponent } from "./tables/tables.component";
+import { WidgetsExamplesComponent } from "./widgets-examples.component";
+import { CategoryComponent } from "./category/category.component";
+import { ChallengeComponent } from "./challenge/challenge.component";
+import { CoachComponent } from "./coach/coach.component";
+import { PostComponent } from "./post/post.component";
+import { ChapterComponent } from "./chapter/chapter.component";
+import { LessonComponent } from "./lesson/lesson.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: WidgetsExamplesComponent,
     children: [
       {
-        path: 'lists',
+        path: "lists",
         component: ListsComponent,
       },
       {
-        path: 'posts',
+        path: "lessons",
+        component: LessonComponent,
+      },
+      {
+        path: "chapters",
+        component: ChapterComponent,
+      },
+      {
+        path: "posts",
         component: PostComponent,
       },
       {
-        path: 'challenges',
+        path: "challenges",
         component: ChallengeComponent,
       },
       {
-        path: 'category',
+        path: "category",
         component: CategoryComponent,
       },
       {
-        path: 'statistics',
+        path: "statistics",
         component: StatisticsComponent,
       },
       {
-        path: 'charts',
+        path: "charts",
         component: ChartsComponent,
       },
       {
-        path: 'mixed',
+        path: "mixed",
         component: MixedComponent,
       },
       {
-        path: 'tables',
+        path: "tables",
         component: TablesComponent,
       },
       {
-        path: 'feeds',
+        path: "feeds",
         component: FeedsComponent,
       },
       {
-        path: 'coach',
+        path: "coach",
         component: CoachComponent,
       },
-      { path: '', redirectTo: 'lists', pathMatch: 'full' },
-      { path: '**', redirectTo: 'lists', pathMatch: 'full' },
+      { path: "", redirectTo: "lists", pathMatch: "full" },
+      { path: "**", redirectTo: "lists", pathMatch: "full" },
     ],
   },
 ];
