@@ -1,14 +1,15 @@
-import { Component, OnInit, TemplateRef, inject } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject, AfterViewInit, ElementRef, ViewChild, } from '@angular/core';
 import { ChallengeService } from './services/challenge.service';
 import { environment } from 'src/environments/environment';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 const API_USERS_URL = `${environment.backednUrl}`;
+declare var $: any;
 
 @Component({
   selector: 'app-challenge',
   templateUrl: './challenge.component.html',
 })
-export class ChallengeComponent implements OnInit {
+export class ChallengeComponent implements OnInit, AfterViewInit {
   public challenges;
   public selectedChallenge;
   public isViewing: boolean = false;
@@ -16,7 +17,13 @@ export class ChallengeComponent implements OnInit {
   private modalService = inject(NgbModal);
 	closeResult = '';
 
+  @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
+
   constructor(private challengeService: ChallengeService) {}
+
+  ngAfterViewInit() {
+    $(this.tableElement.nativeElement).DataTable();
+  }
 
   open(content: TemplateRef<any>, challenge: any) {
     this.selectedChallenge = {...challenge};

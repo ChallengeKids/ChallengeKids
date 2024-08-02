@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-  TemplateRef,
-  inject,
-} from "@angular/core";
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, TemplateRef, inject, } from "@angular/core";
 import { CoachService } from "./services/coach.service";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 declare var $: any;
@@ -15,7 +7,8 @@ declare var $: any;
   selector: "app-coach",
   templateUrl: "./coach.component.html",
 })
-export class CoachComponent implements OnInit {
+
+export class CoachComponent implements OnInit, AfterViewInit {
   public coaches: any;
   public isEditing: boolean = false;
   public selectedCoach: any = null;

@@ -16,6 +16,7 @@ import { CoachComponent } from "./coach/coach.component";
 import { AccountModule } from "../account/account.module";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { PostComponent } from "./post/post.component";
+import { LessonComponent } from "./lesson/lesson.component";
 import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
@@ -36,6 +37,7 @@ import { KidComponent } from "./kid/kid.component";
     ChapterComponent,
     LessonComponent,
     KidComponent,
+
   ],
   imports: [
     CommonModule,
