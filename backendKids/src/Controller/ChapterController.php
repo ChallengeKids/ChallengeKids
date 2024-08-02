@@ -117,4 +117,24 @@ class ChapterController extends AbstractController
 
         return new JsonResponse(['status' => 'The chapter$chapter has been deleted']);
     }
+
+    #[Route('/{id}/addLesson', name: 'chapter_add_lessons', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "lessons" => ["1st Lesson", "2nd Lesson", "5th Lesson"],
+            ]
+        )
+    )]
+    public function addLesson($id, Request $request, ChapterRepository $chapterRepository): JsonResponse
+    {
+        $chapter = $chapterRepository->find($id);
+        $data = $request->toArray();
+        $lessonTitles = $data["lessons"];
+        $this->chapterService->addLessons($chapter, $lessonTitles);
+
+        return new JsonResponse(true);
+    }
 }

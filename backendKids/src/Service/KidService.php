@@ -15,22 +15,28 @@ use phpDocumentor\Reflection\Types\Integer;
 class KidService
 {
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager = null)
+    private $categoryService;
+
+    public function __construct(EntityManagerInterface $entityManager = null, CategoryService $categoryService = null)
     {
         $this->entityManager = $entityManager;
+        $this->categoryService = $categoryService;
     }
 
     public function kidToJson(Kid $kid)
     {
         $challenges = $kid->getChallenges()->toArray();
         $responses = $kid->getResponses()->toArray();
+        $categories = $kid->getInterests()->toArray();
 
         return [
             'id' => $kid->getId(),
             'fullName' => $kid->getFullName(),
             'email' => $kid->getEmail(),
             'registrationDate' => $kid->getRegistrationDate()->format('Y-m-d H:i:s'),
-            'interests' => $kid->getInterests(),
+            'interests' => array_map(function ($category) {
+                return $this->categoryService->categoryToJson($category);
+            }, $categories),
             'friends' => $kid->getFriends(),
             'points' => $kid->getPoints(),
             'level' => $kid->getLevel(),
