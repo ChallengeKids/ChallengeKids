@@ -97,7 +97,7 @@ class ChallengeController extends AbstractController
 
         return new JsonResponse(['status' => 'The Challenge has been deleted']);
     }
-    #[Route('/{coachId}/addChalleneg', name: 'challenge_add_image', methods: ['POST'])]
+    #[Route('/{coachId}/addChallenge', name: 'challenge_add_image', methods: ['POST'])]
     #[OA\Post(
         summary: 'Add a new Challenge Image',
         description: 'Add Challenge Image',
@@ -194,5 +194,25 @@ class ChallengeController extends AbstractController
         $coach = $challenge->getCoach();
         $coach = $this->coachService->coachToJson($coach);
         return new JsonResponse($coach);
+    }
+
+    #[Route('/{id}/addChapters', name: 'chapter_add_challenge', methods: ['PUT'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "chapters" => ["Chapter1", "Chapter3", "Chapter5"],
+            ]
+        )
+    )]
+    public function addChapters($id, Request $request, ChallengeRepository $challengeRepository): JsonResponse
+    {
+        $challenge = $challengeRepository->find($id);
+        $data = $request->toArray();
+        $chapterTitles = $data["chapters"];
+        $this->challengeService->addChapters($challenge, $chapterTitles);
+
+        return new JsonResponse(true);
     }
 }
