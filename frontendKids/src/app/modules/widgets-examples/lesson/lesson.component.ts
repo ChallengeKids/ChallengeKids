@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
 import { lastValueFrom } from "rxjs";
+import { InlineSVGModule } from "ng-inline-svg-2";
 import {
   OnInit,
   AfterViewInit,
