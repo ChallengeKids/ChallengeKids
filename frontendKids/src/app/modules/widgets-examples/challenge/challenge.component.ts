@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { ChallengeService } from './services/challenge.service';
+import { environment } from 'src/environments/environment';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+const API_USERS_URL = `${environment.backednUrl}`;
 
 @Component({
   selector: 'app-challenge',
@@ -9,8 +12,33 @@ export class ChallengeComponent implements OnInit {
   public challenges;
   public selectedChallenge;
   public isViewing: boolean = false;
+  backendUrl = API_USERS_URL;
+  private modalService = inject(NgbModal);
+	closeResult = '';
 
   constructor(private challengeService: ChallengeService) {}
+
+  open(content: TemplateRef<any>, challenge: any) {
+    this.selectedChallenge = {...challenge};
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered':true, 'size':'lg' }).result.then(
+			(result) => {
+				this.closeResult = `Closed with: ${result}`;
+			},
+			(reason) => {
+				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+			},
+		);
+	}
+  private getDismissReason(reason: any): string {
+		switch (reason) {
+			case ModalDismissReasons.ESC:
+				return 'by pressing ESC';
+			case ModalDismissReasons.BACKDROP_CLICK:
+				return 'by clicking on a backdrop';
+			default:
+				return `with: ${reason}`;
+		}
+	}
 
   ngOnInit() {
     this.loadChallenges();
