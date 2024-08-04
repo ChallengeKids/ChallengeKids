@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -44,7 +45,7 @@ class CoachController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/{id}', name: 'coach_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'coach_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(CoachRepository $coachRepository, $id): Response
     {
         $coach = $coachRepository->find($id);
@@ -155,11 +156,80 @@ class CoachController extends AbstractController
             ]
         )
     )]
-    public function addInterests($id, Request $request): JsonResponse
+    public function addTeachingDomains($id, Request $request): JsonResponse
     {
         $data = $request->toArray();
         $categoryTitles = $data['categoryTitles'];
         $this->coachService->updateCategories($id, $categoryTitles);
         return new JsonResponse(['status' => 'Categories updated successfully']);
+    }
+
+    #[Route('/pending', name: 'api_coaches_pending', methods: ['GET'])]
+    public function getPending(CoachRepository $coachRepository): JsonResponse
+    {
+        $pendingCoaches = $coachRepository->findPendingAcceptance();
+
+        $listJson = [];
+        foreach ($pendingCoaches as $key => $coach) {
+            $listJson[$key] = $this->coachService->coachToJson($coach);
+        }
+
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/accepted', name: 'api_coaches_accepted', methods: ['GET'])]
+    public function getAccepted(CoachRepository $coachRepository): JsonResponse
+    {
+        $acceptedCoaches = $coachRepository->findByAcceptanceStatus(true);
+
+        $listJson = [];
+        foreach ($acceptedCoaches as $key => $coach) {
+            $listJson[$key] = $this->coachService->coachToJson($coach);
+        }
+
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/refused', name: 'api_coaches_refused', methods: ['GET'])]
+    public function getRefused(CoachRepository $coachRepository): JsonResponse
+    {
+        $refusedCoaches = $coachRepository->findByAcceptanceStatus(false);
+        $listJson = [];
+        foreach ($refusedCoaches as $key => $coach) {
+            $listJson[$key] = $this->coachService->coachToJson($coach);
+        }
+
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/{id}/status', name: 'api_update_coach_status', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "accepted" => false,
+            ]
+        )
+    )]
+    public function updateStatus(int $id, Request $request, CoachRepository $coachRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $coach = $coachRepository->find($id);
+        if (!$coach) {
+            return $this->json(['error' => 'Coach not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $accepted = $data['accepted'] ?? null;
+
+        if ($accepted === null) {
+            return $this->json(['error' => 'Invalid status value'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $coach->setAccepted($accepted);
+        $entityManager->persist($coach);
+        $entityManager->flush();
+
+        return new JsonResponse(true);
     }
 }

@@ -24,4 +24,20 @@ export class CoachService {
   updateCoach(coach): Observable<void> {
     return this.http.put<void>(`${API_USERS_URL}/api/coach/${coach.id}/edit`, coach);
   }
+
+  getPendingCoaches(){
+    return this.http.get(`${API_USERS_URL}/api/coach/pending`);
+  }
+
+  getAcceptedCoaches() {
+    return this.http.get(`${API_USERS_URL}/api/coach/accepted`);
+  }
+
+  getRefusedCoaches(){
+    return this.http.get(`${API_USERS_URL}/api/coach/refused`);
+  }
+
+  updateCoachStatus(id: number, accepted: boolean){
+    return this.http.post(`${API_USERS_URL}/api/coach/${id}/status`, { accepted });
+  }
 }
