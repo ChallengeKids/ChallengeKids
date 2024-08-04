@@ -12,12 +12,9 @@ class UserService
 
         return [
             'id' => $user->getId(),
-            'firstName' => $user->getFirstName(),
-            'secondName' => $user->getSecondName(),
+            'fullName' => $user->getFullName(),
             'email' => $user->getEmail(),
-            'registrationDate' => $user->getRegistrationDate()->format('Y-m-d H:i:s'),
-            'birthDate' => $user->getBirthDate()->format('Y-m-d'),
-            'posts' => $posts,
+            
         ];
     }
 }

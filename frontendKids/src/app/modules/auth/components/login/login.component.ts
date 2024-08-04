@@ -1,21 +1,21 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { UserModel } from '../../models/user.model';
-import { AuthService } from '../../services/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Subscription, Observable } from "rxjs";
+import { first } from "rxjs/operators";
+import { UserModel } from "../../models/user.model";
+import { AuthService } from "../../services/auth.service";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit, OnDestroy {
   // KeenThemes mock, change it to:
   defaultAuth: any = {
-    email: 'admin@demo.com',
-    password: 'demo',
+    email: "admin@demo.com",
+    password: "demo",
   };
   loginForm: FormGroup;
   hasError: boolean;
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoading$ = this.authService.isLoading$;
     // redirect to home if already logged in
     if (this.authService.currentUserValue) {
-      this.router.navigate(['/']);
+      this.router.navigate(["/"]);
     }
   }
 
@@ -42,7 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.initForm();
     // get return url from route parameters or default to '/'
     this.returnUrl =
-      this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
+      this.route.snapshot.queryParams["returnUrl".toString()] ||
+      "/admindashboard/widgets";
   }
 
   // convenience getter for easy access to form fields

@@ -13,6 +13,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use OpenApi\Attributes as OA;
 use OpenApi\Examples\Polymorphism\Request;
+use App\Repository\UserRepository;
+use App\Service\UserService;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Entity\User;
+
 
 #[Route('/api')]
 class SecurityController extends AbstractController
@@ -20,10 +25,12 @@ class SecurityController extends AbstractController
     private $jwtManager;
     private $refreshTokenManager;
 
-    public function __construct(JWTTokenManagerInterface $jwtManager, RefreshTokenManagerInterface $refreshTokenManager)
+    public function __construct(JWTTokenManagerInterface $jwtManager, RefreshTokenManagerInterface $refreshTokenManager,Security $security,UserService $userService)
     {
         $this->jwtManager = $jwtManager;
         $this->refreshTokenManager = $refreshTokenManager;
+        $this->security = $security;
+        $this->UserService = $userService;
     }
 
     #[Route(path: '/login_check', name: 'app_login_check', methods: ['POST'])]
@@ -54,6 +61,7 @@ class SecurityController extends AbstractController
 
         $token = $this->jwtManager->create($user);
         $refreshToken = $this->refreshTokenManager->create($user);
+        $role=$user->getRoles();
         return new JsonResponse(['authToken' => $token, 'refreshToken' => $refreshToken]);
     }
 
@@ -61,5 +69,19 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+    #[Route('/profile', name: 'user_profile', methods: ['GET'])]
+    public function showProfile(UserRepository $userRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
+        $user = $userRepository->find($user->getId());
+        if (!$user) {
+            return new JsonResponse(['error' => 'user not found']);
+        }
+        $userData = $this->UserService->userToJson($user);
+        return new JsonResponse($userData);
     }
 }

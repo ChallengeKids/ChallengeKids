@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { UserModel } from '../../models/user.model';
-import { environment } from '../../../../../environments/environment';
-import { AuthModel } from '../../models/auth.model';
-import { consumerAfterComputation } from '@angular/core/primitives/signals';
+import { Injectable } from "@angular/core";
+import { map, Observable } from "rxjs";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { UserModel } from "../../models/user.model";
+import { environment } from "../../../../../environments/environment";
+import { AuthModel } from "../../models/auth.model";
+import { consumerAfterComputation } from "@angular/core/primitives/signals";
 
 const API_USERS_URL = `${environment.backednUrl}/api`;
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthHTTPService {
   user: UserModel;
@@ -21,14 +21,14 @@ export class AuthHTTPService {
       .post<{ token: string; refresh_token: string }>(
         `${API_USERS_URL}/login_check`,
         { email, password },
-        { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+        { headers: new HttpHeaders({ "Content-Type": "application/json" }) }
       )
       .pipe(
         map((response) => {
           const authModel = new AuthModel();
           authModel.authToken = response.token;
           authModel.refreshToken = response.refresh_token;
-          this.user = this.getUser(authModel.authToken);
+          authModel.role = this.getUserRole(authModel.authToken);
           return authModel;
         })
       );
@@ -41,11 +41,11 @@ export class AuthHTTPService {
       email: user.email,
       plainPassword: user.password,
       confirmPassword: user.password,
-      _token: 'string',
+      _token: "string",
     };
-    console.log('we we');
+    console.log("we we");
     return this.http.post<any>(
-      `${API_USERS_URL}/register`,
+      `${API_USERS_URL}/registerAdmin`,
       JSON.stringify(newUser)
     );
   }
@@ -61,12 +61,17 @@ export class AuthHTTPService {
     const httpHeaders = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.get<UserModel>(`${API_USERS_URL}/kid/profile`, {
+    return this.http.get<UserModel>(`${API_USERS_URL}/profile`, {
       headers: httpHeaders,
     });
   }
 
-  private getUser(token:string): UserModel{
-    return JSON.parse(atob(token.split('.')[1]))as UserModel;
+  private getUser(token: string): UserModel {
+    return JSON.parse(atob(token.split(".")[1])) as UserModel;
+  }
+
+  private getUserRole(token: string): string {
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    return decodedToken.roles[0]; // Assuming the role is in the 'roles' array
   }
 }
