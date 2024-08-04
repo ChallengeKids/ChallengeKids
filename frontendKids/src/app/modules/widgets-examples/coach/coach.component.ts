@@ -10,6 +10,9 @@ declare var $: any;
 
 export class CoachComponent implements OnInit, AfterViewInit {
   public coaches: any;
+  pendingCoaches: any;
+  acceptedCoaches: any;
+  refusedCoaches: any;
   public isEditing: boolean = false;
   public selectedCoach: any = null;
   public confirmPassword: string = "";
@@ -24,20 +27,30 @@ export class CoachComponent implements OnInit, AfterViewInit {
     this.loadCoaches();
   }
 
-  ngAfterViewInit() {
-    $(this.tableElement.nativeElement).DataTable();
+  ngAfterViewInit(): void {
+    this.initializeDataTable();
   }
 
-  loadCoaches() {
-    this.coachService.getCoaches().subscribe(
-      (data) => {
-        this.coaches = data;
-        console.log("Coach data:", this.coaches); // Logs the coach data to the console
-      },
-      (err) => {
-        console.log("Error fetching coaches:", err);
-      }
-    );
+  initializeDataTable(): void {
+    $(document).ready(() => {
+      $('#pendingCoachesTable').DataTable();
+      $('#acceptedCoachesTable').DataTable();
+      $('#refusedCoachesTable').DataTable();
+    });
+  }
+
+  loadCoaches(): void {
+    this.coachService.getPendingCoaches().subscribe(data => {
+      this.pendingCoaches = data;
+    });
+
+    this.coachService.getAcceptedCoaches().subscribe(data => {
+      this.acceptedCoaches = data;
+    });
+
+    this.coachService.getRefusedCoaches().subscribe(data => {
+      this.refusedCoaches = data;
+    });
   }
 
   deleteCoach(id: number) {
@@ -115,5 +128,13 @@ export class CoachComponent implements OnInit, AfterViewInit {
       default:
         return `with: ${reason}`;
     }
+  }
+
+  updateStatus(coach, event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const accepted = selectElement.value === 'true';
+    this.coachService.updateCoachStatus(coach.id, accepted).subscribe(() => {
+      this.loadCoaches(); // Reload the lists after updating
+    });
   }
 }

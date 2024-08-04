@@ -24,6 +24,9 @@ class Coach extends User
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'coaches')]
     private Collection $teachingDomains;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $Accepted = null;
+
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
@@ -90,6 +93,18 @@ class Coach extends User
     public function removeTeachingDomain(Category $teachingDomain): static
     {
         $this->teachingDomains->removeElement($teachingDomain);
+
+        return $this;
+    }
+
+    public function isAccepted(): ?bool
+    {
+        return $this->Accepted;
+    }
+
+    public function setAccepted(?bool $Accepted): static
+    {
+        $this->Accepted = $Accepted;
 
         return $this;
     }
