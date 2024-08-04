@@ -23,7 +23,7 @@ import { KidComponent } from "./kid/kid.component";
 @NgModule({
   declarations: [
     WidgetsExamplesComponent,
-    ListsComponent,
+    //ListsComponent,
     StatisticsComponent,
     ChartsComponent,
     MixedComponent,
@@ -45,5 +45,14 @@ import { KidComponent } from "./kid/kid.component";
     AccountModule,
     InlineSVGModule,
   ],
+  exports: [
+    CategoryComponent,
+    ChallengeComponent,
+    CoachComponent,
+    PostComponent,
+    ChapterComponent,
+    LessonComponent,
+    KidComponent
+  ]
 })
 export class WidgetsExamplesModule {}

@@ -16,7 +16,7 @@ declare var $: any;
 
   templateUrl: "./kid.component.html",
 })
-export class KidComponent implements OnInit {
+export class KidComponent implements OnInit, AfterViewInit {
   kids: any;
   selectedkid: any;
   confirmPassword: any;

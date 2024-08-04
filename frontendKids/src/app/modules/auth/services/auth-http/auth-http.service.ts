@@ -12,6 +12,7 @@ const API_USERS_URL = `${environment.backednUrl}/api`;
   providedIn: 'root',
 })
 export class AuthHTTPService {
+  user: UserModel;
   constructor(private http: HttpClient) {}
 
   // public methods
@@ -27,7 +28,7 @@ export class AuthHTTPService {
           const authModel = new AuthModel();
           authModel.authToken = response.token;
           authModel.refreshToken = response.refresh_token;
-
+          this.user = this.getUser(authModel.authToken);
           return authModel;
         })
       );
@@ -63,5 +64,9 @@ export class AuthHTTPService {
     return this.http.get<UserModel>(`${API_USERS_URL}/kid/profile`, {
       headers: httpHeaders,
     });
+  }
+
+  private getUser(token:string): UserModel{
+    return JSON.parse(atob(token.split('.')[1]))as UserModel;
   }
 }

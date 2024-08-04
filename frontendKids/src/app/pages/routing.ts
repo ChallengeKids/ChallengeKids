@@ -1,10 +1,13 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from '../modules/auth/services/auth-http/auth.guard';
 
 const Routing: Routes = [
   {
+    canActivate: [AuthGuard],
     path: 'dashboard',
     loadChildren: () =>
       import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+    
   },
   {
     path: 'builder',
