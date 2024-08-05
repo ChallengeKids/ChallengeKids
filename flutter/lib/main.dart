@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/signIn.dart';
+import 'widgets/testGET.dart';
 import 'widgets/signUp.dart';
 import 'widgets/home.dart';
 void main() {
@@ -9,8 +10,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: GoogleBottomBar(),
+    return  MaterialApp(
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

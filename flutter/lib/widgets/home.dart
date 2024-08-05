@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'homeWidgets/home.dart';
+import 'homeWidgets/profile.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
-class GoogleBottomBar extends StatefulWidget {
-  const GoogleBottomBar({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<GoogleBottomBar> createState() => _GoogleBottomBarState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _GoogleBottomBarState extends State<GoogleBottomBar> {
+class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Google Bottom Bar')),
       body: _buildBody(),
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: _selectedIndex,
@@ -36,11 +36,11 @@ class _GoogleBottomBarState extends State<GoogleBottomBar> {
       case 0:
         return const NewsFeedPage2();
       case 1:
-        return const Center(child: Text("Likes Screen"));
+        return const Center(child: Text("Search favoir"));
       case 2:
         return const Center(child: Text("Search Screen"));
       case 3:
-        return const Center(child: Text("Profile Screen"));
+        return const ProfilePage1();
       default:
         return const Center(child: Text("Home Screen"));
     }
@@ -51,7 +51,7 @@ final _navBarItems = [
   SalomonBottomBarItem(
     icon: const Icon(Icons.home),
     title: const Text("Home"),
-    selectedColor: Colors.purple,
+    selectedColor: Color.fromRGBO(61, 143, 239, 1),
   ),
   SalomonBottomBarItem(
     icon: const Icon(Icons.favorite_border),
