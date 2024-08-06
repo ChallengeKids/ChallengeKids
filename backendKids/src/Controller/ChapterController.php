@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -22,16 +23,29 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ChapterController extends AbstractController
 {
     private $chapterService;
-
-    public function __construct(ChapterService $chapterService)
+    private $security;
+    public function __construct(ChapterService $chapterService, Security $security)
     {
         $this->chapterService = $chapterService;
+        $this->security = $security;
     }
     #[Route('/', name: 'chapter_index', methods: ['GET'])]
     public function index(ChapterRepository $chapterRepository): JsonResponse
     {
         $listJson = [];
         $list = $chapterRepository->findAll();
+        foreach ($list as $key => $value) {
+            $listJson[$key] = $this->chapterService->chapterToJson($value);
+        }
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/coach', name: 'chapter_coach', methods: ['GET'])]
+    public function getCoachChapters(ChapterRepository $chapterRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        $listJson = [];
+        $list = $chapterRepository->findBy(["coach" => $user]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->chapterService->chapterToJson($value);
         }

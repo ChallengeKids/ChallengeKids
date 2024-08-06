@@ -27,10 +27,18 @@ class Coach extends User
     #[ORM\Column(nullable: true)]
     private ?bool $Accepted = null;
 
+    /**
+     * @var Collection<int, Lesson>
+     */
+    #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'coach')]
+    private Collection $lessons;
+
+
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->teachingDomains = new ArrayCollection();
+        $this->lessons = new ArrayCollection();
     }
 
     public function getRoles(): array
@@ -105,6 +113,36 @@ class Coach extends User
     public function setAccepted(?bool $Accepted): static
     {
         $this->Accepted = $Accepted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lesson>
+     */
+    public function getLessons(): Collection
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson(Lesson $lesson): static
+    {
+        if (!$this->lessons->contains($lesson)) {
+            $this->lessons->add($lesson);
+            $lesson->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesson(Lesson $lesson): static
+    {
+        if ($this->lessons->removeElement($lesson)) {
+            // set the owning side to null (unless already changed)
+            if ($lesson->getCoach() === $this) {
+                $lesson->setCoach(null);
+            }
+        }
 
         return $this;
     }

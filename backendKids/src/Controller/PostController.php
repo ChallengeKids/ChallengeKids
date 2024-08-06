@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -25,10 +26,12 @@ class PostController extends AbstractController
 {
     private $postService;
     private $entityManager;
-    public function __construct(PostService $postService, EntityManagerInterface $entityManager)
+    private $security;
+    public function __construct(PostService $postService, EntityManagerInterface $entityManager, Security $security)
     {
         $this->postService = $postService;
         $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     #[Route('/', name: 'post_show_all', methods: ['GET'])]
@@ -42,38 +45,16 @@ class PostController extends AbstractController
         return new JsonResponse($listJson);
     }
 
-    #[Route('/{lesson}', name: 'post_index_lesson', methods: ['GET'])]
-    public function getPostsByLesson(Lesson $lesson, PostRepository $postRepository): JsonResponse
+    #[Route('/user', name: 'post_user', methods: ['GET'])]
+    public function getPostsByUser(PostRepository $postRepository): JsonResponse
     {
-        $listJson = [];
-        $list = $postRepository->findBy(["lesson" => $lesson]);
-        foreach ($list as $key => $value) {
-            $listJson[$key] = $this->postService->postToJson($value);
-        }
-        return new JsonResponse($listJson);
-    }
-
-    #[Route('/{user}/{lesson}', name: 'post_index_user_lesson', methods: ['GET'])]
-    public function getPostsByUserAndLesson(User $user, Lesson $lesson, PostRepository $postRepository): JsonResponse
-    {
-        $listJson = [];
-        $list = $postRepository->findBy(["user" => $user, 'lesson' => $lesson]);
-        foreach ($list as $key => $value) {
-            $listJson[$key] = $this->postService->postToJson($value);
-        }
-        return new JsonResponse($listJson);
-    }
-
-    #[Route('/{user}', name: 'post_index_user', methods: ['GET'])]
-    public function getPostsByUser(User $user, PostRepository $postRepository, UserRepository $userRepository): JsonResponse
-    {
-        $userEntity = $userRepository->find($user);
-        if (!$userEntity) {
+        $user = $this->security->getUser();
+        if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
 
         $listJson = [];
-        $list = $postRepository->findBy(["user" => $userEntity]);
+        $list = $postRepository->findBy(["user" => $user]);
         foreach ($list as $key => $value) {
             $listJson[$key] = $this->postService->postToJson($value);
         }
@@ -133,7 +114,7 @@ class PostController extends AbstractController
         return new JsonResponse(['status' => 'The Post has been deleted']);
     }
 
-    #[Route('/{userId}/new', name: 'post_new_upload', methods: ['POST'])]
+    #[Route('/user/new', name: 'post_new_upload', methods: ['POST'])]
     #[OA\Post(
         summary: 'Add a new post',
         description: 'Creates a new post for the specified user.',
@@ -178,9 +159,9 @@ class PostController extends AbstractController
             ]
         ),
     )]
-    public function addPost(Request $request, $userId): JsonResponse
+    public function addPost(Request $request): JsonResponse
     {
-        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $user = $this->security->getUser();
 
         $post = new Post();
         $post->setUser($user);
