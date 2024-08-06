@@ -19,6 +19,7 @@ import { PostComponent } from "./post/post.component";
 import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
+import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { KidComponent } from "./kid/kid.component";
     ChapterComponent,
     LessonComponent,
     KidComponent,
+    CoachesPostsComponent,
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,7 @@ import { KidComponent } from "./kid/kid.component";
     PostComponent,
     ChapterComponent,
     LessonComponent,
-    KidComponent
-  ]
+    KidComponent,
+  ],
 })
 export class WidgetsExamplesModule {}

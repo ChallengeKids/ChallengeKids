@@ -14,12 +14,14 @@ import { PostComponent } from "./post/post.component";
 import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
+import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 
 const routes: Routes = [
   {
     path: "",
     component: WidgetsExamplesComponent,
     children: [
+      { path: "coachesposts", component: CoachesPostsComponent },
       {
         path: "lists",
         component: ListsComponent,
