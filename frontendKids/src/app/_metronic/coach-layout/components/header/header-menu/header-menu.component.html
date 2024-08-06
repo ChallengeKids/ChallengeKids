@@ -1,16 +1,16 @@
 <!-- Dashboard -->
 <div class="menu-item me-lg-1">
-  <a
-    class="menu-link py-3"
-    routerLinkActive="active"
-    routerLink="coach/dashboard"
+  <a class="menu-link py-3" routerLinkActive="active" routerLink="/coach"
     ><span class="menu-title" translate="MENU.DASHBOARD"></span
   ></a>
 </div>
 
 <!-- Layout Builder -->
 <div class="menu-item me-lg-1">
-  <a class="menu-link py-3" routerLinkActive="active" routerLink="coach/builder"
+  <a
+    class="menu-link py-3"
+    routerLinkActive="active"
+    routerLink="/coach/builder"
     ><span class="menu-title">Layout Builder</span></a
   >
 </div>
@@ -25,7 +25,7 @@
     class="menu-link py-3"
     [ngClass]="calculateMenuItemCssClass('/crafted')"
   >
-    <span class="menu-title">Admindashboard</span>
+    <span class="menu-title">Crafted</span>
     <span class="menu-arrow d-lg-none"></span>
   </span>
   <div

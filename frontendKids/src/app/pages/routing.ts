@@ -23,7 +23,7 @@ const Routing: Routes = [
       import("../modules/wizards/wizards.module").then((m) => m.WizardsModule),
   },
   {
-    path: "admindashboard/widgets",
+    path: "widgets",
     loadChildren: () =>
       import("../modules/widgets-examples/widgets-examples.module").then(
         (m) => m.WidgetsExamplesModule
