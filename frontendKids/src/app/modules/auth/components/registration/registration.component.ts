@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { ConfirmPasswordValidator } from './confirm-password.validator';
-import { UserModel } from '../../models/user.model';
-import { first } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { Subscription, Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
+import { ConfirmPasswordValidator } from "./confirm-password.validator";
+import { UserModel } from "../../models/user.model";
+import { first } from "rxjs/operators";
 
 @Component({
-  selector: 'app-registration',
-  templateUrl: './registration.component.html',
-  styleUrls: ['./registration.component.scss'],
+  selector: "app-registration",
+  templateUrl: "./registration.component.html",
+  styleUrls: ["./registration.component.scss"],
 })
 export class RegistrationComponent implements OnInit, OnDestroy {
   registrationForm: FormGroup;
@@ -28,7 +28,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     this.isLoading$ = this.authService.isLoading$;
     // redirect to home if already logged in
     if (this.authService.currentUserValue) {
-      this.router.navigate(['/']);
+      this.router.navigate(["/"]);
     }
   }
 
@@ -45,7 +45,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     this.registrationForm = this.fb.group(
       {
         fullname: [
-          '',
+          "",
           Validators.compose([
             Validators.required,
             Validators.minLength(3),
@@ -53,7 +53,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
           ]),
         ],
         email: [
-          'qwe@qwe.qwe',
+          "qwe@qwe.qwe",
           Validators.compose([
             Validators.required,
             Validators.email,
@@ -62,7 +62,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
           ]),
         ],
         password: [
-          '',
+          "",
           Validators.compose([
             Validators.required,
             Validators.minLength(3),
@@ -70,7 +70,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
           ]),
         ],
         cPassword: [
-          '',
+          "",
           Validators.compose([
             Validators.required,
             Validators.minLength(3),
@@ -100,7 +100,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe((user: UserModel) => {
         if (user) {
-          this.router.navigate(['/']);
+          this.router.navigate(["/"]);
         } else {
           this.hasError = true;
         }

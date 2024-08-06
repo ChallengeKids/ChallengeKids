@@ -18,17 +18,26 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean {
     const authData = this.authService.getAuthFromLocalStorage();
-
-    if (authData && authData.role && authData.role.includes("ROLE_ADMIN")) {
-      console.log("User has admin role");
-      return true;
+    if (!authData) {
+      console.log("No auth data, redirecting to login");
+      this.router.navigate(["/auth/login"], {
+        queryParams: { returnUrl: state.url },
+      });
+      return false;
     }
 
-    // Redirect to login page if not authenticated
-    this.router.navigate(["/auth/login"], {
-      queryParams: { returnUrl: state.url },
-    });
-    console.log(authData);
+    if (authData && authData.role) {
+      if (authData.role.includes("ROLE_ADMIN")) {
+        console.log("eeeeeeeeeeeeee");
+        // User has admin role, navigate to admin layout
+        return true;
+      } else if (authData.role.includes("ROLE_COACH")) {
+        // User has coach role, navigate to coach layout
+        return true;
+      }
+    }
+
+    this.authService.logout();
     return false;
   }
 }
