@@ -42,8 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.initForm();
     // get return url from route parameters or default to '/'
     this.returnUrl =
-      this.route.snapshot.queryParams["returnUrl".toString()] ||
-      "/admindashboard/widgets";
+      this.route.snapshot.queryParams["returnUrl".toString()] || "/";
   }
 
   // convenience getter for easy access to form fields
@@ -80,7 +79,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe((user: UserModel | undefined) => {
         if (user) {
-          this.router.navigate([this.returnUrl]);
+          const authData = this.authService.getAuthFromLocalStorage();
+          if (authData && authData.role) {
+            if (authData.role.includes("ROLE_ADMIN")) {
+              this.router.navigate(["/admin"]);
+              console.log("admin");
+            } else if (authData.role.includes("ROLE_COACH")) {
+              this.router.navigate(["/coach"]);
+            }
+          } else {
+            console.log("nothing");
+          }
         } else {
           this.hasError = true;
         }

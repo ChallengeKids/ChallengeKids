@@ -63,9 +63,23 @@ export class AuthService implements OnDestroy {
   }
   logout() {
     localStorage.removeItem(this.authLocalStorageToken);
-    this.router.navigate(["/auth/login"], {
-      queryParams: {},
-    });
+    this.currentUserSubject.next(undefined);
+
+    // Use setTimeout to ensure the navigation occurs in the next event loop
+    setTimeout(() => {
+      this.router
+        .navigate(["/auth/login"], {
+          queryParams: {},
+        })
+        .then(() => {
+          console.log("Navigation to login page successful");
+        })
+        .catch((error) => {
+          console.error("Navigation to login page failed", error);
+        });
+    }, 0);
+
+    console.log("Logout initiated");
   }
 
   getUserByToken(): Observable<UserType> {

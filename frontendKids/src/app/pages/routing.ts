@@ -3,11 +3,6 @@ import { AuthGuard } from "../modules/auth/services/auth-http/auth.guard";
 
 const Routing: Routes = [
   {
-    path: "dashboard",
-    loadChildren: () =>
-      import("./dashboard/dashboard.module").then((m) => m.DashboardModule),
-  },
-  {
     path: "builder",
     loadChildren: () =>
       import("./builder/builder.module").then((m) => m.BuilderModule),
@@ -28,7 +23,6 @@ const Routing: Routes = [
       import("../modules/wizards/wizards.module").then((m) => m.WizardsModule),
   },
   {
-    canActivate: [AuthGuard],
     path: "admindashboard/widgets",
     loadChildren: () =>
       import("../modules/widgets-examples/widgets-examples.module").then(
@@ -42,7 +36,7 @@ const Routing: Routes = [
   },
   {
     path: "",
-    redirectTo: "/dashboard",
+    redirectTo: "admin",
     pathMatch: "full",
   },
   {
