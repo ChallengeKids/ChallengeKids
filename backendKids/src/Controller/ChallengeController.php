@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,12 +27,14 @@ class ChallengeController extends AbstractController
     private $challengeService;
     private $coachService;
     private $entityManager;
+    private $security;
 
-    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager, CoachService $coachService)
+    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager, CoachService $coachService, Security $security)
     {
         $this->challengeService = $challengeService;
         $this->entityManager = $entityManager;
         $this->coachService = $coachService;
+        $this->security = $security;
     }
 
     #[Route('/', name: 'challenge_index', methods: ['GET'])]
@@ -97,7 +100,7 @@ class ChallengeController extends AbstractController
 
         return new JsonResponse(['status' => 'The Challenge has been deleted']);
     }
-    #[Route('/{coachId}/addChallenge', name: 'challenge_add_image', methods: ['POST'])]
+    #[Route('/coach/addChallenge', name: 'challenge_add_image', methods: ['POST'])]
     #[OA\Post(
         summary: 'Add a new Challenge Image',
         description: 'Add Challenge Image',
@@ -141,9 +144,9 @@ class ChallengeController extends AbstractController
             ]
         )
     )]
-    public function addChallenge(Request $request, $coachId): JsonResponse
+    public function addChallenge(Request $request): JsonResponse
     {
-        $user = $this->entityManager->getRepository(Coach::class)->find($coachId);
+        $user = $this->security->getUser();
 
         $title = $request->request->get('title');
         $description = $request->request->get('description');

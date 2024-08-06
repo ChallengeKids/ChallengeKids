@@ -33,12 +33,19 @@ class Coach extends User
     #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'coach')]
     private Collection $lessons;
 
+    /**
+     * @var Collection<int, Chapter>
+     */
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'coach')]
+    private Collection $chapters;
+
 
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->teachingDomains = new ArrayCollection();
         $this->lessons = new ArrayCollection();
+        $this->chapters = new ArrayCollection();
     }
 
     public function getRoles(): array
@@ -141,6 +148,36 @@ class Coach extends User
             // set the owning side to null (unless already changed)
             if ($lesson->getCoach() === $this) {
                 $lesson->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Chapter>
+     */
+    public function getChapters(): Collection
+    {
+        return $this->chapters;
+    }
+
+    public function addChapter(Chapter $chapter): static
+    {
+        if (!$this->chapters->contains($chapter)) {
+            $this->chapters->add($chapter);
+            $chapter->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChapter(Chapter $chapter): static
+    {
+        if ($this->chapters->removeElement($chapter)) {
+            // set the owning side to null (unless already changed)
+            if ($chapter->getCoach() === $this) {
+                $chapter->setCoach(null);
             }
         }
 

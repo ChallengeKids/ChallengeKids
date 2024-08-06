@@ -66,9 +66,11 @@ class ChapterController extends AbstractController
     )]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->security->getUser();
         $data = json_decode($request->getContent(), true);
 
         $chapter = new Chapter();
+        $chapter->setCoach($user);
         $form = $this->createForm(ChapterType::class, $chapter);
         $form->submit($data);
 

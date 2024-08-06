@@ -46,7 +46,7 @@ export class CoachesPostsComponent {
   async delete(id: any) {
     try {
       const response = await lastValueFrom(
-        this.httpservice.delete(`/api//post/${id}`)
+        this.httpservice.delete(`/api/post/${id}`)
       );
       window.location.reload();
     } catch (error) {

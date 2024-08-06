@@ -40,6 +40,10 @@ class Chapter
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'chapter')]
     private Collection $categories;
 
+    #[ORM\ManyToOne(inversedBy: 'chapters')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Coach $coach = null;
+
     public function __construct()
     {
         $this->lessons = new ArrayCollection();
@@ -155,6 +159,18 @@ class Chapter
                 $category->setChapter(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCoach(): ?Coach
+    {
+        return $this->coach;
+    }
+
+    public function setCoach(?Coach $coach): static
+    {
+        $this->coach = $coach;
 
         return $this;
     }
