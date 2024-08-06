@@ -93,6 +93,7 @@ export class AuthService implements OnDestroy {
       map((user: UserType) => {
         if (user) {
           this.currentUserSubject.next(user);
+          console.log(user);
         } else {
           this.logout();
         }

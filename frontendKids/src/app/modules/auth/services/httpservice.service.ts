@@ -1,15 +1,19 @@
-import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
-
+import { Injectable } from "@angular/core";
+import { environment } from "src/environments/environment";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { AuthService } from "./auth.service";
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class HttpserviceService {
-  constructor(private http: HttpClient) {}
-
+  constructor(private http: HttpClient, private authservice: AuthService) {}
   get(endPoint: string) {
-    return this.http.get(`${environment.backednUrl}${endPoint}`);
+    const auth = this.authservice.getAuthFromLocalStorage();
+    const httpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${auth?.authToken}`,
+    });
+    const params = { headers: httpHeaders };
+    return this.http.get(`${environment.backednUrl}${endPoint}`, params);
   }
   post(endPoint: string, body: object) {
     return this.http.post(`${environment.backednUrl}${endPoint}`, body);

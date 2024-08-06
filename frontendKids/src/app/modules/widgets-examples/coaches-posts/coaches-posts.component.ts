@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, of } from "rxjs";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
 import {
   OnInit,
@@ -9,6 +9,8 @@ import {
   TemplateRef,
   inject,
 } from "@angular/core";
+import { AuthService } from "../../auth";
+import { HttpHeaders } from "@angular/common/http";
 
 declare var $: any;
 
@@ -18,7 +20,10 @@ declare var $: any;
 })
 export class CoachesPostsComponent {
   posts: any;
-  constructor(private httpservice: HttpserviceService) {}
+  constructor(
+    private httpservice: HttpserviceService,
+    private authservice: AuthService
+  ) {}
   confirmPassword: any;
   selectedpost: any;
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
