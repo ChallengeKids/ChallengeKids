@@ -19,10 +19,9 @@ declare var $: any;
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
 })
-
 export class CoachesPostsComponent {
   title: string = "";
-  content: string = "";
+  thecontent: string = "";
   mediaFile: File | null = null;
   Categories: string[] = []; // Add more categories as needed
   posts: any;
@@ -47,7 +46,7 @@ export class CoachesPostsComponent {
   addPost() {
     const formData = new FormData();
     formData.append("title", this.title);
-    formData.append("content", this.content);
+    formData.append("content", this.thecontent);
     if (this.mediaFile) {
       formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
     }
