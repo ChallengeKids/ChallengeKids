@@ -23,13 +23,15 @@ class _searcheScreenState extends State<searcheScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100.0), // Set the desired height here
+        preferredSize:
+            const Size.fromHeight(100.0), // Set the desired height here
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Container(
             width: double.infinity, // Make the container span the full width
             child: AppBar(
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Remove shadow
+              backgroundColor:
+                  const Color.fromARGB(255, 255, 255, 255), // Remove shadow
               title: const Align(
                 alignment: Alignment.center,
                 child: Text(
@@ -64,88 +66,97 @@ class _searcheScreenState extends State<searcheScreen> {
               ),
             ),
           ),
-          SizedBox(height: 10,),
-Expanded(
-  child: FutureBuilder<List<Challenge>>(
-    future: challengesFuture,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Error: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No challenges found'));
-      } else {
-        return Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) {
-                final challenge = snapshot.data![index];
-                return Container(
-                  height: 160,
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(234, 244, 255, 1),
-                    border: Border.all(color: const Color(0xFFE0E0E0)),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(15.0),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: FutureBuilder<List<Challenge>>(
+              future: challengesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No challenges found'));
+                } else {
+                  return Center(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final challenge = snapshot.data![index];
+                          return Container(
+                            height: 160,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(234, 244, 255, 1),
+                              border:
+                                  Border.all(color: const Color(0xFFE0E0E0)),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 130,
+                                    height: 130,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                          'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 15.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            challenge.title,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            challenge.description,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          // Remove redundant Row or use for additional data
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  challenge.title,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  challenge.description,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 8),
-                                // Remove redundant Row or use for additional data
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           ),
-        );
-      }
-    },
-  ),
-),
-
-
         ],
       ),
     );

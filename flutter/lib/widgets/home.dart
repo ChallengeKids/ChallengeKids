@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return const homeScreen();
       case 1:
-        return const challengeScreen();
+        return const searcheScreen();
       case 2:
         return const searcheScreen();
       case 3:

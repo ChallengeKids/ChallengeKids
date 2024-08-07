@@ -212,13 +212,15 @@ class _homeScreenState extends State<homeScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No challenges found'));
+                          return const Center(
+                              child: Text('No challenges found'));
                         } else {
                           return ListView.builder(
                             itemCount: snapshot.data!.length,
@@ -227,7 +229,8 @@ class _homeScreenState extends State<homeScreen> {
                               return Column(
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                    margin: const EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
                                       color: const Color.fromRGBO(
                                           234, 244, 255, 1),
@@ -249,7 +252,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),
@@ -306,12 +309,22 @@ class _homeScreenState extends State<homeScreen> {
                                                         40, // Adjust height as needed
                                                     child: TextButton(
                                                       onPressed: () {
-                                                        Navigator.push(context,MaterialPageRoute(builder: (context) => challengeScreen()),);
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ChallengeScreen(
+                                                                    challenge:
+                                                                        challenge),
+                                                          ),
+                                                        );
                                                       },
                                                       style:
                                                           TextButton.styleFrom(
                                                         backgroundColor:
-                                                            Color.fromRGBO(61, 143, 239, 1),
+                                                            const Color
+                                                                .fromRGBO(61,
+                                                                143, 239, 1),
                                                         shape:
                                                             RoundedRectangleBorder(
                                                           borderRadius:
