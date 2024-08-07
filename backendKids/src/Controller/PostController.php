@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use PHPUnit\Util\Json;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -168,8 +169,8 @@ class PostController extends AbstractController
         $title = $request->request->get('title');
         $content = $request->request->get('content');
         $mediaFile = $request->files->get('mediaFileName');
-        $categoryTitles = $request->request->get('categories');
-        print_r($categoryTitles);
+        $categoryTitlesJson  = $request->request->get('categories');
+        $categoryTitles = json_decode($categoryTitlesJson, true);
 
         if (!$title || !$content) {
             return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
@@ -193,17 +194,16 @@ class PostController extends AbstractController
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
         }
 
-        if ($categoryTitles) {
-            $categoryTitlesArray = explode(',', $categoryTitles);
+        if (is_array($categoryTitles)) {
 
-            foreach ($categoryTitlesArray as $categoryTitle) {
-                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => trim($categoryTitle)]);
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
                 if ($category) {
                     $post->addCategory($category);
                 }
             }
         } else {
-            return new JsonResponse(['message' => 'File upload categories.', 'data' => $categoryTitles]);
+            return new JsonResponse("failed to load categories");
         }
 
 
