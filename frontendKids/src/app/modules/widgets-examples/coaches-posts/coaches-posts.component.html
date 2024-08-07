@@ -12,7 +12,7 @@
       data-bs-trigger="hover"
       title="Click to add a user"
     >
-      <a href="#" class="btn btn-sm btn-light-primary">
+      <a class="btn btn-sm btn-light-primary" (click)="open(content)">
         <span
           [inlineSVG]="'./assets/media/icons/duotune/arrows/arr075.svg'"
           class="svg-icon svg-icon-3"
@@ -123,7 +123,6 @@
                   ></span>
                 </a>
                 <a
-                  (click)="open()"
                   class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                 >
                   <span
@@ -155,98 +154,84 @@
   <!-- begin::Body -->
 </div>
 <ng-template #content let-modal class="card mb-5 mb-xl-10">
-  <div
-    class="modal-title card-header border-0 cursor-pointer"
-    id="modal-basic-title"
-    role="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#kt_account_profile_details"
-    aria-expanded="true"
-    aria-controls="kt_account_profile_details"
-  >
-    <div class="card-title m-0">
-      <h3 class="fw-bolder m-0 p-5">Profile Details</h3>
-    </div>
-  </div>
+  <!-- ... existing modal header ... -->
   <div
     id="kt_account_profile_details"
     class="collapse show modal-body modal-xl"
   >
-    <form novalidate="" class="form" (ngSubmit)="savepost()">
+    <form novalidate class="form" (ngSubmit)="addPost()">
       <div class="card-body border-top p-9">
         <div class="row mb-6">
-          <label class="col-lg-4 col-form-label required fw-bold fs-6"
-            >Full Name</label
+          <label
+            for="title"
+            class="col-lg-4 col-form-label required fw-bold fs-6"
+            >Title:</label
           >
           <div class="col-lg-8 fv-row">
             <input
               type="text"
-              id="fullname"
-              [(ngModel)]="selectedpost.fullName"
-              name="fullname"
+              id="title"
+              [(ngModel)]="title"
+              name="title"
               class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
-              required
             />
           </div>
         </div>
         <div class="row mb-6">
-          <label class="col-lg-4 col-form-label required fw-bold fs-6"
-            >Email</label
+          <label
+            for="postcontent"
+            class="col-lg-4 col-form-label required fw-bold fs-6"
+            >Content:</label
           >
           <div class="col-lg-8 fv-row">
             <input
-              type="email"
-              id="email"
-              [(ngModel)]="selectedpost.email"
-              name="email"
-              class="form-control form-control-lg form-control-solid"
-              required
+              type="text"
+              id="postcontent"
+              [(ngModel)]="content"
+              name="content"
+              class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
             />
           </div>
         </div>
         <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-bold fs-6"
-            ><span class="required">New Password</span></label
+          <label for="fileadd" class="col-lg-4 col-form-label fw-bold fs-6"
+            >Add a media file (video, picture...):</label
           >
           <div class="col-lg-8 fv-row">
             <input
-              type="password"
-              id="password"
-              [(ngModel)]="selectedpost.password"
-              name="password"
+              type="file"
+              id="fileadd"
+              (change)="onFileSelected($event)"
+              name="mediaFileName"
               class="form-control form-control-lg form-control-solid"
             />
           </div>
         </div>
         <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-bold fs-6"
-            ><span class="required password">Confirm New Password</span></label
-          >
+          <label class="col-lg-4 col-form-label fw-bold fs-6">Category:</label>
           <div class="col-lg-8 fv-row">
-            <input
-              type="password"
-              id="confirmPassword"
-              [(ngModel)]="confirmPassword"
-              name="confirmPassword"
-              class="form-control form-control-lg form-control-solid"
-            />
+            <div *ngFor="let category of truecategories; let i = index">
+              <input
+                type="checkbox"
+                id="category-{{ i }}"
+                [checked]="category.selected"
+                (change)="onCategoryChange(category)"
+                name="category-{{ i }}"
+                class="form-check-input me-1"
+              />
+              <label for="category-{{ i }}" class="form-check-label">
+                {{ category.title }}
+              </label>
+            </div>
           </div>
         </div>
       </div>
       <div class="card-footer d-flex justify-content-end py-6 px-9">
-        <button
-          type="submit"
-          class="btn btn-primary m-2"
-          (click)="modal.close('Save click')"
-        >
-          Save Changes
-        </button>
+        <button type="submit" class="btn btn-primary m-2">Save Changes</button>
         <button
           type="button"
-          class="btn-close"
-          aria-label="Close"
+          class="btn btn-secondary m-2"
           (click)="modal.dismiss('Cross click')"
-          class="btn btn-primary m-2"
         >
           Cancel
         </button>
