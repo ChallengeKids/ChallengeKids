@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set background color to white
       body: _buildBody(),
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: _selectedIndex,
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const searcheScreen();
       case 2:
-        return const searcheScreen();
+        return const Center(child: Text("Home Screen"));
       case 3:
         return const ProfilePage1();
       default:
@@ -53,7 +54,7 @@ final _navBarItems = [
   SalomonBottomBarItem(
     icon: const Icon(Icons.home),
     title: const Text("Home"),
-    selectedColor: Color.fromRGBO(61, 143, 239, 1),
+    selectedColor: const Color.fromRGBO(61, 143, 239, 1),
   ),
   SalomonBottomBarItem(
     icon: const Icon(Icons.favorite_border),
