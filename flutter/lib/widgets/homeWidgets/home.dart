@@ -1,5 +1,7 @@
 import 'package:challange_kide/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'challenge.dart';
 
 class homeScreen extends StatefulWidget {
@@ -24,13 +26,14 @@ class _homeScreenState extends State<homeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set background color to white
       body: CustomScrollView(
         slivers: [
           // Fixed header section
           SliverAppBar(
             pinned: true,
             expandedHeight: 120.0, // Adjust height as needed
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            backgroundColor: Colors.white, // Set background color to white
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: [
@@ -232,7 +235,14 @@ class _homeScreenState extends State<homeScreen> {
                                     margin: const EdgeInsets.only(
                                         left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                      color: Colors.white, // Set background color to white
                                       border: Border.all(
                                           color: const Color(0xFFE0E0E0)),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -251,7 +261,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),

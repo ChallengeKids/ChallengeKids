@@ -32,9 +32,9 @@ class ProfilePage1 extends StatelessWidget {
                         },
                         heroTag: 'Logout',
                         elevation: 0,
-                        backgroundColor: const Color.fromARGB(255, 225, 225, 225),
-                        label: const Text("Log out", style: TextStyle(color: Colors.black)),
-                        icon: const Icon(Icons.logout, color: Colors.black),
+                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                        label: const Text("Log out", style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+                        icon: const Icon(Icons.logout, color: Color.fromARGB(255, 255, 255, 255)),
                       ),
                     ],
                   ),
@@ -199,8 +199,8 @@ class _TopPortion extends StatelessWidget {
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
-                Color.fromARGB(255, 225, 225, 225),
-                Color.fromARGB(255, 225, 225, 225),
+                Color.fromRGBO(61, 143, 239, 1),
+                Color.fromRGBO(172, 215, 255, 1),
               ],
             ),
             borderRadius: BorderRadius.only(
