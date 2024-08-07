@@ -20,6 +20,7 @@ import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
 import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
+import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
     LessonComponent,
     KidComponent,
     CoachesPostsComponent,
+    CoachLessonComponent
   ],
   imports: [
     CommonModule,
