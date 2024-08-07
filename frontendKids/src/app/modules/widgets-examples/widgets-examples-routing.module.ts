@@ -15,6 +15,7 @@ import { ChapterComponent } from "./chapter/chapter.component";
 import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
 import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
+import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     component: WidgetsExamplesComponent,
     children: [
       { path: "coachesposts", component: CoachesPostsComponent },
+      {path: "coachLessons", component: CoachLessonComponent},
       {
         path: "lists",
         component: ListsComponent,

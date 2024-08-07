@@ -18,7 +18,7 @@ declare var $: any;
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
 })
-export class CoachesPostsComponent {
+export class CoachesPostsComponent implements OnInit, AfterViewInit{
   posts: any;
   constructor(
     private httpservice: HttpserviceService,

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Form\LessonType;
 use App\Repository\LessonRepository;
 use App\Repository\PostRepository;
@@ -87,14 +88,6 @@ class LessonController extends AbstractController
         return new JsonResponse(true);
     }
 
-    #[Route('/{title}', name: 'lesson_show', methods: ['GET'])]
-    public function show($title, LessonRepository $lessonRepository): Response
-    {
-        $lesson = $lessonRepository->findOneBy(['title' => $title]);
-        $lesson = $this->lessonService->lessonToJson($lesson);
-        return new JsonResponse($lesson);
-    }
-
     #[Route('/{id}/edit', name: 'lesson_edit', methods: ['PUT'])]
     #[OA\RequestBody(
         required: true,
@@ -149,7 +142,7 @@ class LessonController extends AbstractController
             ]
         )
     )]
-    public function addLesson($id, Request $request, PostRepository $postRepository, LessonRepository $lessonRepository): JsonResponse
+    public function addPost($id, Request $request, PostRepository $postRepository, LessonRepository $lessonRepository): JsonResponse
     {
         $lesson = $lessonRepository->find($id);
         $data = json_decode($request->getContent(), true);
@@ -158,5 +151,24 @@ class LessonController extends AbstractController
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
         return new JsonResponse(true);
+    }
+
+    #[Route('/postswithoutlessons', name: 'my_posts_without_lesson', methods: ['GET'])]
+    public function myPostsWithoutLesson(PostRepository $postRepository): JsonResponse
+    {
+
+        $user = $this->security->getUser();
+
+        $posts = $postRepository->findPostsByUserWithNullLesson($user);
+
+        $postData = [];
+        foreach ($posts as $post) {
+            $postData[] = [
+                'id' => $post->getId(),
+                'title' => $post->getTitle(),
+            ];
+        }
+
+        return new JsonResponse($postData);
     }
 }
