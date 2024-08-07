@@ -14,17 +14,12 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PostService
 {
-    private $entityManager;
-    private $slugger;
-    private $params;
+  
     private $categoryService;
 
-    public function __construct(EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $params,CategoryService $categoryService)
+    public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
-        $this->entityManager = $entityManager;
-        $this->slugger = $slugger;
-        $this->params = $params;
     }
     public function postToJson(Post $post)
     {

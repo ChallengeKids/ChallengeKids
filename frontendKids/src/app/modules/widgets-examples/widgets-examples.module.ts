@@ -21,6 +21,8 @@ import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
 import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
+import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
+import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
     LessonComponent,
     KidComponent,
     CoachesPostsComponent,
-    CoachLessonComponent
+    CoachLessonComponent,
+    CoachChapterComponent,
+    CoachchallengeComponent,
   ],
   imports: [
     CommonModule,

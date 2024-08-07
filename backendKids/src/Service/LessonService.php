@@ -3,11 +3,17 @@
 namespace App\Service;
 
 use App\Entity\Lesson;
+class LessonService{
+    
+    private $postService;
 
-class LessonService
-{
-    public function lessonToJson(Lesson $lesson)
+    public function __construct(PostService $postService)
     {
+        $this->postService = $postService;
+    }
+public function lessonToJson(Lesson $lesson)
+    {
+        $post=$lesson->getPost();
         return [
             'id' => $lesson->getId(),
             'title' => $lesson->getTitle(),
@@ -15,8 +21,9 @@ class LessonService
             'lessonNumber' => $lesson->getLessonNumber(),
             'chapter' => $lesson->getChapter(),
             'category' => $lesson->getCategories(),
-            'post' => $lesson->getPost(),
-            'quiz' => $lesson->getQuiz(),
-        ];
+            'post' => $post ? $this->postService->postToJson($post) : null,
+            'quiz' => $lesson->getQuiz()];
+        }
+
+        
     }
-}
