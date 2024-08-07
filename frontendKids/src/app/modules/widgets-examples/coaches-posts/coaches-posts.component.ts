@@ -18,9 +18,8 @@ declare var $: any;
 @Component({
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
-  styleUrls: ['./coaches-posts.component.scss']
 })
-export class CoachesPostsComponent implements OnInit, AfterViewInit {
+export class CoachesPostsComponent implements AfterViewInit, OnInit{
   title: string = "";
   thecontent: string = "";
   mediaFile: File | null = null;
@@ -45,15 +44,14 @@ export class CoachesPostsComponent implements OnInit, AfterViewInit {
   }
 
   addPost() {
+    console.log(this.Categories);
     const formData = new FormData();
     formData.append("title", this.title);
     formData.append("content", this.thecontent);
     if (this.mediaFile) {
       formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
     }
-    for (let i = 0; i < this.Categories.length; i++) {
-      formData.append("categories[]", this.Categories[i]);
-    }
+    formData.append("categories", JSON.stringify(this.Categories));
 
     // Log form data for debugging
     formData.forEach((value, key) => {
@@ -72,14 +70,25 @@ export class CoachesPostsComponent implements OnInit, AfterViewInit {
     );
   }
   onCategoryChange(category: { id: number; title: string; selected: boolean }) {
+    console.log(
+      "Category changed:",
+      category.title,
+      "Selected:",
+      category.selected
+    );
+
     if (category.selected) {
-      this.Categories.push(category.title);
+      if (!this.Categories.includes(category.title)) {
+        this.Categories.push(category.title);
+      }
     } else {
       const index = this.Categories.indexOf(category.title);
       if (index !== -1) {
         this.Categories.splice(index, 1);
       }
     }
+
+    console.log("Current Categories:", this.Categories);
   }
 
   async ngOnInit() {
@@ -137,7 +146,7 @@ export class CoachesPostsComponent implements OnInit, AfterViewInit {
       case ModalDismissReasons.BACKDROP_CLICK:
         return "by clicking on a backdrop";
       default:
-        return `with: ${reason}`;
+        return `with: ${reason}` ;
     }
   }
 }
