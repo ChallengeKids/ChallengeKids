@@ -18,8 +18,9 @@ declare var $: any;
 @Component({
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
+  styleUrls: ['./coaches-posts.component.scss']
 })
-export class CoachesPostsComponent {
+export class CoachesPostsComponent implements OnInit, AfterViewInit {
   title: string = "";
   thecontent: string = "";
   mediaFile: File | null = null;

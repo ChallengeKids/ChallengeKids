@@ -211,17 +211,14 @@
           <label class="col-lg-4 col-form-label fw-bold fs-6">Category:</label>
           <div class="col-lg-8 fv-row">
             <div *ngFor="let category of truecategories; let i = index">
-              <input
-                type="checkbox"
-                id="category-{{ i }}"
-                [checked]="category.selected"
-                (change)="onCategoryChange(category)"
-                name="category-{{ i }}"
-                class="form-check-input me-1"
-              />
-              <label for="category-{{ i }}" class="form-check-label">
+              <button
+                type="button"
+                (click)="category.selected = !category.selected"
+                [class.selected]="category.selected"
+                class="category-button"
+              >
                 {{ category.title }}
-              </label>
+              </button>
             </div>
           </div>
         </div>

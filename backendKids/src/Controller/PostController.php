@@ -169,6 +169,7 @@ class PostController extends AbstractController
         $content = $request->request->get('content');
         $mediaFile = $request->files->get('mediaFileName');
         $categoryTitles = $request->request->get('categories');
+        print_r($categoryTitles);
 
         if (!$title || !$content) {
             return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
@@ -201,6 +202,8 @@ class PostController extends AbstractController
                     $post->addCategory($category);
                 }
             }
+        } else {
+            return new JsonResponse(['message' => 'File upload categories.', 'data' => $categoryTitles]);
         }
 
 
