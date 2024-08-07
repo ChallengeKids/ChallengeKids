@@ -30,7 +30,7 @@ class _homeScreenState extends State<homeScreen> {
           SliverAppBar(
             pinned: true,
             expandedHeight: 120.0, // Adjust height as needed
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: [
@@ -232,8 +232,7 @@ class _homeScreenState extends State<homeScreen> {
                                     margin: const EdgeInsets.only(
                                         left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
-                                      color: const Color.fromRGBO(
-                                          234, 244, 255, 1),
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                       border: Border.all(
                                           color: const Color(0xFFE0E0E0)),
                                       borderRadius: BorderRadius.circular(8.0),

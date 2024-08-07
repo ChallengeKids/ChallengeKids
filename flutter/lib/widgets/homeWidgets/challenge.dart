@@ -14,14 +14,14 @@ class ChallengeScreen extends StatelessWidget {
             const Size.fromHeight(100.0), // Set the desired height here
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
-          child: SizedBox(
+          child: Container(
             width: double.infinity, // Make the container span the full width
             child: AppBar(
               backgroundColor:
                   const Color.fromARGB(255, 255, 255, 255), // Remove shadow
               leading: Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: SizedBox(
+                child: Container(
                   width: 60, // Desired width
                   height: 60, // Height to match width or desired size
                   child: TextButton(
@@ -82,8 +82,9 @@ class ChallengeScreen extends StatelessWidget {
                       offset: Offset(0, 2),
                     ),
                   ],
-                  image: const DecorationImage(
-                    image: AssetImage('image/BG.png'), // Background image
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'), // Background image
                     fit: BoxFit.cover, // Adjust the fit as needed
                   ),
                 ),
@@ -136,20 +137,80 @@ class ChallengeScreen extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          chapter.title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        // Circular Icon with background
+                        Container(
+                          margin: const EdgeInsets.only(
+                              right: 16.0), // Adjusted margin for more space
+                          width: 50,
+                          height: 50,
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(61, 143, 239, 1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              size: 30,
+                              Icons.play_lesson_outlined,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              // Handle icon button tap
+                            },
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          chapter.description,
-                          style: const TextStyle(fontSize: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                chapter.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                chapter.description,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                            width: 20), // Space between text and button
+                        // Learn More Button
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: TextButton(
+                            onPressed: () {
+                              // Handle Learn More button tap
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(61, 143, 239, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
