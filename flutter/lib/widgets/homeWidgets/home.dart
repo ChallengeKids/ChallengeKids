@@ -1,14 +1,15 @@
 import 'package:challange_kide/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'challenge.dart';
 
-class NewsFeedPage2 extends StatefulWidget {
-  const NewsFeedPage2({super.key});
+class homeScreen extends StatefulWidget {
+  const homeScreen({super.key});
 
   @override
-  _NewsFeedPage2State createState() => _NewsFeedPage2State();
+  _homeScreenState createState() => _homeScreenState();
 }
 
-class _NewsFeedPage2State extends State<NewsFeedPage2> {
+class _homeScreenState extends State<homeScreen> {
   final ApiService apiService = ApiService();
   late Future<List<Category>> categoriesFuture;
   late Future<List<Challenge>> challengesFuture;
@@ -249,7 +250,7 @@ class _NewsFeedPage2State extends State<NewsFeedPage2> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),
@@ -306,17 +307,12 @@ class _NewsFeedPage2State extends State<NewsFeedPage2> {
                                                         40, // Adjust height as needed
                                                     child: TextButton(
                                                       onPressed: () {
-                                                        // Handle Learn More button tap
+                                                        Navigator.push(context,MaterialPageRoute(builder: (context) => challengeScreen()),);
                                                       },
                                                       style:
                                                           TextButton.styleFrom(
                                                         backgroundColor:
-                                                            const Color
-                                                                .fromRGBO(
-                                                                61,
-                                                                143,
-                                                                239,
-                                                                1), // Text color
+                                                            Color.fromRGBO(61, 143, 239, 1),
                                                         shape:
                                                             RoundedRectangleBorder(
                                                           borderRadius:

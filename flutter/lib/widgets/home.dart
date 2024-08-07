@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'homeWidgets/home.dart';
 import 'homeWidgets/profile.dart';
+import 'homeWidgets/challenge.dart';
+import 'homeWidgets/search.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,11 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_selectedIndex) {
       case 0:
-        return const NewsFeedPage2();
+        return const homeScreen();
       case 1:
-        return const Center(child: Text("Search favoir"));
+        return const challengeScreen();
       case 2:
-        return const Center(child: Text("Search Screen"));
+        return const searcheScreen();
       case 3:
         return const ProfilePage1();
       default:
