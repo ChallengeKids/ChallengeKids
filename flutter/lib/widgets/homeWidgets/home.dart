@@ -227,8 +227,7 @@ class _homeScreenState extends State<homeScreen> {
                               return Column(
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8.0),
+                                    margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
                                       color: const Color.fromRGBO(
                                           234, 244, 255, 1),

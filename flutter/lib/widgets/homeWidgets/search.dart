@@ -87,7 +87,7 @@ Expanded(
                   height: 160,
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromRGBO(234, 244, 255, 1), // Background color from the first snippet
+                    color: const Color.fromRGBO(234, 244, 255, 1),
                     border: Border.all(color: const Color(0xFFE0E0E0)),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -95,19 +95,16 @@ Expanded(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Container(
-                            width: 130,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(15.0),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
-                                ),
+                        Container(
+                          width: 130,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(15.0),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
                               ),
                             ),
                           ),
@@ -120,27 +117,17 @@ Expanded(
                               children: [
                                 Text(
                                   challenge.title,
-                                  style: const TextStyle(fontWeight: FontWeight.bold ,fontSize: 20),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(challenge.description,
-                                style: const TextStyle(fontSize: 14),),
-                                const SizedBox(height: 2),
-                                Row(
-                                  children: [
-                                    Text(
-                                      challenge.description,
-                                      style: const TextStyle(fontSize: 15),
-                                    ),
-                                    const SizedBox(width: 8), // Increased the width for more noticeable spacing
-                                    Text(
-                                      challenge.description,
-                                      style: const TextStyle(fontSize: 15),
-                                    ),
-                                  ],
-                                )
+                                const SizedBox(height: 8),
+                                Text(
+                                  challenge.description,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 8),
+                                // Remove redundant Row or use for additional data
                               ],
                             ),
                           ),
@@ -157,6 +144,7 @@ Expanded(
     },
   ),
 ),
+
 
         ],
       ),
