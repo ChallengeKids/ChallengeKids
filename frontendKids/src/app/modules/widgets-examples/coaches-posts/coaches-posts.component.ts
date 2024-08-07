@@ -19,7 +19,7 @@ declare var $: any;
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
 })
-export class CoachesPostsComponent implements AfterViewInit, OnInit{
+export class CoachesPostsComponent implements AfterViewInit, OnInit {
   title: string = "";
   thecontent: string = "";
   mediaFile: File | null = null;
@@ -68,6 +68,7 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit{
         // Handle error (e.g., show an error message)
       }
     );
+    window.location.reload();
   }
   onCategoryChange(category: { id: number; title: string; selected: boolean }) {
     console.log(
@@ -146,7 +147,7 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit{
       case ModalDismissReasons.BACKDROP_CLICK:
         return "by clicking on a backdrop";
       default:
-        return `with: ${reason}` ;
+        return `with: ${reason}`;
     }
   }
 }

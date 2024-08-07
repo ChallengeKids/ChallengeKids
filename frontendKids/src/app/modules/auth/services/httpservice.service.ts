@@ -27,6 +27,11 @@ export class HttpserviceService {
     return this.http.delete(`${environment.backednUrl}${endPoint}`);
   }
   put(endPoint: string, body: object) {
-    return this.http.put(`${environment.backednUrl}${endPoint}`, body);
+    const auth = this.authservice.getAuthFromLocalStorage();
+    const httpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${auth?.authToken}`,
+    });
+    const params = { headers: httpHeaders };
+    return this.http.put(`${environment.backednUrl}${endPoint}`, body, params);
   }
 }

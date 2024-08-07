@@ -16,6 +16,8 @@ import { LessonComponent } from "./lesson/lesson.component";
 import { KidComponent } from "./kid/kid.component";
 import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
+import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
+import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 
 const routes: Routes = [
   {
@@ -23,10 +25,18 @@ const routes: Routes = [
     component: WidgetsExamplesComponent,
     children: [
       { path: "coachesposts", component: CoachesPostsComponent },
-      {path: "coachLessons", component: CoachLessonComponent},
+      { path: "coachLessons", component: CoachLessonComponent },
       {
         path: "lists",
         component: ListsComponent,
+      },
+      {
+        path: "chapters",
+        component: CoachChapterComponent,
+      },
+      {
+        path: "challenges",
+        component: CoachchallengeComponent,
       },
       {
         path: "kids",
