@@ -19,6 +19,7 @@ declare var $: any;
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
 })
+
 export class CoachesPostsComponent {
   title: string = "";
   content: string = "";
