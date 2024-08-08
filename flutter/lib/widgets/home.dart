@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'homeWidgets/home.dart';
 import 'homeWidgets/profile.dart';
 import 'homeWidgets/challenge.dart';
+import 'homeWidgets/test.dart';
 import 'homeWidgets/search.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const searcheScreen();
       case 2:
-        return const Center(child: Text("Home Screen"));
+        return const TestBg();
       case 3:
         return const ProfilePage1();
       default:
