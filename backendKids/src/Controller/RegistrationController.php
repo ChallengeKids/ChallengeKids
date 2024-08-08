@@ -35,6 +35,8 @@ class RegistrationController extends AbstractController
     {
 
         $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(RegistrationFormType::class);
+        $form->submit($data);
 
         if ($data === null) {
             return new JsonResponse(['message' => 'Invalid JSON data']);
@@ -44,9 +46,6 @@ class RegistrationController extends AbstractController
 
         $user->setFullName($data['fullName']);
         $user->setEmail($data['email']);
-        if ($data['plainPassword'] != $data['confirmPassword']) {
-            return new JsonResponse(['message' => 'Passwords dont match']);
-        }
 
         $user->setPassword(
             $userPasswordHasher->hashPassword(
@@ -54,14 +53,12 @@ class RegistrationController extends AbstractController
                 $data['plainPassword']
             )
         );
-
+        $user->setBirthDate(!empty($data['birthDate']) ? new \DateTimeImmutable($data['birthDate']) : null);
         $user->setRegistrationDate(new \DateTime());
 
         $entityManager->persist($user);
         $entityManager->flush();
-        return new JsonResponse(true);
-
-        return new JsonResponse(false);
+        return new JsonResponse(["success" => true]);
     }
 
     #[Route('/registerAdmin', name: 'app_register_admin', methods: ['POST'])]
@@ -105,8 +102,7 @@ class RegistrationController extends AbstractController
 
         $entityManager->persist($user);
         $entityManager->flush();
-        return new JsonResponse(true);
 
-        return new JsonResponse(false);
+        return new JsonResponse(["success" => true]);
     }
 }
