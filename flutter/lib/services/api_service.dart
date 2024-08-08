@@ -1,4 +1,3 @@
-// lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -48,7 +47,23 @@ class ApiService {
       throw Exception('Failed to load Lessons');
     }
   }
+
+  Future<bool> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/login_check'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return true;//data['success'] ?? false; // Check if 'success' key exists and return its value
+    } else {
+      throw Exception('Failed to log in');
+    }
+  }
 }
+
 
 // lib/models/challenge.dart
 class Challenge {
