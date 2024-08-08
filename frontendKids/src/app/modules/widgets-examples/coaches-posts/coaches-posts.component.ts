@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { lastValueFrom, of } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
 import {
   OnInit,
@@ -18,7 +18,9 @@ declare var $: any;
 @Component({
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
+  styleUrls : ["./coaches-posts.component.scss"],
 })
+
 export class CoachesPostsComponent implements AfterViewInit, OnInit {
   title: string = "";
   thecontent: string = "";
@@ -44,7 +46,8 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
   }
 
   addPost() {
-    console.log(this.Categories);
+    console.log("Categories to be added:", this.Categories); // Debugging step
+  
     const formData = new FormData();
     formData.append("title", this.title);
     formData.append("content", this.thecontent);
@@ -52,12 +55,12 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
       formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
     }
     formData.append("categories", JSON.stringify(this.Categories));
-
+  
     // Log form data for debugging
     formData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
     });
-
+  
     this.httpservice.post("/api/post/user/new", formData).subscribe(
       (response) => {
         console.log("Post added successfully", response);
@@ -70,14 +73,18 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
     );
     window.location.reload();
   }
+  
+  
   onCategoryChange(category: { id: number; title: string; selected: boolean }) {
+    category.selected = !category.selected; // Toggle the selected state
+  
     console.log(
       "Category changed:",
       category.title,
       "Selected:",
       category.selected
     );
-
+  
     if (category.selected) {
       if (!this.Categories.includes(category.title)) {
         this.Categories.push(category.title);
@@ -88,7 +95,7 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
         this.Categories.splice(index, 1);
       }
     }
-
+  
     console.log("Current Categories:", this.Categories);
   }
 
@@ -114,6 +121,7 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
       console.error("Error fetching categories:", error);
     }
   }
+
   async delete(id: any) {
     try {
       const response = await lastValueFrom(

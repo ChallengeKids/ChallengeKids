@@ -31,11 +31,11 @@ const routes: Routes = [
         component: ListsComponent,
       },
       {
-        path: "chapters",
+        path: "coachchapters",
         component: CoachChapterComponent,
       },
       {
-        path: "challenges",
+        path: "coachchallenges",
         component: CoachchallengeComponent,
       },
       {

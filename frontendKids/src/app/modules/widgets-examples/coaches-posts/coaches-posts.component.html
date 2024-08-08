@@ -28,6 +28,7 @@
     <div class="table-responsive">
       <!-- begin::Table -->
       <table
+        *ngIf="posts"
         #dataTable
         id="example"
         class="table table-row-gray-300 align-middle gs-0 gy-4"
@@ -156,7 +157,7 @@
     id="kt_account_profile_details"
     class="collapse show modal-body modal-xl"
   >
-    <form novalidate class="form" (ngSubmit)="addPost()">
+    <form novalidate class="form">
       <div class="card-body border-top p-9">
         <div class="row mb-6">
           <label
@@ -206,26 +207,30 @@
         </div>
         <div class="row mb-6">
           <label class="col-lg-4 col-form-label fw-bold fs-6">Category:</label>
-          <div class="col-lg-8 fv-row">
-            <div *ngFor="let category of truecategories; let i = index">
-              <input
-                type="checkbox"
-                id="category-{{ i }}"
-                [(ngModel)]="category.selected"
-                (change)="onCategoryChange(category)"
-                name="category-{{ i }}"
-                class="form-check-input me-1"
-              />
-              <label for="category-{{ i }}" class="form-check-label">
+          <div class="btn-group" role="group" aria-label="Category selection">
+            <ng-container
+              *ngFor="let category of truecategories; let i = index"
+            >
+              <button
+                type="button"
+                class="btn"
+                [ngClass]="{
+                  'btn-primary': category.selected,
+                  'btn-outline-primary': !category.selected
+                }"
+                (click)="onCategoryChange(category)"
+              >
                 {{ category.title }}
-              </label>
-            </div>
+              </button>
+            </ng-container>
           </div>
         </div>
       </div>
 
       <div class="card-footer d-flex justify-content-end py-6 px-9">
-        <button type="submit" class="btn btn-primary m-2">Save Changes</button>
+        <button type="submit" (click)="addPost()" class="btn btn-primary m-2">
+          Save Changes
+        </button>
         <button
           type="button"
           class="btn btn-secondary m-2"
