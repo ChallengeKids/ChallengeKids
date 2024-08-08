@@ -236,13 +236,14 @@ class _homeScreenState extends State<homeScreen> {
                                         left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
                                       boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                      color: Colors.white, // Set background color to white
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                      color: Colors
+                                          .white, // Set background color to white
                                       border: Border.all(
                                           color: const Color(0xFFE0E0E0)),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -261,7 +262,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),

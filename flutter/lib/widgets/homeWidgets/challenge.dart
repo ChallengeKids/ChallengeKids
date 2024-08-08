@@ -36,12 +36,6 @@ class ChallengeScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: EdgeInsets.zero, // Remove default padding
-                    ),
-                    child: const Icon(
-                      Icons.keyboard_arrow_left,
-                      color: Colors.white,
-                      size: 30, // Icon size
                     ),
                   ),
                 ),
@@ -90,33 +84,9 @@ class ChallengeScreen extends StatelessWidget {
                     fit: BoxFit.cover, // Adjust the fit as needed
                   ),
                 ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    challenge.title,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    challenge.description,
-                    style: const TextStyle(fontSize: 15),
-                  ),
+                actions: [
+                  // Empty container to keep title centered
+                  Container(width: 48), // Adjust width as needed
                 ],
               ),
             ),

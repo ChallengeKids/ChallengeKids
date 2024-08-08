@@ -7,6 +7,7 @@ import { AuthService } from "./auth.service";
 })
 export class HttpserviceService {
   constructor(private http: HttpClient, private authservice: AuthService) {}
+
   get(endPoint: string) {
     const auth = this.authservice.getAuthFromLocalStorage();
     const httpHeaders = new HttpHeaders({
@@ -15,6 +16,7 @@ export class HttpserviceService {
     const params = { headers: httpHeaders };
     return this.http.get(`${environment.backednUrl}${endPoint}`, params);
   }
+
   post(endPoint: string, body: object) {
     const auth = this.authservice.getAuthFromLocalStorage();
     const httpHeaders = new HttpHeaders({
@@ -23,6 +25,7 @@ export class HttpserviceService {
     const params = { headers: httpHeaders };
     return this.http.post(`${environment.backednUrl}${endPoint}`, body, params);
   }
+  
   delete(endPoint: string) {
     return this.http.delete(`${environment.backednUrl}${endPoint}`);
   }
