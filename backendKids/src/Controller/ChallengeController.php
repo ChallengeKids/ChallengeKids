@@ -49,6 +49,18 @@ class ChallengeController extends AbstractController
         return new JsonResponse($listJson);
     }
 
+    #[Route('/coach', name: 'challenge_coach_show', methods: ['GET'])]
+    public function getCoachChallenges(ChallengeRepository $challengeRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        $listJson = [];
+        $list = $challengeRepository->findBy(["coach" => $user]);
+        foreach ($list as $key => $value) {
+            $listJson[$key] = $this->challengeService->challengeToJson($value);
+        }
+        return new JsonResponse($listJson);
+    }
+
     #[Route('/{id}', name: 'challenge_show', methods: ['GET'])]
     public function show(ChallengeRepository $challengeRepository, $id): JsonResponse
     {

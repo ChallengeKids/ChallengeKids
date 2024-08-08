@@ -10,20 +10,21 @@ class ChallengeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color of the Scaffold to white
+      backgroundColor:
+          Colors.white, // Set the background color of the Scaffold to white
       appBar: PreferredSize(
         preferredSize:
             const Size.fromHeight(100.0), // Set the desired height here
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
-          child: Container(
+          child: SizedBox(
             width: double.infinity, // Make the container span the full width
             child: AppBar(
-              backgroundColor:
-                  const Color.fromARGB(255, 255, 255, 255), // AppBar background color
+              backgroundColor: const Color.fromARGB(
+                  255, 255, 255, 255), // AppBar background color
               leading: Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: Container(
+                child: SizedBox(
                   width: 60, // Desired width
                   height: 60, // Height to match width or desired size
                   child: TextButton(
@@ -36,6 +37,12 @@ class ChallengeScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      padding: EdgeInsets.zero, // Remove default padding
+                    ),
+                    child: const Icon(
+                      Icons.keyboard_arrow_left,
+                      color: Colors.white,
+                      size: 30, // Icon size
                     ),
                   ),
                 ),
@@ -84,9 +91,33 @@ class ChallengeScreen extends StatelessWidget {
                     fit: BoxFit.cover, // Adjust the fit as needed
                   ),
                 ),
-                actions: [
-                  // Empty container to keep title centered
-                  Container(width: 48), // Adjust width as needed
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    challenge.title,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    challenge.description,
+                    style: const TextStyle(fontSize: 15),
+                  ),
                 ],
               ),
             ),
@@ -97,7 +128,8 @@ class ChallengeScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final chapter = challenge.chapters[index];
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(234, 244, 255, 1),
                     border: Border.all(color: const Color(0xFFE0E0E0)),
@@ -167,17 +199,16 @@ class ChallengeScreen extends StatelessWidget {
                           child: TextButton(
                             onPressed: () {
                               Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                chapterScreen(
-                                                                    chapter:
-                                                                        chapter),
-                                                          ),
-                                                        );
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      chapterScreen(chapter: chapter),
+                                ),
+                              );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                              backgroundColor:
+                                  const Color.fromRGBO(61, 143, 239, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -201,12 +232,14 @@ class ChallengeScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0), // Left and right margins
+        padding: const EdgeInsets.symmetric(
+            horizontal: 30.0), // Left and right margins
         child: Container(
           height: 70.0, // Set the height for the BottomAppBar
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(61, 143, 239, 1), // Set the background color to white
-            borderRadius: const BorderRadius.only(
+          decoration: const BoxDecoration(
+            color: Color.fromRGBO(
+                61, 143, 239, 1), // Set the background color to white
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0), // Top-left border radius
               topRight: Radius.circular(30.0), // Top-right border radius
             ),
@@ -214,7 +247,7 @@ class ChallengeScreen extends StatelessWidget {
               BoxShadow(
                 color: Colors.black26, // Color of the shadow
                 blurRadius: 10.0, // Spread of the shadow
-                offset: const Offset(0, 4), // Shadow position
+                offset: Offset(0, 4), // Shadow position
               ),
             ],
           ),
