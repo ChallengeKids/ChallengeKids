@@ -1,13 +1,21 @@
-import { Component, OnInit, TemplateRef, inject, AfterViewInit, ElementRef, ViewChild, } from '@angular/core';
-import { ChallengeService } from './services/challenge.service';
-import { environment } from 'src/environments/environment';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  inject,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+} from "@angular/core";
+import { ChallengeService } from "./services/challenge.service";
+import { environment } from "src/environments/environment";
+import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 const API_USERS_URL = `${environment.backednUrl}`;
 declare var $: any;
 
 @Component({
-  selector: 'app-challenge',
-  templateUrl: './challenge.component.html',
+  selector: "app-challenge",
+  templateUrl: "./challenge.component.html",
 })
 export class ChallengeComponent implements OnInit, AfterViewInit {
   public challenges;
@@ -15,7 +23,7 @@ export class ChallengeComponent implements OnInit, AfterViewInit {
   public isViewing: boolean = false;
   backendUrl = API_USERS_URL;
   private modalService = inject(NgbModal);
-	closeResult = '';
+  closeResult = "";
 
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
 
@@ -26,26 +34,32 @@ export class ChallengeComponent implements OnInit, AfterViewInit {
   }
 
   open(content: TemplateRef<any>, challenge: any) {
-    this.selectedChallenge = {...challenge};
-		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered':true, 'size':'lg' }).result.then(
-			(result) => {
-				this.closeResult = `Closed with: ${result}`;
-			},
-			(reason) => {
-				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-			},
-		);
-	}
+    this.selectedChallenge = { ...challenge };
+    this.modalService
+      .open(content, {
+        ariaLabelledBy: "modal-basic-title",
+        centered: true,
+        size: "lg",
+      })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        }
+      );
+  }
   private getDismissReason(reason: any): string {
-		switch (reason) {
-			case ModalDismissReasons.ESC:
-				return 'by pressing ESC';
-			case ModalDismissReasons.BACKDROP_CLICK:
-				return 'by clicking on a backdrop';
-			default:
-				return `with: ${reason}`;
-		}
-	}
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return "by pressing ESC";
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return "by clicking on a backdrop";
+      default:
+        return `with: ${reason}`;
+    }
+  }
 
   ngOnInit() {
     this.loadChallenges();
@@ -57,31 +71,30 @@ export class ChallengeComponent implements OnInit, AfterViewInit {
         this.challenges = data;
       },
       (err) => {
-        console.error('Error fetching challenges:', err);
+        console.error("Error fetching challenges:", err);
       }
     );
   }
 
   deleteChallenge(id: number) {
-    this.challengeService.deleteChallenge(id)
-      .subscribe(
-        () => {
+    this.challengeService.deleteChallenge(id).subscribe(
+      () => {
+        this.challenges = this.challenges.filter(
+          (challenge) => challenge.id !== id
+        );
 
-          this.challenges = this.challenges.filter(challenge => challenge.id !== id);
+        console.log(`Challenge with ID ${id} deleted`);
 
-          console.log(`Challenge with ID ${id} deleted`);
+        alert("challenge deleted successfully!");
 
-          alert('challenge deleted successfully!');
+        window.location.reload();
+      },
+      (err) => {
+        console.log("Error deleting challenge:", err);
 
-          window.location.reload();
-        },
-        err => {
-
-          console.log('Error deleting challenge:', err);
-
-          alert('Error deleting challenge. Please try again later.');
-        }
-      );
+        alert("Error deleting challenge. Please try again later.");
+      }
+    );
   }
 
   viewChallenge(challengeId: number) {
@@ -91,9 +104,8 @@ export class ChallengeComponent implements OnInit, AfterViewInit {
         this.isViewing = true;
       },
       (err) => {
-        console.error('Error fetching challenge details:', err);
+        console.error("Error fetching challenge details:", err);
       }
     );
   }
-
 }
