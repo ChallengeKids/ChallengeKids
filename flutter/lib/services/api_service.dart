@@ -93,7 +93,6 @@ class ApiService {
   }
 }
 
-// lib/models/challenge.dart
 class Challenge {
   final int id;
   final String title;

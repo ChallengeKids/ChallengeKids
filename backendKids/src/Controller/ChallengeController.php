@@ -163,9 +163,11 @@ class ChallengeController extends AbstractController
         $title = $request->request->get('title');
         $description = $request->request->get('description');
         $imageFile = $request->files->get('imageFileName');
-        $categoryTitles = $request->request->get('categories');
-        $challenge = new Challenge();
+        $categoryTitlesJson  = $request->request->get('categories');
+        $categoryTitles = json_decode($categoryTitlesJson, true);
 
+
+        $challenge = new Challenge();
         $challenge->setTitle($title);
         $challenge->setDescription($description);
         $challenge->setCoach($user);
@@ -185,15 +187,16 @@ class ChallengeController extends AbstractController
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
         }
 
-        if ($categoryTitles) {
-            $categoryTitlesArray = explode(',', $categoryTitles);
+        if (is_array($categoryTitles)) {
 
-            foreach ($categoryTitlesArray as $categoryTitle) {
-                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => trim($categoryTitle)]);
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
                 if ($category) {
                     $challenge->addCategory($category);
                 }
             }
+        } else {
+            return new JsonResponse("failed to load categories");
         }
 
         $this->entityManager->persist($challenge);
