@@ -6,6 +6,7 @@ use App\Repository\KidRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KidRepository::class)]
 class Kid extends User
@@ -37,6 +38,10 @@ class Kid extends User
 
     #[ORM\Column(nullable: true)]
     private ?array $friends = null;
+
+    #[ORM\Column(type: 'string', length: 6)]
+    #[Assert\Choice(choices: ['male', 'female'], message: 'Choose a valid gender.')]
+    private ?string $gender = null;
 
     public function __construct()
     {
@@ -171,6 +176,18 @@ class Kid extends User
     public function setFriends(?array $friends): static
     {
         $this->friends = $friends;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

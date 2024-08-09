@@ -55,6 +55,7 @@ class RegistrationController extends AbstractController
         );
         $user->setBirthDate(!empty($data['birthDate']) ? new \DateTimeImmutable($data['birthDate']) : null);
         $user->setRegistrationDate(new \DateTime());
+        $user->setGender($data['gender']);
 
         $entityManager->persist($user);
         $entityManager->flush();

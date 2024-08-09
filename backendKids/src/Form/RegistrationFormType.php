@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Kid;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -43,13 +44,21 @@ class RegistrationFormType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'required' => false,
+            ])
+            ->add('gender', ChoiceType::class, [
+                'choices' => [
+                    'Male' => 'male',
+                    'Female' => 'female',
+                ],
+                'expanded' => true,
+                'multiple' => false,
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => Kid::class,
         ]);
     }
 }
