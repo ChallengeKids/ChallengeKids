@@ -262,7 +262,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'http://127.0.0.1:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'http://192.168.1.7:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),

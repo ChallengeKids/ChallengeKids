@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://192.168.1.7:8000';
 
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
@@ -57,13 +57,12 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return true;//data['success'] ?? false; // Check if 'success' key exists and return its value
+      return true; //data['success'] ?? false; // Check if 'success' key exists and return its value
     } else {
       throw Exception('Failed to log in');
     }
   }
 }
-
 
 // lib/models/challenge.dart
 class Challenge {
