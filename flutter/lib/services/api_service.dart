@@ -62,6 +62,35 @@ class ApiService {
       throw Exception('Failed to log in');
     }
   }
+  Future<bool> register(String username, String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'fullName': username,
+          'email': email,
+          'plainPassword': password,
+          'confirmPassword': password,
+        }),
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // Adjust this according to your API's actual response
+        return true;//data['success'] ?? false; 
+      } else {
+        print('Failed to register. Status code: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error during registration: $e');
+      return false;
+    }
+  }
 }
 
 
