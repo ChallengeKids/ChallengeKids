@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:challange_kide/services/api_service.dart';
 
-class ProfilePage1 extends StatelessWidget {
+class ProfilePage1 extends StatefulWidget {
   const ProfilePage1({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePage1State createState() => _ProfilePage1State();
+}
+
+class _ProfilePage1State extends State<ProfilePage1> {
+  Future<String> _getUserName() async {
+    return await getUserName(); // Fetch the username from secure storage
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(backgroundColor: const Color.fromARGB(255, 225, 225, 225),),
       body: Column(
         children: [
           const Expanded(flex: 2, child: _TopPortion()),
@@ -18,9 +26,21 @@ class ProfilePage1 extends StatelessWidget {
               padding: const EdgeInsets.all(0.0),
               child: Column(
                 children: [
-                  const Text(
-                    "Richie Lorie",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  FutureBuilder<String>(
+                    future: _getUserName(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final username = snapshot.data ?? 'No username found';
+                        return Text(
+                          username,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -85,7 +105,7 @@ class ProfilePage1 extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Container(
-                                    margin: EdgeInsets.symmetric(vertical: 10),
+                                    margin: const EdgeInsets.symmetric(vertical: 10),
                                     width: double.infinity,
                                     height: 20,
                                     child: Stack(
@@ -224,8 +244,8 @@ class _TopPortion extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+                      image: AssetImage(
+                        'image/user.png', // Path to your image asset
                       ),
                     ),
                   ),

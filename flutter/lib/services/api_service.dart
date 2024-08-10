@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:challange_kide/widgets/signIn.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final String baseUrl = 'https://10.0.2.2:8000';
-
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
 
@@ -52,19 +53,34 @@ class ApiService {
     }
   }
 
-  Future<bool> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/login_check'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'password': password}),
-    );
+Future<bool> login(String email, String password) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/api/login_check'),
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode({'email': email, 'password': password}),
+  );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return true; //data['success'] ?? false; // Check if 'success' key exists and return its value
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    final token = data['token']; // Assuming the token is returned in the 'token' field
+
+    if (token != null && token.isNotEmpty) {
+      // Save the token in SharedPreferences or any other secure storage
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
+      await _storage.write(key: 'token', value: token,);
+      return true;
     } else {
-      throw Exception('Failed to log in');
+      return false; // Token is null or empty, login failed
     }
+  } else {
+    throw Exception('Failed to log in');
+  }
+}
+Future<bool> _isUserLoggedIn() async {
+    // Check if the user is logged in by reading the value from secure storage
+    String? loggedIn = await _storage.read(key: 'loggedIn');
+    return loggedIn == 'true';
   }
   Future<bool> register(String username, String email, String password, String gender, String birthday) async {
     try {
@@ -113,6 +129,30 @@ Future<void> logout(BuildContext context) async {
     print('Error during logout: $e');
   }
 }
+
+
+Future<String> getUserName() async {
+  const key = 'user_name';
+  final storage = FlutterSecureStorage();
+
+  try {
+    String? userName = await storage.read(key: "email");
+    print(userName);
+    if (userName != null) {
+      return userName;
+    } else {
+      return 'User Name not found.';
+    }
+  } catch (e) {
+    print('Error reading user name: $e');
+    return 'Error retrieving user name.';
+  }
+}
+
+
+
+
+
 
 
 // lib/models/challenge.dart
