@@ -49,6 +49,9 @@ class Post
     #[ORM\OneToMany(targetEntity: Reaction::class, mappedBy: 'post')]
     private Collection $reactions;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $approved = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -182,6 +185,18 @@ class Post
                 $reaction->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isApproved(): ?bool
+    {
+        return $this->approved;
+    }
+
+    public function setApproved(?bool $approved): static
+    {
+        $this->approved = $approved;
 
         return $this;
     }
