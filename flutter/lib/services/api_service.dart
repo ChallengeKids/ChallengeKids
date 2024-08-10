@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:challange_kide/widgets/signIn.dart';
 
 class ApiService {
-  final String baseUrl = 'http://192.168.1.7:8000';
+  final String baseUrl = 'https://10.0.2.2:8000';
 
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
@@ -62,7 +66,7 @@ class ApiService {
       throw Exception('Failed to log in');
     }
   }
-  Future<bool> register(String username, String email, String password) async {
+  Future<bool> register(String username, String email, String password, String gender, String birthday) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/register'),
@@ -71,7 +75,8 @@ class ApiService {
           'fullName': username,
           'email': email,
           'plainPassword': password,
-          'confirmPassword': password,
+          'birthDate':birthday,
+          'gender':gender,
         }),
       );
 
@@ -81,7 +86,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Adjust this according to your API's actual response
-        return true;//data['success'] ?? false; 
+        return data['success'] ?? false; 
       } else {
         print('Failed to register. Status code: ${response.statusCode}');
         return false;
@@ -93,6 +98,21 @@ class ApiService {
   }
 }
 
+Future<void> logout(BuildContext context) async {
+  try {
+    final FlutterSecureStorage _storage = FlutterSecureStorage();
+    // Clear all keys
+    await _storage.deleteAll();
+
+    // Optionally, navigate to the login screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  } catch (e) {
+    print('Error during logout: $e');
+  }
+}
 class Challenge {
   final int id;
   final String title;
