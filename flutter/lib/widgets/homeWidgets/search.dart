@@ -110,7 +110,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                       image: DecorationImage(
                                         fit: BoxFit.cover,
                                         image: NetworkImage(
-                                          'http://192.168.1.7:8000/uploads/images/${challenge.imageFileName}',
+                                          'http://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
                                         ),
                                       ),
                                     ),

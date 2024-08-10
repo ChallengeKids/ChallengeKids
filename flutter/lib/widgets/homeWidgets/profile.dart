@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:challange_kide/widgets/signIn.dart';
+import 'package:challange_kide/services/api_service.dart';
 
 class ProfilePage1 extends StatelessWidget {
   const ProfilePage1({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class ProfilePage1 extends StatelessWidget {
                       const SizedBox(width: 10),
                       FloatingActionButton.extended(
                         onPressed: () {
-                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => SignInScreen()),);
+                          logout(context);
                         },
                         heroTag: 'Logout',
                         elevation: 0,
