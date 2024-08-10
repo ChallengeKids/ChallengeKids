@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Lesson;
+use App\Entity\Post;
 use App\Entity\User;
 use App\Form\LessonType;
 use App\Repository\LessonRepository;
@@ -16,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -170,5 +173,106 @@ class LessonController extends AbstractController
         }
 
         return new JsonResponse($postData);
+    }
+
+
+    #[Route('/{lessonId}/createPost', name: 'lesson_create_post', methods: ['POST'])]
+    #[OA\Post(
+        summary: 'Add a new post',
+        description: 'Creates a new post for the specified user.',
+        requestBody: new OA\RequestBody(
+            description: 'Request body for adding a new post',
+            required: true,
+            content: [
+                'multipart/form-data' => new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(
+                                property: 'title',
+                                type: 'string',
+                                example: 'hadil'
+                            ),
+                            new OA\Property(
+                                property: 'content',
+                                type: 'string',
+                                example: 'tahki yasser'
+                            ),
+                            new OA\Property(
+                                property: 'mediaFileName',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'File to upload'
+                            ),
+                            new OA\Property(
+                                property: 'categories',
+                                type: 'array',
+                                items: new OA\Items(
+                                    type: 'string',
+                                    example: 'Category1'
+                                ),
+                                description: 'List of category titles'
+                            )
+                        ],
+                        required: ['title', 'content']
+                    )
+                )
+            ]
+        ),
+    )]
+    public function createPostForLesson(Request $request, $lessonId, LessonRepository $lessonRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        $lesson = $lessonRepository->find($lessonId);
+
+        $post = new Post();
+        $post->setUser($user);
+        $title = $request->request->get('title');
+        $content = $request->request->get('content');
+        $mediaFile = $request->files->get('mediaFileName');
+        $categoryTitlesJson  = $request->request->get('categories');
+        $categoryTitles = json_decode($categoryTitlesJson, true);
+
+        if (!$title || !$content) {
+            return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
+        }
+
+        $post->setTitle($title);
+        $post->setContent($content);
+        $post->setAddedDate(new \DateTime());
+
+        if ($mediaFile instanceof UploadedFile) {
+
+            $fileName = uniqid() . '.' . $mediaFile->guessExtension();
+
+            $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/images';
+
+            $mediaFile->move($uploadsDirectory, $fileName);
+
+            $post->setMediaFileName($fileName);
+        } else {
+
+            return new JsonResponse(['message' => 'File upload failed or not recognized.']);
+        }
+
+        if (is_array($categoryTitles)) {
+
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+                if ($category) {
+                    $post->addCategory($category);
+                }
+            }
+        } else {
+            return new JsonResponse("failed to load categories");
+        }
+
+        $lesson->addPost($post);
+        $this->entityManager->persist($lesson);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Post created successfully.']);
     }
 }

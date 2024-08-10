@@ -120,6 +120,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                           image: NetworkImage(
                                             'http://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
                                           ),
+
                                         ),
                                       ),
                                     ),

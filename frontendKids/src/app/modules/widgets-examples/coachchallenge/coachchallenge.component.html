@@ -79,6 +79,7 @@
             <td>
               <div class="d-flex justify-content-end flex-shrink-0">
                 <a
+                  (click)="goToViewChallenge(challenge.id)"
                   class="btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4 me-2"
                 >
                   View
@@ -105,6 +106,7 @@
     </div>
     <!-- end::Table container -->
   </div>
+
   <!-- begin::Body -->
 </div>
 <!--<div *ngIf="isViewing && selectedChallenge" class="card mb-5 mb-xl-8">
@@ -121,6 +123,7 @@
   </ul>
   <button (click)="isViewing = false">Close</button>
 </div>-->
+<router-outlet></router-outlet>
 <ng-template #content let-modal class="card mb-5 mb-xl-10">
   <!-- ... existing modal header ... -->
   <div

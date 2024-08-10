@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Chapter;
+use App\Entity\Lesson;
 use App\Form\ChapterType;
+use App\Form\LessonType;
 use App\Repository\ChapterRepository;
 use App\Service\ChapterService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -150,6 +152,40 @@ class ChapterController extends AbstractController
         $data = $request->toArray();
         $lessonTitles = $data["lessons"];
         $this->chapterService->addLessons($chapter, $lessonTitles);
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{chapterId}/createLesson', name: 'chapter_create_lesson', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "1st Lesson",
+                "description" => "This is the description of the first lesson",
+                "LessonNumber" => 1,
+            ]
+        )
+    )]
+    public function createLessonForChapter($chapterId, Request $request, EntityManagerInterface $entityManager, ChapterRepository $chapterRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $chapter = $chapterRepository->find($chapterId);
+        $coach = $this->security->getUser();
+
+        $lesson = new Lesson();
+        $lesson->setCoach($coach);
+        $form = $this->createForm(LessonType::class, $lesson);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
+            $chapter->addLesson($lesson);
+            $entityManager->persist($chapter);
+            $entityManager->persist($lesson);
+            $entityManager->flush();
+        }
 
         return new JsonResponse(true);
     }

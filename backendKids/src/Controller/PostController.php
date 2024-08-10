@@ -189,7 +189,6 @@ class PostController extends AbstractController
             $mediaFile->move($uploadsDirectory, $fileName);
 
             $post->setMediaFileName($fileName);
-            
         } else {
 
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
