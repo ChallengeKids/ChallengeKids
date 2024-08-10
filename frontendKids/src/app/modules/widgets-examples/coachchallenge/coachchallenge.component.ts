@@ -10,6 +10,8 @@ import { lastValueFrom } from "rxjs";
 import { environment } from "src/environments/environment";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 const API_USERS_URL = `${environment.backednUrl}`;
 declare var $: any;
 
@@ -31,7 +33,9 @@ export class CoachchallengeComponent {
   Categories: string[] = [];
   constructor(
     private httpservice: HttpserviceService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
   initForm() {
     this.postForm = this.fb.group({
@@ -126,6 +130,9 @@ export class CoachchallengeComponent {
           this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
         }
       );
+  }
+  goToViewChallenge() {
+    this.router.navigate(["/coach/widgets/viewchallenge"]);
   }
   private getDismissReason(reason: any): string {
     switch (reason) {

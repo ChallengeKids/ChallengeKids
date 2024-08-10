@@ -23,13 +23,15 @@ import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from "@angular/forms";
+import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
 
 @NgModule({
   declarations: [
     WidgetsExamplesComponent,
     //ListsComponent,
     StatisticsComponent,
+    ViewChallengeComponent,
     ChartsComponent,
     MixedComponent,
     TablesComponent,
@@ -53,7 +55,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     AccountModule,
     InlineSVGModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
     CategoryComponent,
