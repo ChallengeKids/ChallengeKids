@@ -18,7 +18,6 @@ class SignInScreen extends StatelessWidget {
         backgroundColor: Color.fromRGBO(255, 255, 255, 0), // Background color
       ),
       body: FutureBuilder<bool>(
-        future: _isUserLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -167,7 +166,7 @@ class SignInScreen extends StatelessWidget {
                                             bool success = await _apiService.login(email, password);
                                             if (success) {
                                               // Store a flag indicating successful login
-                                              await _storage.write(key: 'loggedIn', value: 'true');
+                                              await _storage.write(key: 'email', value: email);
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(content: Text('Login Successful')),
                                               );
@@ -234,14 +233,8 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
           );
-        },
+        }, future: null,
       ),
     );
-  }
-
-  Future<bool> _isUserLoggedIn() async {
-    // Check if the user is logged in by reading the value from secure storage
-    String? loggedIn = await _storage.read(key: 'loggedIn');
-    return loggedIn == 'true';
   }
 }

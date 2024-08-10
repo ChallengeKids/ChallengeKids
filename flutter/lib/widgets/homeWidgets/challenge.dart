@@ -1,48 +1,205 @@
+import 'dart:io';
+
 import 'package:challange_kide/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'chapter.dart';
 
-class ChallengeScreen extends StatelessWidget {
+File? selectImage;
+
+class ChallengeScreen extends StatefulWidget {
   final Challenge challenge;
 
   const ChallengeScreen({super.key, required this.challenge});
 
   @override
+  _ChallengeScreenState createState() => _ChallengeScreenState();
+}
+
+class _ChallengeScreenState extends State<ChallengeScreen> {
+  Future<void> pickImageFromGallery() async {
+    final ImagePicker _picker = ImagePicker();
+    try {
+      final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedImage != null) {
+        setState(() {
+          selectImage = File(pickedImage.path);
+        });
+      } else {
+        debugPrint('No image selected.');
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void _showEnrollBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+    ),
+    builder: (BuildContext context) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Enroll in ${widget.challenge.title}',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Please provide the following details to complete your enrollment:',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: selectImage != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          selectImage!,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          "Please select an image",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                pickImageFromGallery();
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+                minimumSize: Size(double.infinity, 48),
+              ),
+              child: const Text('Upload Image'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter the title',
+              ),
+              onChanged: (text) {
+                print('Text changed: $text');
+              },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Add Description',
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the bottom sheet
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      backgroundColor: Colors.grey[200], // Light gray background
+                      minimumSize: Size(double.infinity, 48), // Width of the Cancel button
+                    ),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Container(
+                    width: double.infinity, // Ensure the button takes the full width
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle the enrollment logic here
+                        Navigator.pop(context); // Close the bottom sheet
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                        minimumSize: Size(double.infinity, 60), // Larger button height
+                      ),
+                      child: const Text('Enroll Now'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Set the background color of the Scaffold to white
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(100.0), // Set the desired height here
+        preferredSize: const Size.fromHeight(100.0),
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: SizedBox(
-            width: double.infinity, // Make the container span the full width
+            width: double.infinity,
             child: AppBar(
-              backgroundColor: const Color.fromARGB(
-                  255, 255, 255, 255), // AppBar background color
+              backgroundColor: Colors.white,
               leading: Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: SizedBox(
-                  width: 60, // Desired width
-                  height: 60, // Height to match width or desired size
+                  width: 60,
+                  height: 60,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pop(
-                          context); // This will navigate back to the previous page
+                      Navigator.pop(context);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: EdgeInsets.zero, // Remove default padding
+                      padding: EdgeInsets.zero,
                     ),
                     child: const Icon(
                       Icons.keyboard_arrow_left,
                       color: Colors.white,
-                      size: 30, // Icon size
+                      size: 30,
                     ),
                   ),
                 ),
@@ -57,88 +214,78 @@ class ChallengeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              actions: [
-                // Empty container to keep title centered
-                Container(width: 48), // Adjust width as needed
-              ],
+              actions: [Container(width: 48)],
             ),
           ),
         ),
       ),
-      body: Column(
-        children: [
-          // Event announcement
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 180,
-              width: 380, // Adjust the width as needed
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white, // Set the background color to white
-                  borderRadius: BorderRadius.circular(12), // Rounded border
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 180,
+                width: double.infinity,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          'https://10.0.2.2:8000/uploads/images/${widget.challenge.imageFileName}'),
+                      fit: BoxFit.cover,
                     ),
-                  ],
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        'http://192.168.226.147:8000/uploads/images/${challenge.imageFileName}'), // Background image
-                    fit: BoxFit.cover, // Adjust the fit as needed
                   ),
                 ),
-                child: const Column(
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16),
+                    Text(
+                      widget.challenge.title,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.challenge.description,
+                      style: const TextStyle(fontSize: 15),
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    challenge.title,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    challenge.description,
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: challenge.chapters.length,
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Prevent scrolling in this ListView
+              itemCount: widget.challenge.chapters.length,
               itemBuilder: (context, index) {
-                final chapter = challenge.chapters[index];
+                final chapter = widget.challenge.chapters[index];
                 return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(234, 244, 255, 1),
                     border: Border.all(color: const Color(0xFFE0E0E0)),
                     borderRadius: BorderRadius.circular(8.0),
                     boxShadow: const [
                       BoxShadow(
-                        color: Colors.black26, // Color of the shadow
-                        blurRadius: 4.0, // Spread of the shadow
-                        offset: Offset(0, 2), // Shadow position
+                        color: Colors.black26,
+                        blurRadius: 4.0,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
@@ -192,7 +339,6 @@ class ChallengeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 20),
-                        // Learn More Button
                         SizedBox(
                           height: 50,
                           width: 50,
@@ -201,14 +347,12 @@ class ChallengeScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      chapterScreen(chapter: chapter),
+                                  builder: (context) => chapterScreen(chapter: chapter),
                                 ),
                               );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromRGBO(61, 143, 239, 1),
+                              backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -228,36 +372,37 @@ class ChallengeScreen extends StatelessWidget {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 30.0), // Left and right margins
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: Container(
-          height: 70.0, // Set the height for the BottomAppBar
+          height: 70.0,
           decoration: const BoxDecoration(
-            color: Color.fromRGBO(
-                61, 143, 239, 1), // Set the background color to white
+            color: Color.fromRGBO(61, 143, 239, 1),
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0), // Top-left border radius
-              topRight: Radius.circular(30.0), // Top-right border radius
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26, // Color of the shadow
-                blurRadius: 10.0, // Spread of the shadow
-                offset: Offset(0, 4), // Shadow position
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: Offset(0, 4),
               ),
             ],
           ),
-          child: const Center(
-            child: Text(
-              'Enroll Now',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // Text color
+          child: Center(
+            child: TextButton(
+              onPressed: () => _showEnrollBottomSheet(context),
+              child: const Text(
+                'Enroll Now',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Changed to blue color
+                ),
               ),
             ),
           ),
