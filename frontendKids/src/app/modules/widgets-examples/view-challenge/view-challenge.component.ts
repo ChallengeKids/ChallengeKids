@@ -1,8 +1,9 @@
 import { Component, ElementRef, TemplateRef, ViewChild } from "@angular/core";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, map } from "rxjs";
 import { OnInit, AfterViewInit, inject } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ActivatedRoute } from "@angular/router";
 declare var $: any;
 
 @Component({
@@ -17,10 +18,15 @@ export class ViewChallengeComponent {
   title: any;
   desc: any = "";
   cnumber: number;
+  challeneId: any;
+  challenge: any;
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
   }
-  constructor(private httpservice: HttpserviceService) {}
+  constructor(
+    private httpservice: HttpserviceService,
+    private route: ActivatedRoute
+  ) {}
   async savechapter() {
     try {
       const body = {
@@ -65,11 +71,15 @@ export class ViewChallengeComponent {
     }
   }
   async ngOnInit() {
+    this.route.params.subscribe((params) => {
+      this.challeneId = params["id"];
+    });
     try {
       const response = await lastValueFrom(
-        this.httpservice.get("/api/chapter/coach")
+        this.httpservice.get(`/api/challenge/${this.challeneId}`)
       );
-      this.chapters = response;
+      this.challenge = response;
+      this.chapters = this.challenge.chapters;
       console.log("Chapters loaded:", this.chapters);
     } catch (error) {
       console.error("Error fetching categories:", error);
