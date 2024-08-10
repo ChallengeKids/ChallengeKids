@@ -25,12 +25,14 @@ import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 import { ReactiveFormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
+import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
 
 @NgModule({
   declarations: [
     WidgetsExamplesComponent,
     //ListsComponent,
     StatisticsComponent,
+    ViewChallengeComponent,
     ChartsComponent,
     MixedComponent,
     TablesComponent,
