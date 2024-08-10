@@ -24,6 +24,7 @@ import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 import { ReactiveFormsModule } from '@angular/forms';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     AccountModule,
     InlineSVGModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    QuillModule
   ],
   exports: [
     CategoryComponent,

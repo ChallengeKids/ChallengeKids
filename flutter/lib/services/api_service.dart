@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 
 class ApiService {
-  final String baseUrl = 'https://10.0.2.2:8000';
+  final String baseUrl = 'http://192.168.226.147:8000';
 
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
@@ -66,7 +66,9 @@ class ApiService {
       throw Exception('Failed to log in');
     }
   }
-  Future<bool> register(String username, String email, String password, String gender, String birthday) async {
+
+  Future<bool> register(String username, String email, String password,
+      String gender, String birthday) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/register'),
@@ -75,8 +77,8 @@ class ApiService {
           'fullName': username,
           'email': email,
           'plainPassword': password,
-          'birthDate':birthday,
-          'gender':gender,
+          'birthDate': birthday,
+          'gender': gender,
         }),
       );
 
@@ -86,7 +88,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Adjust this according to your API's actual response
-        return data['success'] ?? false; 
+        return data['success'] ?? false;
       } else {
         print('Failed to register. Status code: ${response.statusCode}');
         return false;
@@ -113,6 +115,7 @@ Future<void> logout(BuildContext context) async {
     print('Error during logout: $e');
   }
 }
+
 class Challenge {
   final int id;
   final String title;

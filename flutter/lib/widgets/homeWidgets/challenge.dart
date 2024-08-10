@@ -87,7 +87,7 @@ class ChallengeScreen extends StatelessWidget {
                   ],
                   image: DecorationImage(
                     image: NetworkImage(
-                        'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'), // Background image
+                        'http://192.168.226.147:8000/uploads/images/${challenge.imageFileName}'), // Background image
                     fit: BoxFit.cover, // Adjust the fit as needed
                   ),
                 ),
