@@ -18,6 +18,7 @@ import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
+import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
       {
         path: "coachchallenges",
         component: CoachchallengeComponent,
+      },
+      {
+        path: "viewchallenge",
+        component: ViewChallengeComponent,
       },
       {
         path: "kids",
