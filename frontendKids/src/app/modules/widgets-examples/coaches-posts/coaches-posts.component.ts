@@ -1,112 +1,49 @@
-import { Component } from "@angular/core";
-import { lastValueFrom } from "rxjs";
-import { HttpserviceService } from "../../auth/services/httpservice.service";
-import {
-  OnInit,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-  TemplateRef,
-  inject,
-} from "@angular/core";
-import { AuthService } from "../../auth";
-import { HttpHeaders } from "@angular/common/http";
-import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-
-declare var $: any;
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { HttpserviceService } from '../../auth/services/httpservice.service';
+import { AuthService } from '../../auth';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: "app-coaches-posts",
-  templateUrl: "./coaches-posts.component.html",
-  styleUrls : ["./coaches-posts.component.scss"],
+  selector: 'app-coaches-posts',
+  templateUrl: './coaches-posts.component.html',
+  styleUrls: ['./coaches-posts.component.scss'],
 })
-
-export class CoachesPostsComponent implements AfterViewInit, OnInit {
+export class CoachesPostsComponent implements OnInit {
   title: string = "";
-  thecontent: string = "";
+  thecontent: string = "";  // This is bound to the Quill editor
   mediaFile: File | null = null;
-  Categories: string[] = []; // Add more categories as needed
+  Categories: string[] = [];
   posts: any;
   closeResult = "";
   fakecategories: any;
   truecategories: any[] = [];
   confirmPassword: any;
   selectedpost: any = null;
-  private modalService = inject(NgbModal);
+
+  quillConfig = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ 'header': [1, 2, false] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image'],
+      ['clean']
+    ]
+  };
+
   constructor(
     private httpservice: HttpserviceService,
-    private authservice: AuthService
+    private authservice: AuthService,
+    private modalService: NgbModal
   ) {}
-  @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
-  ngAfterViewInit() {
-    $(this.tableElement.nativeElement).DataTable();
-  }
-  onFileSelected(event: any) {
-    this.mediaFile = event.target.files[0];
+
+  ngOnInit() {
+    this.loadCategoriesAndPosts();
   }
 
-  addPost() {
-    console.log("Categories to be added:", this.Categories); // Debugging step
-  
-    const formData = new FormData();
-    formData.append("title", this.title);
-    formData.append("content", this.thecontent);
-    if (this.mediaFile) {
-      formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
-    }
-    formData.append("categories", JSON.stringify(this.Categories));
-  
-    // Log form data for debugging
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
-  
-    this.httpservice.post("/api/post/user/new", formData).subscribe(
-      (response) => {
-        console.log("Post added successfully", response);
-        // Handle success (e.g., show a success message, clear the form)
-      },
-      (error) => {
-        console.error("Error adding post", error);
-        // Handle error (e.g., show an error message)
-      }
-    );
-    window.location.reload();
-  }
-  
-  
-  onCategoryChange(category: { id: number; title: string; selected: boolean }) {
-    category.selected = !category.selected; // Toggle the selected state
-  
-    console.log(
-      "Category changed:",
-      category.title,
-      "Selected:",
-      category.selected
-    );
-  
-    if (category.selected) {
-      if (!this.Categories.includes(category.title)) {
-        this.Categories.push(category.title);
-      }
-    } else {
-      const index = this.Categories.indexOf(category.title);
-      if (index !== -1) {
-        this.Categories.splice(index, 1);
-      }
-    }
-  
-    console.log("Current Categories:", this.Categories);
-  }
-
-  async ngOnInit() {
+  async loadCategoriesAndPosts() {
     try {
-      const response = await lastValueFrom(
-        this.httpservice.get("/api/post/user")
-      );
-      const response2 = await lastValueFrom(
-        this.httpservice.get("/api/category")
-      );
+      const response = await this.httpservice.get("/api/post/user").toPromise();
+      const response2 = await this.httpservice.get("/api/category").toPromise();
       this.fakecategories = response2;
       this.posts = response;
       for (let i = 0; i < this.fakecategories.length; i++) {
@@ -122,38 +59,85 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
     }
   }
 
+  onFileSelected(event: any) {
+    this.mediaFile = event.target.files[0];
+  }
+
+  addPost() {
+    console.log("Categories to be added:", this.Categories);
+
+    const formData = new FormData();
+    formData.append("title", this.title);
+    formData.append("content", this.thecontent);  // Content from Quill editor
+    if (this.mediaFile) {
+      formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
+    }
+    formData.append("categories", JSON.stringify(this.Categories));
+
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+
+    this.httpservice.post("/api/post/user/new", formData).subscribe(
+      (response) => {
+        console.log("Post added successfully", response);
+      },
+      (error) => {
+        console.error("Error adding post", error);
+      }
+    );
+    window.location.reload();
+  }
+
+  onCategoryChange(category: { id: number; title: string; selected: boolean }) {
+    category.selected = !category.selected;
+
+    console.log("Category changed:", category.title, "Selected:", category.selected);
+
+    if (category.selected) {
+      if (!this.Categories.includes(category.title)) {
+        this.Categories.push(category.title);
+      }
+    } else {
+      const index = this.Categories.indexOf(category.title);
+      if (index !== -1) {
+        this.Categories.splice(index, 1);
+      }
+    }
+
+    console.log("Current Categories:", this.Categories);
+  }
+
   async delete(id: any) {
     try {
-      const response = await lastValueFrom(
-        this.httpservice.delete(`/api/post/${id}`)
-      );
+      const response = await this.httpservice.delete(`/api/post/${id}`).toPromise();
       window.location.reload();
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error deleting post:", error);
     }
   }
+
   open(content: TemplateRef<any>) {
-    this.modalService
-      .open(content, {
-        ariaLabelledBy: "modal-basic-title",
-        centered: true,
-        size: "lg",
-      })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-basic-title',
+      centered: true,
+      size: 'lg',
+    }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
   }
+
   private getDismissReason(reason: any): string {
     switch (reason) {
       case ModalDismissReasons.ESC:
-        return "by pressing ESC";
+        return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
-        return "by clicking on a backdrop";
+        return 'by clicking on a backdrop';
       default:
         return `with: ${reason}`;
     }

@@ -6,14 +6,14 @@ import 'widgets/home.dart';
 import 'dart:io';
 
 void main() {
-  HttpOverrides.global = MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       home: SignInScreen(),
       debugShowCheckedModeBanner: false,
     );
