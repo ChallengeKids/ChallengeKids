@@ -113,9 +113,6 @@ Future<void> logout(BuildContext context) async {
     print('Error during logout: $e');
   }
 }
-
-
-// lib/models/challenge.dart
 class Challenge {
   final int id;
   final String title;

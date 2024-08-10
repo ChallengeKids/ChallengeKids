@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Challenge;
+use App\Entity\Chapter;
 use App\Entity\Coach;
 use App\Form\ChallengeType;
+use App\Form\ChapterType;
 use App\Repository\ChallengeRepository;
 use App\Service\ChallengeService;
 use App\Service\CoachService;
@@ -163,9 +165,11 @@ class ChallengeController extends AbstractController
         $title = $request->request->get('title');
         $description = $request->request->get('description');
         $imageFile = $request->files->get('imageFileName');
-        $categoryTitles = $request->request->get('categories');
-        $challenge = new Challenge();
+        $categoryTitlesJson  = $request->request->get('categories');
+        $categoryTitles = json_decode($categoryTitlesJson, true);
 
+
+        $challenge = new Challenge();
         $challenge->setTitle($title);
         $challenge->setDescription($description);
         $challenge->setCoach($user);
@@ -185,15 +189,16 @@ class ChallengeController extends AbstractController
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
         }
 
-        if ($categoryTitles) {
-            $categoryTitlesArray = explode(',', $categoryTitles);
+        if (is_array($categoryTitles)) {
 
-            foreach ($categoryTitlesArray as $categoryTitle) {
-                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => trim($categoryTitle)]);
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
                 if ($category) {
                     $challenge->addCategory($category);
                 }
             }
+        } else {
+            return new JsonResponse("failed to load categories");
         }
 
         $this->entityManager->persist($challenge);
@@ -227,6 +232,41 @@ class ChallengeController extends AbstractController
         $data = $request->toArray();
         $chapterTitles = $data["chapters"];
         $this->challengeService->addChapters($challenge, $chapterTitles);
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/{challengeId}/createChapter', name: 'challenge_create_chapter', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "title" => "Chapter5",
+                "description" => "This is a description for the 5th Chapter",
+                "chapterNumber" => 5
+            ]
+        )
+    )]
+    public function createChapterForChallenge($challengeId, Request $request, ChallengeRepository $challengeRepository, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->security->getUser();
+
+        $challenge = $challengeRepository->find($challengeId);
+
+        $data = json_decode($request->getContent(), true);
+
+        $chapter = new Chapter();
+        $chapter->setCoach($user);
+        $form = $this->createForm(ChapterType::class, $chapter);
+        $form->submit($data);
+
+        if ($form->isSubmitted()) {
+            $challenge->addChapter($chapter);
+            $entityManager->persist($challenge);
+            $entityManager->persist($chapter);
+            $entityManager->flush();
+        }
 
         return new JsonResponse(true);
     }
