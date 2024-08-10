@@ -40,7 +40,7 @@ const routes: Routes = [
         component: CoachchallengeComponent,
       },
       {
-        path: "viewchallenge",
+        path: "viewchallenge/:id",
         component: ViewChallengeComponent,
       },
       {

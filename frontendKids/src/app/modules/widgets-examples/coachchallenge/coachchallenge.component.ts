@@ -131,8 +131,8 @@ export class CoachchallengeComponent {
         }
       );
   }
-  goToViewChallenge() {
-    this.router.navigate(["/coach/widgets/viewchallenge"]);
+  goToViewChallenge(challengeId) {
+    this.router.navigate([`/coach/widgets/viewchallenge/${challengeId}`]);
   }
   private getDismissReason(reason: any): string {
     switch (reason) {
