@@ -14,6 +14,45 @@ class _ProfilePage1State extends State<ProfilePage1> {
     return await getUserName(); // Fetch the username from secure storage
   }
 
+  void _showProfileModificationSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Modify Profile',
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle profile update logic here
+                  Navigator.pop(context);
+                },
+                child: const Text('Save Changes'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +85,16 @@ class _ProfilePage1State extends State<ProfilePage1> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      FloatingActionButton.extended(
+                        onPressed: () {
+                          _showProfileModificationSheet();
+                        },
+                        heroTag: 'ModifyProfile',
+                        elevation: 0,
+                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                        label: const Text("Modify Profile", style: TextStyle(color: Colors.white)),
+                        icon: const Icon(Icons.edit, color: Colors.white),
+                      ),
                       const SizedBox(width: 10),
                       FloatingActionButton.extended(
                         onPressed: () {
@@ -54,8 +103,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         heroTag: 'Logout',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Log out", style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-                        icon: const Icon(Icons.logout, color: Color.fromARGB(255, 255, 255, 255)),
+                        label: const Text("Log out", style: TextStyle(color: Colors.white)),
+                        icon: const Icon(Icons.logout, color: Colors.white),
                       ),
                     ],
                   ),

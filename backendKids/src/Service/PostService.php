@@ -35,6 +35,7 @@ class PostService
             },  $categories),
             'lesson' => $lesson,
             'user' => $post->getUser()->getFullName(),
+            'mediaFileName' => $post->getMediaFileName(),
         ];
     }
 }
