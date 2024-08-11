@@ -1,7 +1,5 @@
-import { Component } from "@angular/core";
-import { lastValueFrom } from "rxjs";
-import { HttpserviceService } from "../../auth/services/httpservice.service";
 import {
+  Component,
   OnInit,
   AfterViewInit,
   ElementRef,
@@ -9,23 +7,22 @@ import {
   TemplateRef,
   inject,
 } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { lastValueFrom } from "rxjs";
+import { HttpserviceService } from "../../auth/services/httpservice.service";
 import { AuthService } from "../../auth";
-import { HttpHeaders } from "@angular/common/http";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-
 declare var $: any;
 
 @Component({
   selector: "app-coaches-posts",
   templateUrl: "./coaches-posts.component.html",
-  styleUrls : ["./coaches-posts.component.scss"],
+  styleUrls: ["./coaches-posts.component.scss"],
 })
-
 export class CoachesPostsComponent implements AfterViewInit, OnInit {
-  title: string = "";
-  thecontent: string = "";
+  postForm: FormGroup;
   mediaFile: File | null = null;
-  Categories: string[] = []; // Add more categories as needed
+  Categories: string[] = [];
   posts: any;
   closeResult = "";
   fakecategories: any;
@@ -33,58 +30,58 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
   confirmPassword: any;
   selectedpost: any = null;
   private modalService = inject(NgbModal);
+
   constructor(
     private httpservice: HttpserviceService,
-    private authservice: AuthService
-  ) {}
+    private authservice: AuthService,
+    private formBuilder: FormBuilder
+  ) {
+    this.postForm = this.formBuilder.group({
+      title: ["", Validators.required],
+      content: ["", Validators.required],
+      mediaFileName: [null],
+      categories: [[]],
+    });
+  }
+
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
+
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
   }
+
   onFileSelected(event: any) {
     this.mediaFile = event.target.files[0];
+    this.postForm.patchValue({
+      mediaFileName: this.mediaFile,
+    });
   }
 
   addPost() {
-    console.log("Categories to be added:", this.Categories); // Debugging step
-  
-    const formData = new FormData();
-    formData.append("title", this.title);
-    formData.append("content", this.thecontent);
-    if (this.mediaFile) {
-      formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
-    }
-    formData.append("categories", JSON.stringify(this.Categories));
-  
-    // Log form data for debugging
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
-  
-    this.httpservice.post("/api/post/user/new", formData).subscribe(
-      (response) => {
-        console.log("Post added successfully", response);
-        // Handle success (e.g., show a success message, clear the form)
-      },
-      (error) => {
-        console.error("Error adding post", error);
-        // Handle error (e.g., show an error message)
+    if (this.postForm.valid) {
+      const formData = new FormData();
+      formData.append("title", this.postForm.get("title")?.value);
+      formData.append("content", this.postForm.get("content")?.value);
+      if (this.mediaFile) {
+        formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
       }
-    );
-    window.location.reload();
+      formData.append("categories", JSON.stringify(this.Categories));
+
+      this.httpservice.post("/api/post/user/new", formData).subscribe(
+        (response) => {
+          console.log("Post added successfully", response);
+          window.location.reload();
+        },
+        (error) => {
+          console.error("Error adding post", error);
+        }
+      );
+    }
   }
-  
-  
+
   onCategoryChange(category: { id: number; title: string; selected: boolean }) {
-    category.selected = !category.selected; // Toggle the selected state
-  
-    console.log(
-      "Category changed:",
-      category.title,
-      "Selected:",
-      category.selected
-    );
-  
+    category.selected = !category.selected;
+
     if (category.selected) {
       if (!this.Categories.includes(category.title)) {
         this.Categories.push(category.title);
@@ -95,8 +92,10 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
         this.Categories.splice(index, 1);
       }
     }
-  
-    console.log("Current Categories:", this.Categories);
+
+    this.postForm.patchValue({
+      categories: this.Categories,
+    });
   }
 
   async ngOnInit() {

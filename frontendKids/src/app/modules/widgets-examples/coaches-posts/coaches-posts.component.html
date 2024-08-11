@@ -151,12 +151,11 @@
   <!-- begin::Body -->
 </div>
 <ng-template #content let-modal class="card mb-5 mb-xl-10">
-  <!-- ... existing modal header ... -->
   <div
     id="kt_account_profile_details"
     class="collapse show modal-body modal-xl"
   >
-    <form novalidate class="form">
+    <form [formGroup]="postForm" (ngSubmit)="addPost()" novalidate class="form">
       <div class="card-body border-top p-9">
         <div class="row mb-6">
           <label
@@ -168,8 +167,7 @@
             <input
               type="text"
               id="title"
-              [(ngModel)]="title"
-              name="title"
+              formControlName="title"
               class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
             />
           </div>
@@ -184,8 +182,7 @@
             <input
               type="text"
               id="postcontent"
-              [(ngModel)]="thecontent"
-              name="content"
+              formControlName="content"
               class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
             />
           </div>
@@ -199,7 +196,6 @@
               type="file"
               id="fileadd"
               (change)="onFileSelected($event)"
-              name="mediaFileName"
               class="form-control form-control-lg form-control-solid"
             />
           </div>
@@ -227,9 +223,7 @@
       </div>
 
       <div class="card-footer d-flex justify-content-end py-6 px-9">
-        <button type="submit" (click)="addPost()" class="btn btn-primary m-2">
-          Save Changes
-        </button>
+        <button type="submit" class="btn btn-primary m-2">Save Changes</button>
         <button
           type="button"
           class="btn btn-secondary m-2"

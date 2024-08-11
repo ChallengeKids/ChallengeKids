@@ -4,6 +4,8 @@ import { lastValueFrom, map } from "rxjs";
 import { OnInit, AfterViewInit, inject } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ActivatedRoute } from "@angular/router";
+import { environment } from "src/environments/environment";
+const API_USERS_URL = `${environment.backednUrl}`;
 declare var $: any;
 
 @Component({
@@ -11,6 +13,8 @@ declare var $: any;
   templateUrl: "./view-challenge.component.html",
 })
 export class ViewChallengeComponent {
+  showForm = false;
+  backendUrl = API_USERS_URL;
   private modalService = inject(NgbModal);
   closeResult: string;
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
@@ -20,6 +24,9 @@ export class ViewChallengeComponent {
   cnumber: number;
   challeneId: any;
   challenge: any;
+  showExistingChapters = false;
+  selectedChapters: string[] = [];
+  addChapters: any;
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
   }
@@ -27,6 +34,41 @@ export class ViewChallengeComponent {
     private httpservice: HttpserviceService,
     private route: ActivatedRoute
   ) {}
+  async addExistingChapter() {
+    try {
+      const body = {
+        chapters: this.selectedChapters,
+      };
+      console.log(body);
+      const response = await lastValueFrom(
+        this.httpservice.put(
+          `/api/challenge/${this.challeneId}/addChapters`,
+          body
+        )
+      );
+      window.location.reload();
+      console.log("chapter added:", response);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  }
+  onChapterSelect(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const chapterTitle = target.value;
+    const isChecked = target.checked;
+
+    if (isChecked) {
+      if (!this.selectedChapters.includes(chapterTitle)) {
+        this.selectedChapters.push(chapterTitle);
+        console.log(this.selectedChapters);
+      }
+    } else {
+      const index = this.selectedChapters.indexOf(chapterTitle);
+      if (index > -1) {
+        this.selectedChapters.splice(index, 1);
+      }
+    }
+  }
   async savechapter() {
     try {
       const body = {
@@ -36,7 +78,10 @@ export class ViewChallengeComponent {
       };
       console.log(body);
       const response = await lastValueFrom(
-        this.httpservice.post("/api/chapter/new", body)
+        this.httpservice.post(
+          `/api/challenge/${this.challeneId}/createChapter`,
+          body
+        )
       );
       window.location.reload();
       console.log("lesson added:", response);
@@ -76,9 +121,13 @@ export class ViewChallengeComponent {
     });
     try {
       const response = await lastValueFrom(
+        this.httpservice.get("/api/chapter/coach")
+      );
+      const response2 = await lastValueFrom(
         this.httpservice.get(`/api/challenge/${this.challeneId}`)
       );
-      this.challenge = response;
+      this.challenge = response2;
+      this.addChapters = response;
       this.chapters = this.challenge.chapters;
       console.log("Chapters loaded:", this.chapters);
     } catch (error) {
