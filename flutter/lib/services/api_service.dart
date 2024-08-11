@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final String baseUrl = 'https://10.0.2.2:8000';
 class ApiService {
-  final String baseUrl = 'http://192.168.1.12:8000';
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   Future<List<Challenge>> fetchChallenges() async {
@@ -138,22 +138,38 @@ Future<void> logout(BuildContext context) async {
 }
 
 Future<String> getUserName() async {
-  const key = 'user_name';
+  const key = 'auth_token'; // Key to retrieve token
   final storage = FlutterSecureStorage();
+  final token = await storage.read(key: "token");
+
+  if (token == null) {
+    return 'Authorization token not found.';
+  }
 
   try {
-    String? userName = await storage.read(key: "email");
-    print(userName);
-    if (userName != null) {
-      return userName;
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/kid/profile'), // Adjust URL to your API endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Include the token in the Authorization header
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final userName = data['fullName']; // Adjust to match your API response structure
+      return userName ?? 'User Name not found.';
     } else {
-      return 'User Name not found.';
+      return 'Failed to fetch user name.';
     }
   } catch (e) {
-    print('Error reading user name: $e');
+    print('Error fetching user name: $e');
     return 'Error retrieving user name.';
   }
 }
+
+
+
 
 class Challenge {
   final int id;
@@ -242,6 +258,8 @@ class Chapter {
           .toList(),
     );
   }
+
+  get chapter => null;
 }
 
 // lib/models/lesson.dart
@@ -250,12 +268,14 @@ class Lesson {
   final String title;
   final String description;
   final int lessonNumber;
+  final Post post; // Include Post instance
 
   Lesson({
     required this.id,
     required this.title,
     required this.description,
     required this.lessonNumber,
+    required this.post,
   });
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
@@ -264,6 +284,33 @@ class Lesson {
       title: json['title'],
       description: json['description'],
       lessonNumber: json['lessonNumber'],
+      post: Post.fromJson(json['post'] ?? {}), // Handle null or missing post
+    );
+  }
+
+  String get mediaFileName => post.mediaFileName; // Access mediaFileName from Post
+}
+
+// lib/models/post.dart
+class Post {
+  final int id;
+  final String title;
+  final String content;
+  final String mediaFileName;
+
+  Post({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.mediaFileName,
+  });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'],
+      title: json['title'],
+      content: json['content'],
+      mediaFileName: json['mediaFileName'] ?? '', // Default value if missing
     );
   }
 }

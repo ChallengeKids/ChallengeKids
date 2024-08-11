@@ -58,12 +58,12 @@ final _navBarItems = [
     selectedColor: const Color.fromRGBO(61, 143, 239, 1),
   ),
   SalomonBottomBarItem(
-    icon: const Icon(Icons.favorite_border),
+    icon: const Icon(Icons.search),
     title: const Text("Likes"),
     selectedColor: Colors.pink,
   ),
   SalomonBottomBarItem(
-    icon: const Icon(Icons.search),
+    icon: const Icon(Icons.favorite_border),
     title: const Text("Search"),
     selectedColor: Colors.orange,
   ),

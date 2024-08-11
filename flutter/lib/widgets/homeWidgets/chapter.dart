@@ -1,6 +1,8 @@
 import 'package:challange_kide/services/api_service.dart';
 import 'package:flutter/material.dart';
 
+import 'lesson.dart';
+
 class chapterScreen extends StatelessWidget {
   final Chapter chapter;
 
@@ -17,10 +19,10 @@ class chapterScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: 400, // Set a fixed height for the background image
+              height: 300, // Set a fixed height for the background image
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('image/BG.png'),
+                  image: AssetImage('image/chapterBG.png'),
                   fit: BoxFit.cover, // Ensure the image covers the container
                 ),
               ),
@@ -39,7 +41,7 @@ class chapterScreen extends StatelessWidget {
           ),
           // Main Content
           Positioned(
-            top: 300, // Position below the background image
+            top: 200, // Position below the background image
             left: 0,
             right: 0,
             bottom: 0, // Extend to the bottom of the screen
@@ -131,7 +133,7 @@ class chapterScreen extends StatelessWidget {
                                     color: Color.fromARGB(
                                         255, 129, 129, 129)),
                               ),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               Icon(Icons.format_list_numbered,
                                   size: 20, color: Colors.grey),
                               SizedBox(width: 4),
@@ -167,86 +169,78 @@ class chapterScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 16.0),
-                                    width: 50,
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: Color.fromRGBO(61, 143, 239, 1),
-                                      shape: BoxShape.circle,
+                            child:Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center, // Center children vertically
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(right: 16.0),
+                                  width: 50,
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromRGBO(61, 143, 239, 1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      size: 30,
+                                      Icons.play_lesson_outlined,
+                                      color: Colors.white,
                                     ),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        size: 30,
-                                        Icons.play_lesson_outlined,
+                                    onPressed: () {
+                                      // Handle icon button tap
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft, // Align text to the left and center vertically
+                                    child: Text(
+                                      lesson.title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => lessonScreen(lesson: lesson),
+                                ),
+                              );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.play_circle_rounded,
                                         color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        // Handle icon button tap
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          lesson.title,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          lesson.description,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        // Handle Learn More button tap
-                                      },
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(
-                                            61, 143, 239, 1),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        padding: EdgeInsets.zero,
-                                      ),
-                                      child: const Align(
-                                        alignment: Alignment.center,
-                                        child: Icon(
-                                          Icons.play_circle_rounded,
-                                          color: Colors.white,
-                                          size: 30,
-                                        ),
+                                        size: 30,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                          )
+
                           );
                         },
                       ),

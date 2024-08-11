@@ -262,7 +262,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'http://192.168.1.12:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),
@@ -323,7 +323,7 @@ class _homeScreenState extends State<homeScreen> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                ChallengeScreen(
+                                                                challengeScreen(
                                                                     challenge:
                                                                         challenge),
                                                           ),
