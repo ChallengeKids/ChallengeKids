@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -54,31 +53,36 @@ class ApiService {
     }
   }
 
-Future<bool> login(String email, String password) async {
-  final response = await http.post(
-    Uri.parse('$baseUrl/api/login_check'),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({'email': email, 'password': password}),
-  );
+  Future<bool> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/login_check'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
+    );
 
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    final token = data['token']; // Assuming the token is returned in the 'token' field
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final token =
+          data['token']; // Assuming the token is returned in the 'token' field
 
-    if (token != null && token.isNotEmpty) {
-      // Save the token in SharedPreferences or any other secure storage
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
-      await _storage.write(key: 'token', value: token,);
-      return true;
+      if (token != null && token.isNotEmpty) {
+        // Save the token in SharedPreferences or any other secure storage
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        await _storage.write(
+          key: 'token',
+          value: token,
+        );
+        return true;
+      } else {
+        return false; // Token is null or empty, login failed
+      }
     } else {
-      return false; // Token is null or empty, login failed
+      throw Exception('Failed to log in');
     }
-  } else {
-    throw Exception('Failed to log in');
   }
-}
-Future<bool> _isUserLoggedIn() async {
+
+  Future<bool> _isUserLoggedIn() async {
     // Check if the user is logged in by reading the value from secure storage
     String? loggedIn = await _storage.read(key: 'loggedIn');
     return loggedIn == 'true';

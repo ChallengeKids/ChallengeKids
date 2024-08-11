@@ -24,13 +24,15 @@ class _searcheScreenState extends State<searcheScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100.0), // Set the desired height here
+        preferredSize:
+            const Size.fromHeight(100.0), // Set the desired height here
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Container(
             width: double.infinity, // Make the container span the full width
             child: AppBar(
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Remove shadow
+              backgroundColor:
+                  const Color.fromARGB(255, 255, 255, 255), // Remove shadow
               title: const Align(
                 alignment: Alignment.center,
                 child: Text(
@@ -60,7 +62,8 @@ class _searcheScreenState extends State<searcheScreen> {
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                prefixIcon: const Icon(Icons.search, color: Color.fromARGB(255, 70, 98, 255)),
+                prefixIcon: const Icon(Icons.search,
+                    color: Color.fromARGB(255, 70, 98, 255)),
               ),
             ),
           ),
@@ -99,10 +102,12 @@ class _searcheScreenState extends State<searcheScreen> {
                             },
                             child: Container(
                               height: 160,
-                              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8.0),
                               decoration: BoxDecoration(
                                 color: const Color.fromRGBO(234, 244, 255, 1),
-                                border: Border.all(color: const Color(0xFFE0E0E0)),
+                                border:
+                                    Border.all(color: const Color(0xFFE0E0E0)),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Padding(
@@ -114,21 +119,23 @@ class _searcheScreenState extends State<searcheScreen> {
                                       height: 130,
                                       decoration: BoxDecoration(
                                         color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
                                         image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            'http://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
+                                            'http://192.168.1.12:8000/uploads/images/${challenge.imageFileName}',
                                           ),
-
                                         ),
                                       ),
                                     ),
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 15.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 15.0),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               challenge.title,
@@ -141,7 +148,8 @@ class _searcheScreenState extends State<searcheScreen> {
                                             const SizedBox(height: 8),
                                             Text(
                                               challenge.description,
-                                              style: const TextStyle(fontSize: 14),
+                                              style:
+                                                  const TextStyle(fontSize: 14),
                                               maxLines: 4,
                                               overflow: TextOverflow.ellipsis,
                                             ),

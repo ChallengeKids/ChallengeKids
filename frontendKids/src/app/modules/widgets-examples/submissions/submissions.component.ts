@@ -11,12 +11,14 @@ import {
 } from "@angular/core";
 
 declare var $: any;
-
 @Component({
-  selector: "app-post",
-  templateUrl: "./post.component.html",
+  selector: 'app-submissions',
+  templateUrl: './submissions.component.html',
 })
-export class PostComponent implements OnInit, AfterViewInit {
+export class SubmissionsComponent implements OnInit, AfterViewInit{
+  selectedpost: any;
+  confirmPassword: any;
+
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
@@ -24,8 +26,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   open() {
     throw new Error("Method not implemented.");
   }
-  selectedpost: any;
-  confirmPassword: any;
+  
   savepost() {
     throw new Error("Method not implemented.");
   }
@@ -34,7 +35,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     try {
-      const response = await lastValueFrom(this.httpservice.get("/api/post"));
+      const response = await lastValueFrom(this.httpservice.get("/api/coach/all-submissions"));
       this.posts = response;
       console.log("Categories loaded:", this.posts);
     } catch (error) {

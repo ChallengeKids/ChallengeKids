@@ -1,14 +1,16 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { HttpserviceService } from '../../auth/services/httpservice.service';
 import { AuthService } from '../../auth';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
+declare var $: any;
 
 @Component({
   selector: 'app-coaches-posts',
   templateUrl: './coaches-posts.component.html',
   styleUrls: ['./coaches-posts.component.scss'],
 })
-export class CoachesPostsComponent implements OnInit {
+export class CoachesPostsComponent implements OnInit, AfterViewInit {
   title: string = "";
   thecontent: string = "";  // This is bound to the Quill editor
   mediaFile: File | null = null;
@@ -19,6 +21,12 @@ export class CoachesPostsComponent implements OnInit {
   truecategories: any[] = [];
   confirmPassword: any;
   selectedpost: any = null;
+
+  @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
+  
+  ngAfterViewInit() {
+    $(this.tableElement.nativeElement).DataTable();
+  }
 
   quillConfig = {
     toolbar: [

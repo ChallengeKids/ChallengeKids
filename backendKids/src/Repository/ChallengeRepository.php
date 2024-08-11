@@ -31,6 +31,18 @@ class ChallengeRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findChallengeIdsByCoach(int $coachId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id')
+            ->andWhere('c.coach = :coachId')
+            ->setParameter('coachId', $coachId)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
     //    /**
     //     * @return Challenge[] Returns an array of Challenge objects
     //     */

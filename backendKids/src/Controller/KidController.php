@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Kid;
+use App\Entity\Post;
 use App\Entity\User;
-use App\Form\KidType;
 use App\Form\UserPasswordType;
+use App\Repository\ChallengeRepository;
 use App\Repository\KidRepository;
 use App\Service\KidService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +20,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/kid')]
 #[OA\Tag(name: 'Kid')]
@@ -123,7 +127,26 @@ class KidController extends AbstractController
         return new JsonResponse(['status' => 'The Kid has been deleted']);
     }
 
+    #[Route('/{idKid}/{idUserToAdd}', name: 'kid_add_friend', methods: ['PUT'])]
+    public function addFriend($idKid, $idUserToAdd, KidRepository $kidRepository): Response
+    {
+        $kid = $this->entityManager->getRepository(Kid::class)->find($idKid);
+        if (!$kid) {
+            throw new NotFoundHttpException('Kid not found');
+        }
+        $user = $this->entityManager->getRepository(User::class)->find($idUserToAdd);
 
+        $friendData = $this->kidService->serializeFriendData($user);
+
+        $friends = $kid->getFriends();
+        $friends[] = $friendData;
+        $kid->setFriends($friends);
+
+        $this->entityManager->persist($kid);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'The Kid has been deleted']);
+    }
 
     #[Route('/{id}/addInterests', name: 'kid_add_interests', methods: ['POST'])]
     #[OA\RequestBody(
@@ -165,24 +188,87 @@ class KidController extends AbstractController
         return new JsonResponse(true);
     }
 
-    #[Route('/{idKid}/{idUserToAdd}', name: 'kid_add_friend', methods: ['Post'])]
-    public function addFriend($idKid, $idUserToAdd, KidRepository $kidRepository): Response
+
+
+    #[Route('/postchallenge/{challengeId}', name: 'kid_enroll_challenge', methods: ['POST'], requirements: ['challengeId' => '\d+'])]
+    #[OA\Post(
+        summary: 'Add a new post',
+        description: 'Creates a new post for the specified user.',
+        requestBody: new OA\RequestBody(
+            description: 'Request body for adding a new post',
+            required: true,
+            content: [
+                'multipart/form-data' => new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(
+                                property: 'title',
+                                type: 'string',
+                                example: 'hadil'
+                            ),
+                            new OA\Property(
+                                property: 'content',
+                                type: 'string',
+                                example: 'tahki yasser'
+                            ),
+                            new OA\Property(
+                                property: 'mediaFileName',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'File to upload'
+                            )
+                        ],
+                        required: ['title', 'content']
+                    )
+                )
+            ]
+        ),
+    )]
+    #[IsGranted('ROLE_KID')]
+    public function addPost(Request $request, $challengeId, ChallengeRepository $challengeRepository): JsonResponse
     {
-        $kid = $this->entityManager->getRepository(Kid::class)->find($idKid);
-        if (!$kid) {
-            throw new NotFoundHttpException('Kid not found');
+        $user = $this->security->getUser();
+        $challenge = $challengeRepository->find($challengeId);
+        $categories = $challenge->getCategories();
+        $post = new Post();
+        $post->setUser($user);
+        $post->setChallengeId($challengeId);
+        $title = $request->request->get('title');
+        $content = $request->request->get('content');
+        $mediaFile = $request->files->get('mediaFileName');
+
+
+        if (!$title || !$content) {
+            return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
         }
-        $user = $this->entityManager->getRepository(User::class)->find($idUserToAdd);
 
-        $friendData = $this->kidService->serializeFriendData($user);
+        $post->setTitle($title);
+        $post->setContent($content);
+        $post->setAddedDate(new \DateTime());
 
-        $friends = $kid->getFriends();
-        $friends[] = $friendData;
-        $kid->setFriends($friends);
+        if ($mediaFile instanceof UploadedFile) {
 
-        $this->entityManager->persist($kid);
+            $fileName = uniqid() . '.' . $mediaFile->guessExtension();
+
+            $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/images';
+
+            $mediaFile->move($uploadsDirectory, $fileName);
+
+            $post->setMediaFileName($fileName);
+        } else {
+
+            return new JsonResponse(['message' => 'File upload failed or not recognized.']);
+        }
+
+        foreach ($categories as $category) {
+            $post->addCategory($category);
+        }
+
+        $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return new JsonResponse(['status' => 'The Kid has been deleted']);
+        return new JsonResponse(['success' => true, 'message' => 'Post created successfully.']);
     }
 }

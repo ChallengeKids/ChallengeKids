@@ -52,6 +52,9 @@ class Post
     #[ORM\Column(nullable: true)]
     private ?bool $approved = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $challengeId = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -197,6 +200,18 @@ class Post
     public function setApproved(?bool $approved): static
     {
         $this->approved = $approved;
+
+        return $this;
+    }
+
+    public function getChallengeId(): ?int
+    {
+        return $this->challengeId;
+    }
+
+    public function setChallengeId(?int $challengeId): static
+    {
+        $this->challengeId = $challengeId;
 
         return $this;
     }
