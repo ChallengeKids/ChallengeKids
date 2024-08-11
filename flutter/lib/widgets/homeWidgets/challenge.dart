@@ -21,7 +21,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Future<void> pickImageFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
-      final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage =
+          await _picker.pickImage(source: ImageSource.gallery);
 
       if (pickedImage != null) {
         setState(() {
@@ -36,137 +37,141 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   void _showEnrollBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-    ),
-    builder: (BuildContext context) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Enroll in ${widget.challenge.title}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Please provide the following details to complete your enrollment:',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: selectImage != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          selectImage!,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Center(
-                        child: Text(
-                          "Please select an image",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                pickImageFromGallery();
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-                minimumSize: Size(double.infinity, 48),
-              ),
-              child: const Text('Upload Image'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter the title',
-              ),
-              onChanged: (text) {
-                print('Text changed: $text');
-              },
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Add Description',
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close the bottom sheet
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      backgroundColor: Colors.grey[200], // Light gray background
-                      minimumSize: Size(double.infinity, 48), // Width of the Cancel button
-                    ),
-                    child: const Text('Cancel'),
-                  ),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enroll in ${widget.challenge.title}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    width: double.infinity, // Ensure the button takes the full width
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Please provide the following details to complete your enrollment:',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 200,
+                  child: selectImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            selectImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : const Center(
+                          child: Text(
+                            "Please select an image",
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  pickImageFromGallery();
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: const Text('Upload Image'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter the title',
+                ),
+                onChanged: (text) {
+                  print('Text changed: $text');
+                },
+              ),
+              const SizedBox(height: 16),
+              const TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Add Description',
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle the enrollment logic here
                         Navigator.pop(context); // Close the bottom sheet
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.blue,
-                        minimumSize: Size(double.infinity, 60), // Larger button height
+                        foregroundColor: Colors.blue,
+                        backgroundColor:
+                            Colors.grey[200], // Light gray background
+                        minimumSize: const Size(
+                            double.infinity, 48), // Width of the Cancel button
                       ),
-                      child: const Text('Enroll Now'),
+                      child: const Text('Cancel'),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Container(
+                      width: double
+                          .infinity, // Ensure the button takes the full width
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle the enrollment logic here
+                          Navigator.pop(context); // Close the bottom sheet
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue,
+                          minimumSize: const Size(
+                              double.infinity, 60), // Larger button height
+                        ),
+                        child: const Text('Enroll Now'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +247,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                     ],
                     image: DecorationImage(
                       image: NetworkImage(
-                          'https://10.0.2.2:8000/uploads/images/${widget.challenge.imageFileName}'),
+                          'http://192.168.1.12:8000/uploads/images/${widget.challenge.imageFileName}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -250,7 +255,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Column(
@@ -258,7 +264,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   children: [
                     Text(
                       widget.challenge.title,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -271,12 +278,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             ),
             ListView.builder(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Prevent scrolling in this ListView
+              physics:
+                  const NeverScrollableScrollPhysics(), // Prevent scrolling in this ListView
               itemCount: widget.challenge.chapters.length,
               itemBuilder: (context, index) {
                 final chapter = widget.challenge.chapters[index];
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(234, 244, 255, 1),
                     border: Border.all(color: const Color(0xFFE0E0E0)),
@@ -347,12 +356,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => chapterScreen(chapter: chapter),
+                                  builder: (context) =>
+                                      chapterScreen(chapter: chapter),
                                 ),
                               );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                              backgroundColor:
+                                  const Color.fromRGBO(61, 143, 239, 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),

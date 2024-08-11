@@ -18,7 +18,7 @@ class chapterScreen extends StatelessWidget {
             right: 0,
             child: Container(
               height: 400, // Set a fixed height for the background image
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('image/BG.png'),
                   fit: BoxFit.cover, // Ensure the image covers the container
@@ -31,7 +31,7 @@ class chapterScreen extends StatelessWidget {
             top: 30,
             left: 15,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
               onPressed: () {
                 Navigator.pop(context); // Navigate back
               },
@@ -58,22 +58,24 @@ class chapterScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             chapter.title,
-                            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.left,
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             chapter.description,
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                             textAlign: TextAlign.left,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,52 +83,62 @@ class chapterScreen extends StatelessWidget {
                               Container(
                                 width: 36,
                                 height: 36,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.blue,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.person,
                                   size: 24,
                                   color: Colors.white,
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              Text(
+                              const SizedBox(width: 8),
+                              const Text(
                                 'Aziz Chandoul',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           // Center the "Lessons" title
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 "Lessons",
-                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.w700),
                                 textAlign: TextAlign.center,
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           // Center the time and number info
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.access_time, size: 20, color: const Color.fromARGB(255, 129, 129, 129)),
+                              Icon(Icons.access_time,
+                                  size: 20,
+                                  color:
+                                      Color.fromARGB(255, 129, 129, 129)),
                               SizedBox(width: 4),
                               Text(
                                 'Time: 10:00 AM',
-                                style: TextStyle(fontSize: 14, color: const Color.fromARGB(255, 129, 129, 129)),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color.fromARGB(
+                                        255, 129, 129, 129)),
                               ),
                               SizedBox(width: 20),
-                              Icon(Icons.format_list_numbered, size: 20, color: Colors.grey),
+                              Icon(Icons.format_list_numbered,
+                                  size: 20, color: Colors.grey),
                               SizedBox(width: 4),
                               Text(
                                 'Number: 5',
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                             ],
                           ),
@@ -140,10 +152,12 @@ class chapterScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final lesson = chapter.lessons[index];
                           return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4.0),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4.0),
                             decoration: BoxDecoration(
                               color: const Color.fromRGBO(234, 244, 255, 1),
-                              border: Border.all(color: const Color(0xFFE0E0E0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE0E0E0)),
                               borderRadius: BorderRadius.circular(8.0),
                               boxShadow: const [
                                 BoxShadow(
@@ -179,7 +193,8 @@ class chapterScreen extends StatelessWidget {
                                   ),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           lesson.title,
@@ -211,13 +226,15 @@ class chapterScreen extends StatelessWidget {
                                         // Handle Learn More button tap
                                       },
                                       style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                                        backgroundColor: const Color.fromRGBO(
+                                            61, 143, 239, 1),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         padding: EdgeInsets.zero,
                                       ),
-                                      child: Align(
+                                      child: const Align(
                                         alignment: Alignment.center,
                                         child: Icon(
                                           Icons.play_circle_rounded,

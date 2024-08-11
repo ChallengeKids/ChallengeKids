@@ -9,8 +9,10 @@ use App\Entity\Coach;
 use App\Form\ChallengeType;
 use App\Form\ChapterType;
 use App\Repository\ChallengeRepository;
+use App\Repository\PostRepository;
 use App\Service\ChallengeService;
 use App\Service\CoachService;
+use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,15 +30,17 @@ class ChallengeController extends AbstractController
 {
     private $challengeService;
     private $coachService;
+    private $postService;
     private $entityManager;
     private $security;
 
-    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager, CoachService $coachService, Security $security)
+    public function __construct(ChallengeService $challengeService, EntityManagerInterface $entityManager, CoachService $coachService, Security $security, PostService $postService)
     {
         $this->challengeService = $challengeService;
         $this->entityManager = $entityManager;
         $this->coachService = $coachService;
         $this->security = $security;
+        $this->postService = $postService;
     }
 
     #[Route('/', name: 'challenge_index', methods: ['GET'])]
@@ -269,5 +273,28 @@ class ChallengeController extends AbstractController
         }
 
         return new JsonResponse(true);
+    }
+
+    #[Route('/{id}/submissions', name: 'challenge_submissions', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function viewSubmissions(int $id, PostRepository $postRepository): Response
+    {
+
+        $listJson = [];
+        $posts = $postRepository->findByChallengeIdAndKid($id);
+
+        foreach ($posts as $key => $value) {
+            $listJson[$key] = $this->postService->postToJson($value);
+        }
+
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/coach/{coachId}', name: 'challenge_ids_by_caoch', methods: ['GET'], requirements: ['coachId' => '\d+'])]
+    public function challengeIds(int $coachId, ChallengeRepository $challengeRepository): Response
+    {
+
+        $challengeIds = $challengeRepository->findChallengeIdsByCoach($coachId);
+
+        return new JsonResponse($challengeIds);
     }
 }

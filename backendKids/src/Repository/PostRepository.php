@@ -26,6 +26,17 @@ class PostRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByChallengeIdAndKid(int $challengeId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.user', 'u')
+            ->andWhere('p.challengeId = :challengeId')
+            ->andWhere('u INSTANCE OF App\Entity\Kid') // Check if the user is an instance of Kid
+            ->setParameter('challengeId', $challengeId)
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Post[] Returns an array of Post objects
     //     */

@@ -31,12 +31,24 @@ export class CoachchallengeComponent {
   selectedFile: File | null = null;
   fakecategories: any;
   Categories: string[] = [];
+
+  quillConfig = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ 'header': [1, 2, false] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image'],
+      ['clean']
+    ]
+  };
+  
   constructor(
     private httpservice: HttpserviceService,
     private fb: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
+
   initForm() {
     this.postForm = this.fb.group({
       title: ["", Validators.required],
