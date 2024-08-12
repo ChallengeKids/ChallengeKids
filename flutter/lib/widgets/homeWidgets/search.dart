@@ -94,7 +94,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      challengeScreen(
+                                      ChallengeScreen(
                                           challenge:
                                               challenge),
                                 ),
@@ -124,7 +124,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                         image: DecorationImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            'http://192.168.1.12:8000/uploads/images/${challenge.imageFileName}',
+                                            'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}',
                                           ),
                                         ),
                                       ),

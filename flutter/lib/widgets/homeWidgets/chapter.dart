@@ -216,7 +216,7 @@ class chapterScreen extends StatelessWidget {
                                       Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => lessonScreen(lesson: lesson),
+                                  builder: (context) => LessonScreen(lesson: lesson),
                                 ),
                               );
                                     },

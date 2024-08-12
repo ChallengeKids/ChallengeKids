@@ -323,7 +323,7 @@ class _homeScreenState extends State<homeScreen> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                challengeScreen(
+                                                                ChallengeScreen(
                                                                     challenge:
                                                                         challenge),
                                                           ),
