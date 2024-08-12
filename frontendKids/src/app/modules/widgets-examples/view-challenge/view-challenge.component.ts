@@ -5,6 +5,7 @@ import { OnInit, AfterViewInit, inject } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ActivatedRoute } from "@angular/router";
 import { environment } from "src/environments/environment";
+import { Router } from "@angular/router";
 const API_USERS_URL = `${environment.backednUrl}`;
 declare var $: any;
 
@@ -13,6 +14,9 @@ declare var $: any;
   templateUrl: "./view-challenge.component.html",
 })
 export class ViewChallengeComponent {
+  goToViewChapter(chapterid) {
+    this.router.navigate([`/coach/widgets/viewchapter/${chapterid}`]);
+  }
   showForm = false;
   backendUrl = API_USERS_URL;
   private modalService = inject(NgbModal);
@@ -32,7 +36,8 @@ export class ViewChallengeComponent {
   }
   constructor(
     private httpservice: HttpserviceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
   async addExistingChapter() {
     try {

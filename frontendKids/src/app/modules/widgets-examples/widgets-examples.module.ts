@@ -25,6 +25,8 @@ import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
+import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
+import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
 
 @NgModule({
   declarations: [
@@ -47,6 +49,8 @@ import { ViewChallengeComponent } from "./view-challenge/view-challenge.componen
     CoachLessonComponent,
     CoachChapterComponent,
     CoachchallengeComponent,
+    ViewChapterComponent,
+    ViewLessonComponent,
   ],
   imports: [
     CommonModule,
