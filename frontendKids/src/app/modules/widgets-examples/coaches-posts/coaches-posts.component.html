@@ -90,7 +90,7 @@
                 href="#"
                 class="text-gray-900 fw-bolder text-hover-primary d-block fs-6"
               >
-                {{ post.content }}
+                <div [innerHTML]="post.content"></div>
               </a>
             </td>
             <td>
@@ -172,6 +172,7 @@
             />
           </div>
         </div>
+        <!-- Updated template to remove config binding -->
         <div class="row mb-6">
           <label
             for="postcontent"

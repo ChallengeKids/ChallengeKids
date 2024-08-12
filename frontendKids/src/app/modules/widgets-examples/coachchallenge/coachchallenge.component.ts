@@ -1,7 +1,10 @@
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
   ElementRef,
   inject,
+  OnInit,
   TemplateRef,
   ViewChild,
 } from "@angular/core";
@@ -18,8 +21,9 @@ declare var $: any;
 @Component({
   selector: "app-coachchallenge",
   templateUrl: "./coachchallenge.component.html",
+  styleUrl: './coachchallenge.component.scss'
 })
-export class CoachchallengeComponent {
+export class CoachchallengeComponent implements OnInit, AfterViewInit{
   postForm: FormGroup;
   challenges: any;
   backendUrl = API_USERS_URL;
@@ -31,12 +35,24 @@ export class CoachchallengeComponent {
   selectedFile: File | null = null;
   fakecategories: any;
   Categories: string[] = [];
+
+  quillConfig = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ header: [1, 2, false] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
   constructor(
     private httpservice: HttpserviceService,
     private fb: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
+
   initForm() {
     this.postForm = this.fb.group({
       title: ["", Validators.required],
@@ -101,14 +117,11 @@ export class CoachchallengeComponent {
         .subscribe(
           (response) => {
             console.log("Post added successfully", response);
-            // Handle success (e.g., show a success message, clear the form)
           },
           (error) => {
             console.error("Error adding post", error);
-            // Handle error (e.g., show an error message)
           }
         );
-      // Handle form submission with formData
     }
   }
 

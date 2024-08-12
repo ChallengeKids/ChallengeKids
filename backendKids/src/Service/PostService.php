@@ -14,7 +14,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PostService
 {
-  
+
     private $categoryService;
 
     public function __construct(CategoryService $categoryService)
@@ -23,7 +23,7 @@ class PostService
     }
     public function postToJson(Post $post)
     {
-        $categories=$post->getCategories()->toArray();
+        $categories = $post->getCategories()->toArray();
         $lesson = $post->getLesson() ?? null;
         return [
             'id' => $post->getId(),
@@ -35,6 +35,9 @@ class PostService
             },  $categories),
             'lesson' => $lesson,
             'user' => $post->getUser()->getFullName(),
+            'mediaFileName' => $post->getMediaFileName(),
+            'approved' => $post->isApproved(),
+
         ];
     }
 }

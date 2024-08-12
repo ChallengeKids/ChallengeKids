@@ -1,14 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:challange_kide/services/api_service.dart';
+import 'challenge.dart';// Make sure to import the Post model
 
-class ProfilePage1 extends StatelessWidget {
+class ProfilePage1 extends StatefulWidget {
   const ProfilePage1({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePage1State createState() => _ProfilePage1State();
+}
+
+class _ProfilePage1State extends State<ProfilePage1> {
+  final ApiService apiService = ApiService();
+  late Future<List<Post>> postsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    postsFuture = apiService.fetchUserPosts(); // Changed method call
+  }
+
+  Future<String> _getUserName() async {
+    // Ensure this function is correctly implemented
+    return await getUserName(); // Fetch the username from secure storage
+  }
+
+  void _showProfileModificationSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Modify Profile',
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle profile update logic here
+                  Navigator.pop(context);
+                },
+                child: const Text('Save Changes'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(backgroundColor: const Color.fromARGB(255, 225, 225, 225),),
       body: Column(
         children: [
           const Expanded(flex: 2, child: _TopPortion()),
@@ -18,14 +76,36 @@ class ProfilePage1 extends StatelessWidget {
               padding: const EdgeInsets.all(0.0),
               child: Column(
                 children: [
-                  const Text(
-                    "Richie Lorie",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  FutureBuilder<String>(
+                    future: _getUserName(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final username = snapshot.data ?? 'No username found';
+                        return Text(
+                          username,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      FloatingActionButton.extended(
+                        onPressed: () {
+                          _showProfileModificationSheet();
+                        },
+                        heroTag: 'ModifyProfile',
+                        elevation: 0,
+                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                        label: const Text("Modify Profile", style: TextStyle(color: Colors.white)),
+                        icon: const Icon(Icons.edit, color: Colors.white),
+                      ),
                       const SizedBox(width: 10),
                       FloatingActionButton.extended(
                         onPressed: () {
@@ -34,8 +114,8 @@ class ProfilePage1 extends StatelessWidget {
                         heroTag: 'Logout',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Log out", style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-                        icon: const Icon(Icons.logout, color: Color.fromARGB(255, 255, 255, 255)),
+                        label: const Text("Log out", style: TextStyle(color: Colors.white)),
+                        icon: const Icon(Icons.logout, color: Colors.white),
                       ),
                     ],
                   ),
@@ -43,86 +123,91 @@ class ProfilePage1 extends StatelessWidget {
                   const _ProfileInfoRow(),
                   const SizedBox(height: 10),
                   Expanded(
-                    child: ListView(
-                      children: _articles.map((article) => Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFE0E0E0)),
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              height: 136,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(article.imageUrl),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    child: FutureBuilder<List<Post>>(
+                      future: postsFuture, // Updated future
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('No posts found'));
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final post = snapshot.data![index];
+                              return Column(
                                 children: [
-                                  Text(
-                                    article.title,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 8),
                                   Container(
-                                    margin: EdgeInsets.symmetric(vertical: 10),
-                                    width: double.infinity,
-                                    height: 20,
-                                    child: Stack(
+                                    margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                    decoration: BoxDecoration(
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                      border: Border.all(color: const Color(0xFFE0E0E0)),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Container(
+                                          width: double.infinity,
+                                          height: 225,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: const Color.fromARGB(255, 254, 132, 0), width: 2),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(10),
-                                            child: LinearProgressIndicator(
-                                              value: double.tryParse(article.level.replaceAll('%', ''))! / 100,
-                                              backgroundColor: Colors.transparent,
-                                              color: const Color.fromARGB(255, 254, 132, 0),
-                                              minHeight: 20,
+                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage('https://10.0.2.2:8000/uploads/images/${post.mediaFileName}'),
                                             ),
                                           ),
                                         ),
-                                        Center(
-                                          child: Text(
-                                            article.level,
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                post.title,
+                                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(post.content),
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    color: post.approved == null ? const Color.fromARGB(255, 54, 244, 63) : const Color.fromARGB(255, 175, 76, 76), // Background color based on validity
+                                                    padding: EdgeInsets.all(8.0),
+                                                    child: Text(
+                                                      post.approved == null ? "Valid" : " Not Valid",
+                                                      style: TextStyle(
+                                                        color: Colors.white, // Text color
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )).toList(),
+                              );
+                            },
+                          );
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -224,8 +309,8 @@ class _TopPortion extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+                      image: AssetImage(
+                        'image/user.png', // Path to your image asset
                       ),
                     ),
                   ),
@@ -250,43 +335,3 @@ class _TopPortion extends StatelessWidget {
     );
   }
 }
-
-class Article {
-  final String title;
-  final String imageUrl;
-  final String author;
-  final String postedOn;
-  final String level;
-
-  const Article({
-    required this.title,
-    required this.imageUrl,
-    required this.author,
-    required this.postedOn,
-    required this.level,
-  });
-}
-
-const List<Article> _articles = [
-  Article(
-    title: "Panasonic's 25-megapixel GH6 is the highest resolution Micro Four Thirds camera yet",
-    author: "Polygon",
-    imageUrl: "https://picsum.photos/id/1020/960/540",
-    postedOn: "2 hours ago",
-    level : "0%",
-  ),
-  Article(
-    title: "Samsung Galaxy S22 Ultra charges strangely slowly",
-    author: "TechRadar",
-    imageUrl: "https://picsum.photos/id/1021/960/540",
-    postedOn: "10 days ago",
-    level : "100%",
-  ),
-  Article(
-    title: "Snapchat unveils real-time location sharing",
-    author: "Fox Business",
-    imageUrl: "https://picsum.photos/id/1060/960/540",
-    postedOn: "10 hours ago",
-    level : "50%",
-  ),
-];

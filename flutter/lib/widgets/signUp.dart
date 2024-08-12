@@ -321,7 +321,7 @@ try {
   print('success test test: ${success}');
   if (success) {
     // Store a flag indicating successful registration
-    await _storage.write(key: 'loggedIn', value: 'true');
+    await _storage.write(key: 'email', value: email);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Sign Up Successful')),
     );

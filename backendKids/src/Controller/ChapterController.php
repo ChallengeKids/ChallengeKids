@@ -42,6 +42,14 @@ class ChapterController extends AbstractController
         return new JsonResponse($listJson);
     }
 
+    #[Route('/{id}', name: 'chapter_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function getchapterById($id, ChapterRepository $chapterRepository): JsonResponse
+    {
+        $chapter = $chapterRepository->find($id);
+        $chapter = $this->chapterService->chapterToJson($chapter);
+        return new JsonResponse($chapter);
+    }
+
     #[Route('/coach', name: 'chapter_coach', methods: ['GET'])]
     public function getCoachChapters(ChapterRepository $chapterRepository): JsonResponse
     {

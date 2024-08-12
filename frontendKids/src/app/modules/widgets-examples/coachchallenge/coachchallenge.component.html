@@ -156,15 +156,15 @@
           <label
             for="description"
             class="col-lg-4 col-form-label required fw-bold fs-6"
-            >Description:</label
+            >Content:</label
           >
           <div class="col-lg-8 fv-row">
-            <textarea
+            <quill-editor
               id="description"
               formControlName="description"
-              class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
-              rows="4"
-            ></textarea>
+              class="form-control-solid mb-3 mb-lg-0"
+              style="height: 250px"
+            ></quill-editor>
           </div>
         </div>
         <div class="row mb-6">

@@ -14,10 +14,9 @@ declare var $: any;
 
 @Component({
   selector: "app-post",
-
   templateUrl: "./post.component.html",
 })
-export class PostComponent {
+export class PostComponent implements OnInit, AfterViewInit {
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();

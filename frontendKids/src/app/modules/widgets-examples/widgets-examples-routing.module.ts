@@ -21,12 +21,15 @@ import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.compone
 import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
 import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
 import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
+import { SubmissionsComponent } from "./submissions/submissions.component";
+
 
 const routes: Routes = [
   {
     path: "",
     component: WidgetsExamplesComponent,
     children: [
+      { path: "submissions", component: SubmissionsComponent},
       { path: "coachesposts", component: CoachesPostsComponent },
       { path: "coachLessons", component: CoachLessonComponent },
       {

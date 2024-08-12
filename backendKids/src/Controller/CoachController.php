@@ -5,10 +5,14 @@ namespace App\Controller;
 use App\Entity\Coach;
 use App\Form\CoachType;
 use App\Form\UserPasswordType;
+use App\Repository\ChallengeRepository;
 use App\Repository\CoachRepository;
+use App\Repository\PostRepository;
 use App\Service\CoachService;
+use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,13 +28,16 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class CoachController extends AbstractController
 {
     private $coachService;
-    private $passwordHasher;
+    private $postService;
     private $entityManager;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, CoachService $coachService, EntityManagerInterface $entityManager)
+    private $security;
+
+    public function __construct(PostService $postService, Security $security, CoachService $coachService, EntityManagerInterface $entityManager)
     {
-        $this->passwordHasher = $passwordHasher;
+        $this->postService = $postService;
         $this->coachService = $coachService;
         $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     #[Route('/', name: 'coach_index', methods: ['GET'])]
@@ -231,5 +238,56 @@ class CoachController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(true);
+    }
+
+    #[Route('/all-submissions', name: 'coach_all_submissions', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function viewAllSubmissionsByCoach(ChallengeRepository $challengeRepository, PostRepository $postRepository): JsonResponse
+    {
+        $coach = $this->security->getUser();
+
+        if (!$coach instanceof Coach) {
+            throw new \LogicException('The logged-in user is not a coach.');
+        }
+
+        $listJson = [];
+
+        $challengeIds = $challengeRepository->findChallengeIdsByCoach($coach->getId());
+
+        foreach ($challengeIds as $challengeId) {
+            $posts = $postRepository->findByChallengeIdAndKid($challengeId['id']); // Assuming challengeId is an associative array with 'id' as key
+
+            foreach ($posts as $key => $value) {
+                $listJson[] = $this->postService->postToJson($value); // Add each post to the JSON list
+            }
+        }
+
+        return new JsonResponse($listJson);
+    }
+
+    #[Route('/submissions/{id}/status', name: 'update_post_status', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "approved" => false,
+            ]
+        )
+    )]
+    public function updatePostStatus(int $id, Request $request, PostRepository $postRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $post = $postRepository->find($id);
+
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $approved = $data['approved'] ?? null;
+
+        $post->setApproved($approved);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'Post status updated successfully']);
     }
 }
