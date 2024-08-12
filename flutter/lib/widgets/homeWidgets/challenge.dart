@@ -18,6 +18,17 @@ class ChallengeScreen extends StatefulWidget {
 }
 
 class _ChallengeScreenState extends State<ChallengeScreen> {
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
   Future<void> pickImageFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
@@ -36,6 +47,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     }
   }
 
+  void _resetForm() {
+    setState(() {
+      titleController.clear();
+      descriptionController.clear();
+      selectImage = null;
+    });
+    _formKey.currentState?.reset(); // Reset the form state
+  }
+
   void _showEnrollBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -45,128 +65,165 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       ),
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Enroll in ${widget.challenge.title}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Please provide the following details to complete your enrollment:',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 200,
-                  child: selectImage != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            selectImage!,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Center(
-                          child: Text(
-                            "Please select an image",
-                            textAlign: TextAlign.center,
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  pickImageFromGallery();
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blue,
-                  minimumSize: Size(double.infinity, 48),
-                ),
-                child: const Text('Upload Image'),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter the title',
-                ),
-                onChanged: (text) {
-                  print('Text changed: $text');
-                },
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Add Description',
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              Row(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom, // Add padding for keyboard
+            left: 16.0,
+            right: 16.0,
+          ),
+          child: Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).viewInsets.bottom > 0 ? 40.0 : 0.0), // Add top padding when keyboard is open
+            height: MediaQuery.of(context).size.height * 0.75, // Adjust the height as needed
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue,
-                        backgroundColor:
-                            Colors.grey[200], // Light gray background
-                        minimumSize: Size(
-                            double.infinity, 48), // Width of the Cancel button
-                      ),
-                      child: const Text('Cancel'),
+                  Text(
+                    'Enroll in ${widget.challenge.title}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Container(
-                      width: double
-                          .infinity, // Ensure the button takes the full width
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle the enrollment logic here
-                          Navigator.pop(context); // Close the bottom sheet
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                          minimumSize:
-                              Size(double.infinity, 60), // Larger button height
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Please provide the following details to complete your enrollment:',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
                         ),
-                        child: const Text('Enroll Now'),
-                      ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 200,
+                      child: selectImage != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                selectImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Center(
+                              child: Text(
+                                "Please select an image",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16, color: Colors.black54),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      pickImageFromGallery();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue,
+                      minimumSize: Size(double.infinity, 48),
+                    ),
+                    child: const Text('Upload Image'),
+                  ),
+                  const SizedBox(height: 16),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Enter the title',
+                          ),
+                          controller: titleController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Title is required';
+                            }
+                            return null;
+                          },
+
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Add Description',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Description is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _resetForm(); // Reset form fields and image
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                  backgroundColor: Colors.grey[200], // Light gray background
+                                  minimumSize: Size(double.infinity, 48), // Width of the Cancel button
+                                ),
+                                child: const Text('Restart'),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity, // Ensure the button takes the full width
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState?.validate() ?? false) {
+                                      if (selectImage == null) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Image is required.')),
+                                        );
+                                        return;
+                                      }
+
+                                      upload(
+                                        widget.challenge.id,
+                                        titleController.text,
+                                        descriptionController.text,
+                                        selectImage!.path,
+                                      );
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: Colors.blue,
+                                    minimumSize: Size(double.infinity, 60), // Larger button height
+                                  ),
+                                  child: const Text('Enroll Now'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -187,8 +244,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               width: double.infinity,
               height: 300,
               decoration: BoxDecoration(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(8.0)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
@@ -230,15 +286,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.challenge.title,
-                            style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w700),
+                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(height: 10),
@@ -248,32 +302,6 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 24,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Aziz Chandoul',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
                           // Center the time and number info
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -281,8 +309,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               SizedBox(width: 4),
                               Text(
                                 "Chapters",
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.w700),
+                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(width: 20),
@@ -293,31 +320,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                     ),
                     Expanded(
                       child: ListView.builder(
-                        padding: EdgeInsets.zero,
                         itemCount: widget.challenge.chapters.length,
                         itemBuilder: (context, index) {
                           final chapter = widget.challenge.chapters[index];
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(234, 244, 255, 1),
-                              border:
-                                  Border.all(color: const Color(0xFFE0E0E0)),
-                              borderRadius: BorderRadius.circular(8.0),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4.0,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .center, // Center children vertically
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(right: 16.0),
@@ -340,8 +354,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                   ),
                                   Expanded(
                                     child: Align(
-                                      alignment: Alignment
-                                          .centerLeft, // Align text to the left and center vertically
+                                      alignment: Alignment.centerLeft,
                                       child: Text(
                                         chapter.title,
                                         style: const TextStyle(
@@ -441,4 +454,5 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       ),
     );
   }
+
 }

@@ -194,19 +194,25 @@ class chapterScreen extends StatelessWidget {
                                         },
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment
-                                            .centerLeft, // Align text to the left and center vertically
-                                        child: Text(
-                                          lesson.title,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LessonScreen(lesson: lesson),
+                                ),
+                              );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                     const SizedBox(width: 20),
