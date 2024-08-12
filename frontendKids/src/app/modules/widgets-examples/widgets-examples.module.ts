@@ -26,7 +26,10 @@ import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.compone
 import { ReactiveFormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
+import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
+import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
 import { SubmissionsComponent } from "./submissions/submissions.component";
+
 
 @NgModule({
   declarations: [
@@ -49,6 +52,8 @@ import { SubmissionsComponent } from "./submissions/submissions.component";
     CoachLessonComponent,
     CoachChapterComponent,
     CoachchallengeComponent,
+    ViewChapterComponent,
+    ViewLessonComponent,
     SubmissionsComponent
   ],
   imports: [

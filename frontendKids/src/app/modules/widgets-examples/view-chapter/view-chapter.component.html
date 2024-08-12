@@ -1,45 +1,60 @@
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
 
-  .card {
+  .chapter-card {
     font-family: "Roboto", sans-serif;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
   }
 
-  .card-title {
-    font-size: 1.5rem;
-    font-weight: 700;
+  .chapter-card__header {
+    margin-bottom: 1.5rem;
   }
 
-  .card-text {
-    font-size: 1.1rem;
-  }
-
-  .category-badge {
-    font-size: 1rem;
-    padding: 0.5em 1em;
-    border-radius: 25px;
-    background-color: #e0f2ff;
-    color: #0077cc;
-    border: 1px solid #0077cc;
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin-right: 0.5rem;
+  .chapter-card__number {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
   }
 
-  .category-badge:hover {
-    background-color: #0077cc;
-    color: #ffffff;
+  .chapter-card__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 0.75rem;
   }
 
-  .enrolled-count {
-    font-size: 1.2rem;
-  }
-  .existing-chapters {
-    max-width: 600px;
-    margin: 0 auto;
+  .chapter-card__description {
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
   }
 
+  .chapter-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .chapter-card__lessons {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .chapter-card__lessons-count {
+    font-weight: 700;
+    color: #0077cc;
+  }
   .checkbox-list {
     display: flex;
     flex-direction: column;
@@ -76,56 +91,31 @@
   }
 </style>
 
-<div class="card mb-5 mb-xl-8 shadow-sm">
-  <div class="row g-0">
-    <!-- begin::Image (smaller and to the left) -->
-    <div class="col-md-4 d-flex align-items-center p-3">
-      <img
-        [src]="backendUrl + '/uploads/images/' + challenge.imageFileName"
-        alt="Challenge Image"
-        class="img-fluid rounded"
-        style="width: 100%; height: 100%; object-fit: cover"
-      />
+<div class="chapter-card">
+  <div class="chapter-card__header">
+    <div class="chapter-card__number">
+      Chapter {{ myChapter.chapterNumber }}
     </div>
-    <!-- end::Image -->
+    <h2 class="chapter-card__title">{{ myChapter.title }}</h2>
+  </div>
 
-    <!-- begin::Body (content taking full available space) -->
-    <div class="col-md-8">
-      <div class="card-body d-flex flex-column h-100">
-        <!-- Challenge Title -->
-        <h5 class="card-title mb-4">{{ challenge.title }}</h5>
+  <p class="chapter-card__description">{{ myChapter.description }}</p>
 
-        <!-- Challenge Description -->
-        <p class="card-text mb-4">
-          {{ challenge.description }}
-        </p>
-
-        <!-- Challenge Categories -->
-        <div class="d-flex flex-wrap mb-4">
-          <span
-            *ngFor="let category of challenge.categories"
-            class="category-badge"
-          >
-            {{ category.title }}
-          </span>
-        </div>
-
-        <!-- Enrolled Kids Count -->
-        <div class="mt-auto">
-          <span class="enrolled-count">Total Kids Enrolled: 50</span>
-        </div>
-      </div>
+  <div class="chapter-card__meta">
+    <div class="chapter-card__lessons">
+      Lessons:
+      <span class="chapter-card__lessons-count">{{
+        myChapter.lessons.length
+      }}</span>
     </div>
-    <!-- end::Body -->
   </div>
 </div>
-
 <div class="card mb-5 mb-xl-8">
   <!-- begin::Header -->
   <div class="card-header border-0 pt-5">
     <h3 class="card-title align-items-start flex-column">
-      <span class="card-label fw-bolder fs-3 mb-1">Chapters</span>
-      <span class="text-muted mt-1 fw-bold fs-7">Over 500 chapters</span>
+      <span class="card-label fw-bolder fs-3 mb-1">Lessons</span>
+      <span class="text-muted mt-1 fw-bold fs-7">Over 500 lesson</span>
     </h3>
     <div
       class="card-toolbar"
@@ -139,7 +129,7 @@
           [inlineSVG]="'./assets/media/icons/duotune/arrows/arr075.svg'"
           class="svg-icon svg-icon-3"
         ></span>
-        New Chapter
+        New lesson
       </a>
     </div>
   </div>
@@ -172,15 +162,15 @@
             </th>
             <th class="min-w-150px">Title</th>
             <th class="min-w-140px">Description</th>
-            <th class="min-w-120px">ChapterNumber</th>
-            <th class="min-w-120px">Lessons</th>
+            <th class="min-w-120px">LessonNumber</th>
+            <th class="min-w-120px">AssignPost</th>
             <th class="min-w-100px text-end">Actions</th>
           </tr>
         </thead>
         <!-- end::Table head -->
         <!-- begin::Table body -->
-        <tbody *ngIf="chapters.length > 0">
-          <tr *ngFor="let chapter of chapters">
+        <tbody *ngIf="myLessons.length > 0">
+          <tr *ngFor="let lesson of myLessons">
             <td>
               <div
                 class="form-check form-check-sm form-check-custom form-check-solid"
@@ -199,7 +189,7 @@
                     href="#"
                     class="text-gray-900 fw-bolder text-hover-primary fs-6"
                   >
-                    {{ chapter.title }}
+                    {{ lesson.title }}
                   </a>
                 </div>
               </div>
@@ -209,40 +199,56 @@
                 href="#"
                 class="text-gray-900 fw-bolder text-hover-primary d-block fs-6"
               >
-                {{ chapter.description }}
+                {{ lesson.description }}
+              </a>
+            </td>
+            <td>
+              <a
+                href="#"
+                class="text-gray-900 fw-bolder text-hover-primary d-block fs-6"
+              >
+                {{ lesson.lessonNumber }}
               </a>
             </td>
             <td class="text-end">
-              <div class="d-flex flex-column w-100 me-2">
+              <div class="d-flex flex-column w-100 me-2" *ngIf="!lesson.post">
                 <div class="d-flex flex-stack mb-2">
-                  <span class="text-muted me-2 fs-7 fw-bold">{{
-                    chapter.chapterNumber
-                  }}</span>
+                  <select (change)="onSelectChange($event, lesson.id)">
+                    <option *ngFor="let option of posts" [value]="option.id">
+                      {{ option.id }} - {{ option.title }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="d-flex flex-column w-100 me-2" *ngIf="lesson.post">
+                <div class="d-flex flex-stack mb-2">
+                  {{ lesson.post.title }}
                 </div>
               </div>
             </td>
-            <td>
-              <div class="d-flex flex-wrap">
-                <div *ngFor="let lesson of chapter.lessons" class="p-2">
-                  <a
-                    class="text-gray-900 fw-bolder text-hover-primary d-block fs-6"
-                  >
-                    {{ lesson.title }}
-                  </a>
-                </div>
-              </div>
-            </td>
-
             <td>
               <div class="d-flex justify-content-end flex-shrink-0">
                 <a
-                  (click)="goToViewChapter(chapter.id)"
-                  class="btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4 me-2"
+                  href="#"
+                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                 >
-                  View
+                  <span
+                    [inlineSVG]="
+                      './assets/media/icons/duotune/general/gen019.svg'
+                    "
+                    class="svg-icon svg-icon-3"
+                  ></span>
                 </a>
                 <a
-                  (click)="delete(chapter.id)"
+                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                >
+                  <span
+                    [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
+                    class="svg-icon svg-icon-3"
+                  ></span>
+                </a>
+                <a
+                  (click)="delete(lesson.id)"
                   class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
                 >
                   <span
@@ -266,43 +272,43 @@
 </div>
 <ng-template #content let-modal class="card mb-5 mb-xl-10">
   <div class="modal-header">
-    <h3 class="modal-title">Add a Chapter</h3>
+    <h3 class="modal-title">Add a Lesson</h3>
   </div>
   <div class="modal-body">
     <div class="d-flex justify-content-center mb-4">
       <button
         type="button"
         class="btn btn-secondary m-2"
-        (click)="showExistingChapters = true; showForm = false"
+        (click)="showExistingLessons = true; showForm = false"
       >
-        Add Existing Chapter
+        Add Existing Lesson
       </button>
       <button
         type="button"
         class="btn btn-primary m-2"
-        (click)="showForm = true; showExistingChapters = false"
+        (click)="showForm = true; showExistingLessons = false"
       >
-        Create Chapter
+        Create Lesson
       </button>
     </div>
 
-    <!-- Existing Chapters Selection -->
-    <div *ngIf="showExistingChapters">
+    <!-- Existing Lessons Selection -->
+    <div *ngIf="showExistingLessons">
       <div class="card-title mb-4">
-        <h3 class="fw-bolder">Select Existing Chapters:</h3>
+        <h3 class="fw-bolder">Select Existing Lessons:</h3>
       </div>
       <div class="form-group">
         <div class="checkbox-list">
-          <div class="form-check" *ngFor="let chapter of addChapters">
+          <div class="form-check" *ngFor="let lesson of addLessons">
             <input
               type="checkbox"
               class="form-check-input"
-              id="chapter-{{ chapter.id }}"
-              [value]="chapter.title"
-              (change)="onChapterSelect($event)"
+              id="lesson-{{ lesson.id }}"
+              [value]="lesson.title"
+              (change)="onLessonSelect($event)"
             />
-            <label class="form-check-label" for="chapter-{{ chapter.id }}">
-              {{ chapter.title }}
+            <label class="form-check-label" for="lesson-{{ lesson.id }}">
+              {{ lesson.title }}
             </label>
           </div>
         </div>
@@ -310,7 +316,7 @@
           <button
             type="button"
             class="btn btn-primary m-2"
-            (click)="addExistingChapter()"
+            (click)="addExistingLesson()"
           >
             Save Changes
           </button>
@@ -325,13 +331,13 @@
       </div>
     </div>
 
-    <!-- New Chapter Form -->
+    <!-- New Lesson Form -->
     <div *ngIf="showForm">
       <div class="card-title m-0">
-        <h3 class="fw-bolder m-0 p-5">Add a new chapter:</h3>
+        <h3 class="fw-bolder m-0 p-5">Add a new lesson:</h3>
       </div>
       <div id="kt_account_profile_details" class="collapse show modal-xl">
-        <form novalidate class="form" (ngSubmit)="savechapter()">
+        <form novalidate class="form" (ngSubmit)="savelesson()">
           <div class="card-body border-top p-9">
             <div class="row mb-6">
               <label class="col-lg-4 col-form-label required fw-bold fs-6"
@@ -340,8 +346,8 @@
               <div class="col-lg-8 fv-row">
                 <input
                   type="text"
-                  id="fullname"
-                  name="fullname"
+                  id="title"
+                  name="title"
                   [(ngModel)]="title"
                   class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
                   required
@@ -354,23 +360,23 @@
               >
               <div class="col-lg-8 fv-row">
                 <textarea
-                  name="desc"
+                  name="description"
                   id="description"
-                  [(ngModel)]="desc"
+                  [(ngModel)]="description"
                   class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
                 ></textarea>
               </div>
             </div>
             <div class="row mb-6">
-              <label class="col-lg-4 col-form-label fw-bold fs-6"
-                ><span class="required">Chapter Number:</span></label
-              >
+              <label class="col-lg-4 col-form-label fw-bold fs-6">
+                <span class="required">Lesson Number:</span>
+              </label>
               <div class="col-lg-8 fv-row">
                 <input
                   type="number"
-                  id="chapterNumber"
-                  name="chapterNumber"
-                  [(ngModel)]="cnumber"
+                  id="lessonNumber"
+                  name="lessonNumber"
+                  [(ngModel)]="lnumber"
                   class="form-control form-control-lg form-control-solid"
                 />
               </div>

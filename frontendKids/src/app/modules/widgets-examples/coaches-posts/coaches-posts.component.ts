@@ -1,18 +1,26 @@
-import { AfterViewInit, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { HttpserviceService } from '../../auth/services/httpservice.service';
-import { AuthService } from '../../auth';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+  TemplateRef,
+  inject,
+} from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { lastValueFrom } from "rxjs";
+import { HttpserviceService } from "../../auth/services/httpservice.service";
+import { AuthService } from "../../auth";
+import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 declare var $: any;
 
 @Component({
-  selector: 'app-coaches-posts',
-  templateUrl: './coaches-posts.component.html',
-  styleUrls: ['./coaches-posts.component.scss'],
+  selector: "app-coaches-posts",
+  templateUrl: "./coaches-posts.component.html",
+  styleUrls: ["./coaches-posts.component.scss"],
 })
-export class CoachesPostsComponent implements OnInit, AfterViewInit {
-  title: string = "";
-  thecontent: string = "";  // This is bound to the Quill editor
+export class CoachesPostsComponent implements AfterViewInit, OnInit {
+  postForm: FormGroup;
   mediaFile: File | null = null;
   Categories: string[] = [];
   posts: any;
@@ -21,37 +29,83 @@ export class CoachesPostsComponent implements OnInit, AfterViewInit {
   truecategories: any[] = [];
   confirmPassword: any;
   selectedpost: any = null;
-
-  @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
-  
-  ngAfterViewInit() {
-    $(this.tableElement.nativeElement).DataTable();
-  }
-
-  quillConfig = {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ 'header': [1, 2, false] }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image'],
-      ['clean']
-    ]
-  };
+  private modalService = inject(NgbModal);
 
   constructor(
     private httpservice: HttpserviceService,
     private authservice: AuthService,
-    private modalService: NgbModal
-  ) {}
-
-  ngOnInit() {
-    this.loadCategoriesAndPosts();
+    private formBuilder: FormBuilder
+  ) {
+    this.postForm = this.formBuilder.group({
+      title: ["", Validators.required],
+      content: ["", Validators.required],
+      mediaFileName: [null],
+      categories: [[]],
+    });
   }
 
-  async loadCategoriesAndPosts() {
+  @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
+
+  ngAfterViewInit() {
+    $(this.tableElement.nativeElement).DataTable();
+  }
+
+  onFileSelected(event: any) {
+    this.mediaFile = event.target.files[0];
+    this.postForm.patchValue({
+      mediaFileName: this.mediaFile,
+    });
+  }
+
+  addPost() {
+    if (this.postForm.valid) {
+      const formData = new FormData();
+      formData.append("title", this.postForm.get("title")?.value);
+      formData.append("content", this.postForm.get("content")?.value);
+      if (this.mediaFile) {
+        formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
+      }
+      formData.append("categories", JSON.stringify(this.Categories));
+
+      this.httpservice.post("/api/post/user/new", formData).subscribe(
+        (response) => {
+          console.log("Post added successfully", response);
+          window.location.reload();
+        },
+        (error) => {
+          console.error("Error adding post", error);
+        }
+      );
+    }
+  }
+
+  onCategoryChange(category: { id: number; title: string; selected: boolean }) {
+    category.selected = !category.selected;
+
+    if (category.selected) {
+      if (!this.Categories.includes(category.title)) {
+        this.Categories.push(category.title);
+      }
+    } else {
+      const index = this.Categories.indexOf(category.title);
+      if (index !== -1) {
+        this.Categories.splice(index, 1);
+      }
+    }
+
+    this.postForm.patchValue({
+      categories: this.Categories,
+    });
+  }
+
+  async ngOnInit() {
     try {
-      const response = await this.httpservice.get("/api/post/user").toPromise();
-      const response2 = await this.httpservice.get("/api/category").toPromise();
+      const response = await lastValueFrom(
+        this.httpservice.get("/api/post/user")
+      );
+      const response2 = await lastValueFrom(
+        this.httpservice.get("/api/category")
+      );
       this.fakecategories = response2;
       this.posts = response;
       for (let i = 0; i < this.fakecategories.length; i++) {
@@ -67,85 +121,38 @@ export class CoachesPostsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onFileSelected(event: any) {
-    this.mediaFile = event.target.files[0];
-  }
-
-  addPost() {
-    console.log("Categories to be added:", this.Categories);
-
-    const formData = new FormData();
-    formData.append("title", this.title);
-    formData.append("content", this.thecontent);  // Content from Quill editor
-    if (this.mediaFile) {
-      formData.append("mediaFileName", this.mediaFile, this.mediaFile.name);
-    }
-    formData.append("categories", JSON.stringify(this.Categories));
-
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
-
-    this.httpservice.post("/api/post/user/new", formData).subscribe(
-      (response) => {
-        console.log("Post added successfully", response);
-      },
-      (error) => {
-        console.error("Error adding post", error);
-      }
-    );
-    window.location.reload();
-  }
-
-  onCategoryChange(category: { id: number; title: string; selected: boolean }) {
-    category.selected = !category.selected;
-
-    console.log("Category changed:", category.title, "Selected:", category.selected);
-
-    if (category.selected) {
-      if (!this.Categories.includes(category.title)) {
-        this.Categories.push(category.title);
-      }
-    } else {
-      const index = this.Categories.indexOf(category.title);
-      if (index !== -1) {
-        this.Categories.splice(index, 1);
-      }
-    }
-
-    console.log("Current Categories:", this.Categories);
-  }
-
   async delete(id: any) {
     try {
-      const response = await this.httpservice.delete(`/api/post/${id}`).toPromise();
+      const response = await lastValueFrom(
+        this.httpservice.delete(`/api/post/${id}`)
+      );
       window.location.reload();
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error("Error fetching categories:", error);
     }
   }
-
   open(content: TemplateRef<any>) {
-    this.modalService.open(content, {
-      ariaLabelledBy: 'modal-basic-title',
-      centered: true,
-      size: 'lg',
-    }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      }
-    );
+    this.modalService
+      .open(content, {
+        ariaLabelledBy: "modal-basic-title",
+        centered: true,
+        size: "lg",
+      })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        }
+      );
   }
-
   private getDismissReason(reason: any): string {
     switch (reason) {
       case ModalDismissReasons.ESC:
-        return 'by pressing ESC';
+        return "by pressing ESC";
       case ModalDismissReasons.BACKDROP_CLICK:
-        return 'by clicking on a backdrop';
+        return "by clicking on a backdrop";
       default:
         return `with: ${reason}`;
     }
