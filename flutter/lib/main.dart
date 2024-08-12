@@ -6,7 +6,7 @@ import 'widgets/home.dart';
 import 'dart:io';
 
 void main() {
-  HttpOverrides.global = MyHttpOverrides();
+  //HttpOverrides.global = MyHttpOverrides();
   runApp(MyApp());
 }
 

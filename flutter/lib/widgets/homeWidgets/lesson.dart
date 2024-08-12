@@ -26,7 +26,7 @@ class _LessonScreenState extends State<LessonScreen> {
     // Initialize the video controller
     _videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(
-          'https://10.0.2.2:8000/uploads/images/ChallengeDance.mp4'),
+          'http://192.168.1.12:8000/uploads/images/${widget.lesson.post.mediaFileName}'),
     );
 
     _initializeVideoPlayerFuture =
