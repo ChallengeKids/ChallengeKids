@@ -1,16 +1,17 @@
 import 'package:challange_kide/services/api_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'challenge.dart';
 
+// ignore: camel_case_types
 class homeScreen extends StatefulWidget {
   const homeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _homeScreenState createState() => _homeScreenState();
 }
 
+// ignore: camel_case_types
 class _homeScreenState extends State<homeScreen> {
   final ApiService apiService = ApiService();
   late Future<List<Category>> categoriesFuture;
@@ -262,7 +263,7 @@ class _homeScreenState extends State<homeScreen> {
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                  'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
+                                                  'http://192.168.1.12:8000/uploads/images/${challenge.imageFileName}'),
                                             ),
                                           ),
                                         ),
@@ -323,7 +324,7 @@ class _homeScreenState extends State<homeScreen> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                challengeScreen(
+                                                                ChallengeScreen(
                                                                     challenge:
                                                                         challenge),
                                                           ),

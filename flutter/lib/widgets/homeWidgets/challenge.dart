@@ -21,7 +21,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Future<void> pickImageFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
-      final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage =
+          await _picker.pickImage(source: ImageSource.gallery);
 
       if (pickedImage != null) {
         setState(() {
@@ -89,7 +90,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                           child: Text(
                             "Please select an image",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.black54),
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                         ),
                 ),
@@ -134,8 +136,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.blue,
-                        backgroundColor: Colors.grey[200], // Light gray background
-                        minimumSize: Size(double.infinity, 48), // Width of the Cancel button
+                        backgroundColor:
+                            Colors.grey[200], // Light gray background
+                        minimumSize: Size(
+                            double.infinity, 48), // Width of the Cancel button
                       ),
                       child: const Text('Cancel'),
                     ),
@@ -143,7 +147,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Container(
-                      width: double.infinity, // Ensure the button takes the full width
+                      width: double
+                          .infinity, // Ensure the button takes the full width
                       child: ElevatedButton(
                         onPressed: () {
                           // Handle the enrollment logic here
@@ -152,7 +157,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blue,
-                          minimumSize: Size(double.infinity, 60), // Larger button height
+                          minimumSize:
+                              Size(double.infinity, 60), // Larger button height
                         ),
                         child: const Text('Enroll Now'),
                       ),
@@ -182,12 +188,11 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               height: 300,
               decoration: BoxDecoration(
                 borderRadius:
-                    const BorderRadius.vertical(
-                        top: Radius.circular(8.0)),
+                    const BorderRadius.vertical(top: Radius.circular(8.0)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                      'https://10.0.2.2:8000/uploads/images/${widget.challenge.imageFileName}'),
+                      'http://192.168.1.12:8000/uploads/images/${widget.challenge.imageFileName}'),
                 ),
               ),
             ),
@@ -197,7 +202,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             top: 30,
             left: 15,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back,
+                  color: Colors.white), // Back icon
               onPressed: () {
                 Navigator.pop(context); // Navigate back
               },
@@ -310,7 +316,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center, // Center children vertically
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .center, // Center children vertically
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(right: 16.0),
@@ -333,7 +340,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                   ),
                                   Expanded(
                                     child: Align(
-                                      alignment: Alignment.centerLeft, // Align text to the left and center vertically
+                                      alignment: Alignment
+                                          .centerLeft, // Align text to the left and center vertically
                                       child: Text(
                                         chapter.title,
                                         style: const TextStyle(
@@ -354,14 +362,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => chapterScreen(chapter: chapter),
+                                            builder: (context) =>
+                                                chapterScreen(chapter: chapter),
                                           ),
                                         );
                                       },
                                       style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                                        backgroundColor: const Color.fromRGBO(
+                                            61, 143, 239, 1),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         padding: EdgeInsets.zero,
                                       ),

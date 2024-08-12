@@ -5,10 +5,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final String baseUrl = 'https://10.0.2.2:8000';
+final String baseUrl = 'http://192.168.1.12:8000';
+
 class ApiService {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
-
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
 
@@ -151,13 +151,15 @@ Future<String> getUserName() async {
       Uri.parse('$baseUrl/api/kid/profile'), // Adjust URL to your API endpoint
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Include the token in the Authorization header
+        'Authorization':
+            'Bearer $token', // Include the token in the Authorization header
       },
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      final userName = data['fullName']; // Adjust to match your API response structure
+      final userName =
+          data['fullName']; // Adjust to match your API response structure
       return userName ?? 'User Name not found.';
     } else {
       return 'Failed to fetch user name.';
@@ -168,16 +170,13 @@ Future<String> getUserName() async {
   }
 }
 
-
-
-
 class Challenge {
-  final int id;
+  final int? id;
   final String title;
   final String description;
   final String imageFileName;
   final int? kid;
-  final int coach;
+  final int? coach;
   final List<Category> categories;
   final List<Chapter> chapters;
 
@@ -288,7 +287,7 @@ class Lesson {
     );
   }
 
-  String get mediaFileName => post.mediaFileName; // Access mediaFileName from Post
+  get lesson => null;
 }
 
 // lib/models/post.dart
@@ -310,7 +309,7 @@ class Post {
       id: json['id'],
       title: json['title'],
       content: json['content'],
-      mediaFileName: json['mediaFileName'] ?? '', // Default value if missing
+      mediaFileName: json['mediaFileName'], // Default value if missing
     );
   }
 }

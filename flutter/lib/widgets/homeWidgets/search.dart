@@ -94,9 +94,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      challengeScreen(
-                                          challenge:
-                                              challenge),
+                                      ChallengeScreen(challenge: challenge),
                                 ),
                               );
                             },

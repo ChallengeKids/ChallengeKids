@@ -1,7 +1,10 @@
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
   ElementRef,
   inject,
+  OnInit,
   TemplateRef,
   ViewChild,
 } from "@angular/core";
@@ -19,7 +22,7 @@ declare var $: any;
   selector: "app-coachchallenge",
   templateUrl: "./coachchallenge.component.html",
 })
-export class CoachchallengeComponent {
+export class CoachchallengeComponent implements OnInit, AfterViewInit{
   postForm: FormGroup;
   challenges: any;
   backendUrl = API_USERS_URL;
@@ -34,14 +37,14 @@ export class CoachchallengeComponent {
 
   quillConfig = {
     toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ 'header': [1, 2, false] }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image'],
-      ['clean']
-    ]
+      ["bold", "italic", "underline"],
+      [{ header: [1, 2, false] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
   };
-  
+
   constructor(
     private httpservice: HttpserviceService,
     private fb: FormBuilder,
@@ -113,14 +116,11 @@ export class CoachchallengeComponent {
         .subscribe(
           (response) => {
             console.log("Post added successfully", response);
-            // Handle success (e.g., show a success message, clear the form)
           },
           (error) => {
             console.error("Error adding post", error);
-            // Handle error (e.g., show an error message)
           }
         );
-      // Handle form submission with formData
     }
   }
 
