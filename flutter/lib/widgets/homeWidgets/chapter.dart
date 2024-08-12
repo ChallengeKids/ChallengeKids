@@ -33,8 +33,7 @@ class chapterScreen extends StatelessWidget {
             top: 30,
             left: 15,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back,
-                  color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
               onPressed: () {
                 Navigator.pop(context); // Navigate back
               },
@@ -124,13 +123,15 @@ class chapterScreen extends StatelessWidget {
                             children: [
                               Icon(Icons.access_time,
                                   size: 20,
-                                  color: Color.fromARGB(255, 129, 129, 129)),
+                                  color:
+                                      Color.fromARGB(255, 129, 129, 129)),
                               SizedBox(width: 4),
                               Text(
                                 'Time: 10:00 AM',
                                 style: TextStyle(
                                     fontSize: 14,
-                                    color: Color.fromARGB(255, 129, 129, 129)),
+                                    color: Color.fromARGB(
+                                        255, 129, 129, 129)),
                               ),
                               const SizedBox(width: 20),
                               Icon(Icons.format_list_numbered,
@@ -153,46 +154,56 @@ class chapterScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final lesson = chapter.lessons[index];
                           return Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4.0),
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(234, 244, 255, 1),
-                                border:
-                                    Border.all(color: const Color(0xFFE0E0E0)),
-                                borderRadius: BorderRadius.circular(8.0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4.0,
-                                    offset: Offset(0, 2),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(234, 244, 255, 1),
+                              border:
+                                  Border.all(color: const Color(0xFFE0E0E0)),
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4.0,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child:Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center, // Center children vertically
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(right: 16.0),
+                                  width: 50,
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromRGBO(61, 143, 239, 1),
+                                    shape: BoxShape.circle,
                                   ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .center, // Center children vertically
-                                  children: [
-                                    Container(
-                                      margin:
-                                          const EdgeInsets.only(right: 16.0),
-                                      width: 50,
-                                      height: 50,
-                                      decoration: const BoxDecoration(
-                                        color: Color.fromRGBO(61, 143, 239, 1),
-                                        shape: BoxShape.circle,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      size: 30,
+                                      Icons.play_lesson_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      // Handle icon button tap
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft, // Align text to the left and center vertically
+                                    child: Text(
+                                      lesson.title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
                                       ),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          size: 30,
-                                          Icons.play_lesson_outlined,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          // Handle icon button tap
-                                        },
-                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
@@ -214,45 +225,23 @@ class chapterScreen extends StatelessWidget {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
+                                      padding: EdgeInsets.zero,
                                     ),
-                                    const SizedBox(width: 20),
-                                    SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LessonScreen(
-                                                lesson: lesson,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        style: TextButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              61, 143, 239, 1),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                        ),
-                                        child: const Align(
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            Icons.play_circle_rounded,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                        ),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.play_circle_rounded,
+                                        color: Colors.white,
+                                        size: 30,
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ));
+                              ],
+                            ),
+                          )
+
+                          );
                         },
                       ),
                     ),

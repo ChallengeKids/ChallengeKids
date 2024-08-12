@@ -17,6 +17,7 @@ declare var $: any;
 @Component({
   selector: 'app-submissions',
   templateUrl: './submissions.component.html',
+  styleUrl: './submissions.component.scss'
 })
 export class SubmissionsComponent implements OnInit, AfterViewInit{
   selectedpost: any;

@@ -34,18 +34,18 @@ class _ProfilePage1State extends State<ProfilePage1> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Modify Profile',
               ),
               const SizedBox(height: 20),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                decoration: const InputDecoration(
                   labelText: 'Username',
                 ),
               ),
               const SizedBox(height: 20),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                 ),
               ),
@@ -87,8 +87,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         final username = snapshot.data ?? 'No username found';
                         return Text(
                           username,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                         );
                       }
                     },
@@ -104,8 +103,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         heroTag: 'ModifyProfile',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Modify Profile",
-                            style: TextStyle(color: Colors.white)),
+                        label: const Text("Modify Profile", style: TextStyle(color: Colors.white)),
                         icon: const Icon(Icons.edit, color: Colors.white),
                       ),
                       const SizedBox(width: 10),
@@ -116,8 +114,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         heroTag: 'Logout',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Log out",
-                            style: TextStyle(color: Colors.white)),
+                        label: const Text("Log out", style: TextStyle(color: Colors.white)),
                         icon: const Icon(Icons.logout, color: Colors.white),
                       ),
                     ],
@@ -201,8 +198,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -326,8 +323,7 @@ class _TopPortion extends StatelessWidget {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     child: Container(
                       margin: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(
-                          color: Colors.green, shape: BoxShape.circle),
+                      decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
                     ),
                   ),
                 ),

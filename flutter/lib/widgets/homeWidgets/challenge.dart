@@ -32,8 +32,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Future<void> pickImageFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
-      final XFile? pickedImage =
-          await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
 
       if (pickedImage != null) {
         setState(() {
@@ -152,7 +151,6 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             }
                             return null;
                           },
-
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -248,7 +246,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                      'http://192.168.1.12:8000/uploads/images/${widget.challenge.imageFileName}'),
+                      'https://10.0.2.2:8000/uploads/images/${widget.challenge.imageFileName}'),
                 ),
               ),
             ),
@@ -258,8 +256,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             top: 30,
             left: 15,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back,
-                  color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
               onPressed: () {
                 Navigator.pop(context); // Navigate back
               },
@@ -375,17 +372,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                chapterScreen(chapter: chapter),
+                                            builder: (context) => chapterScreen(chapter: chapter),
                                           ),
                                         );
                                       },
                                       style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(
-                                            61, 143, 239, 1),
+                                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         padding: EdgeInsets.zero,
                                       ),

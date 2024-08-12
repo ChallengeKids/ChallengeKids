@@ -21,6 +21,7 @@ declare var $: any;
 @Component({
   selector: "app-coachchallenge",
   templateUrl: "./coachchallenge.component.html",
+  styleUrl: './coachchallenge.component.scss'
 })
 export class CoachchallengeComponent implements OnInit, AfterViewInit{
   postForm: FormGroup;

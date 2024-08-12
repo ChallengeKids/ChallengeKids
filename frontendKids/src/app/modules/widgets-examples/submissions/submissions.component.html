@@ -106,16 +106,19 @@
                 <div class="me-3">
                   <select
                     class="form-select form-select-sm"
+                    [ngClass]="{
+                      'btn-success': post.approved === true,
+                      'btn-danger': post.approved === false,
+                      'btn-secondary': post.approved === null
+                    }"
                     [ngModel]="
                       post.approved === null ? '' : post.approved.toString()
                     "
                     (change)="updateStatus(post, $event)"
                   >
                     <option value="" class="text-muted">Pending</option>
-                    <option value="true" class="text-success">Approved</option>
-                    <option value="false" class="text-danger">
-                      Disapproved
-                    </option>
+                    <option value="true">Approved</option>
+                    <option value="false">Disapproved</option>
                   </select>
                 </div>
               </div>
