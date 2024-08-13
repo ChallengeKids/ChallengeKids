@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as p;
 
 final FlutterSecureStorage _storage = FlutterSecureStorage();
-final String baseUrl = 'https://10.0.2.2:8000';
+final String baseUrl = 'http://192.168.1.12:8000';
 
 class ApiService {
   Future<List<Challenge>> fetchChallenges() async {
@@ -432,13 +432,13 @@ class Lesson {
       post.mediaFileName; // Access mediaFileName from Post
 }
 
-// lib/models/post.dart
 class Post {
   final int id;
   final String title;
   final String content;
   final String mediaFileName;
-  final String approved;
+  final bool? approved;
+  final List<Category> category;
 
   Post({
     required this.id,
@@ -446,15 +446,21 @@ class Post {
     required this.content,
     required this.mediaFileName,
     required this.approved,
+    required this.category,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    var categoryList = json['category'] as List;
+    List<Category> categoryItems =
+        categoryList.map((i) => Category.fromJson(i)).toList();
+
     return Post(
       id: json['id'],
       title: json['title'],
       content: json['content'],
       mediaFileName: json['mediaFileName'] ?? '',
-      approved: json['approved'] ?? '',
+      approved: json['approved'],
+      category: categoryItems,
     );
   }
 }
