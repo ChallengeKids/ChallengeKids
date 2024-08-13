@@ -54,6 +54,17 @@ class ApiService {
     }
   }
 
+  Future<List<Post>> fetchPost() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/post'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => Post.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load Lessons');
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/login_check'),

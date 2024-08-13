@@ -290,4 +290,19 @@ class CoachController extends AbstractController
 
         return new JsonResponse(['status' => 'Post status updated successfully']);
     }
+
+    #[Route('/user/details', name: 'coach_details', methods: ['GET'])]
+    public function showProfile(CoachRepository $coachRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof Coach) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
+        $user = $coachRepository->find($user->getId());
+        if (!$user) {
+            return new JsonResponse(['error' => 'user not found']);
+        }
+        $userData = $this->coachService->coachToJson($user);
+        return new JsonResponse($userData);
+    }
 }

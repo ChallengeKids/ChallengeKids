@@ -1,29 +1,12 @@
-//
 // Main
-//
 
 // Body
 body {
 	background-color: var(--#{$prefix}page-bg);
+	background-image: url('C:/Users/Ahmad/Desktop/Projects/ChallengeKids/frontendKids/src/assets/background.jpg');
 	background-repeat: no-repeat;
 	background-position: center top;
-	background-size: 100% get($page-bg-image-height, desktop);
-
-	&.page-bg-image-lg {
-		background-size: 100% get($page-bg-image-height-lg, desktop);
-	}
-}
-
-@include color-mode(light) {
-	body:not(.app-blank) {
-		background-image: url('../../media/patterns/header-bg.jpg');
-	}
-}
-
-@include color-mode(dark) {
-	body:not(.app-blank) {
-		background-image: url('../../media/patterns/header-bg-dark.png');
-	}
+	background-size: cover;
 }
 
 // Font color from Content background color
@@ -68,7 +51,7 @@ body {
 
 	// Wrapper
 	.wrapper {
-		transition: padding-left get($aside-config, transition-speed) ease,  margin-right get($aside-config, transition-speed) ease;
+		transition: padding-left get($aside-config, transition-speed) ease, margin-right get($aside-config, transition-speed) ease;
 
 		// Fixed header mode
 		.header-fixed[data-kt-sticky-header="on"] & {
@@ -81,11 +64,7 @@ body {
 @include media-breakpoint-down(lg) {
 	// Body
 	body {
-		background-size: 100% get($page-bg-image-height, tablet-and-mobile);
-
-		&.page-bg-image-lg {
-			background-size: 100% get($page-bg-image-height-lg, tablet-and-mobile);
-		}
+		background-size: cover;
 	}
 
 	// Containers
