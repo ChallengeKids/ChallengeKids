@@ -5,6 +5,7 @@ import { OnInit, AfterViewInit, inject } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ActivatedRoute } from "@angular/router";
 import { environment } from "src/environments/environment";
+import { Router } from "@angular/router";
 const API_USERS_URL = `${environment.backednUrl}`;
 declare var $: any;
 
@@ -14,6 +15,9 @@ declare var $: any;
   styleUrl: "./view-chapter.component.scss",
 })
 export class ViewChapterComponent {
+  goToViewLesson(id) {
+    this.router.navigate([`/coach/widgets/viewlesson/${id}`]);
+  }
   showExistingLessons: any;
   addLessons: any;
   onLessonSelect(event: Event) {
@@ -64,7 +68,8 @@ export class ViewChapterComponent {
   myLessons: any;
   constructor(
     private httpservice: HttpserviceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
   ngAfterViewInit() {

@@ -147,6 +147,7 @@ export class LayoutInitService {
       const imagePath = this.layout.getProp(
         "main.body.backgroundImage"
       ) as string;
+      console.log(imagePath);
       if (imagePath) {
         let bodyStyles: string = "background-image: url(" + imagePath + ")";
         document.body.setAttribute("style", bodyStyles);
