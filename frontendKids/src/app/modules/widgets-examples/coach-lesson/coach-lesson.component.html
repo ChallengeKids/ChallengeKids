@@ -72,9 +72,6 @@
             </td>
             <td>
               <div class="d-flex align-items-center">
-                <div class="symbol symbol-45px me-5">
-                  <img src="./assets/media/avatars/300-23.jpg" alt="" />
-                </div>
                 <div class="d-flex justify-content-start flex-column">
                   <a
                     href="#"
@@ -120,23 +117,10 @@
             <td>
               <div class="d-flex justify-content-end flex-shrink-0">
                 <a
-                  href="#"
-                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  (click)="goToViewChapter(lesson.id)"
+                  class="btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4 me-2"
                 >
-                  <span
-                    [inlineSVG]="
-                      './assets/media/icons/duotune/general/gen019.svg'
-                    "
-                    class="svg-icon svg-icon-3"
-                  ></span>
-                </a>
-                <a
-                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                >
-                  <span
-                    [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
-                    class="svg-icon svg-icon-3"
-                  ></span>
+                  View
                 </a>
                 <a
                   (click)="delete(lesson.id)"

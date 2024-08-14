@@ -32,7 +32,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Future<void> pickImageFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
-      final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage =
+          await _picker.pickImage(source: ImageSource.gallery);
 
       if (pickedImage != null) {
         setState(() {
@@ -65,13 +66,19 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom, // Add padding for keyboard
+            bottom: MediaQuery.of(context)
+                .viewInsets
+                .bottom, // Add padding for keyboard
             left: 16.0,
             right: 16.0,
           ),
           child: Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).viewInsets.bottom > 0 ? 40.0 : 0.0), // Add top padding when keyboard is open
-            height: MediaQuery.of(context).size.height * 0.75, // Adjust the height as needed
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).viewInsets.bottom > 0
+                    ? 40.0
+                    : 0.0), // Add top padding when keyboard is open
+            height: MediaQuery.of(context).size.height *
+                0.75, // Adjust the height as needed
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -117,7 +124,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               child: Text(
                                 "Please select an image",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16, color: Colors.black54),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black54),
                               ),
                             ),
                     ),
@@ -176,8 +184,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.blue,
-                                  backgroundColor: Colors.grey[200], // Light gray background
-                                  minimumSize: Size(double.infinity, 48), // Width of the Cancel button
+                                  backgroundColor:
+                                      Colors.grey[200], // Light gray background
+                                  minimumSize: Size(double.infinity,
+                                      48), // Width of the Cancel button
                                 ),
                                 child: const Text('Restart'),
                               ),
@@ -185,13 +195,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             const SizedBox(width: 16),
                             Expanded(
                               child: Container(
-                                width: double.infinity, // Ensure the button takes the full width
+                                width: double
+                                    .infinity, // Ensure the button takes the full width
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    if (_formKey.currentState?.validate() ?? false) {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
                                       if (selectImage == null) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('Image is required.')),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content:
+                                                  Text('Image is required.')),
                                         );
                                         return;
                                       }
@@ -208,7 +223,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     backgroundColor: Colors.blue,
-                                    minimumSize: Size(double.infinity, 60), // Larger button height
+                                    minimumSize: Size(double.infinity,
+                                        60), // Larger button height
                                   ),
                                   child: const Text('Enroll Now'),
                                 ),
@@ -242,11 +258,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               width: double.infinity,
               height: 300,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(8.0)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                      'https://10.0.2.2:8000/uploads/images/${widget.challenge.imageFileName}'),
+                      'http://192.168.1.12:8000/uploads/images/${widget.challenge.imageFileName}'),
                 ),
               ),
             ),
@@ -256,7 +273,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             top: 30,
             left: 15,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back,
+                  color: Colors.white), // Back icon
               onPressed: () {
                 Navigator.pop(context); // Navigate back
               },
@@ -283,13 +301,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.challenge.title,
-                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(height: 10),
@@ -306,7 +326,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               SizedBox(width: 4),
                               Text(
                                 "Chapters",
-                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.w700),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(width: 20),
@@ -324,7 +345,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -377,9 +399,11 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                         );
                                       },
                                       style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
+                                        backgroundColor: const Color.fromRGBO(
+                                            61, 143, 239, 1),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         padding: EdgeInsets.zero,
                                       ),
@@ -448,5 +472,4 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       ),
     );
   }
-
 }

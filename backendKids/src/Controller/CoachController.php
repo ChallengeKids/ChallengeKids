@@ -263,4 +263,46 @@ class CoachController extends AbstractController
 
         return new JsonResponse($listJson);
     }
+
+    #[Route('/submissions/{id}/status', name: 'update_post_status', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "approved" => false,
+            ]
+        )
+    )]
+    public function updatePostStatus(int $id, Request $request, PostRepository $postRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $post = $postRepository->find($id);
+
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $approved = $data['approved'] ?? null;
+
+        $post->setApproved($approved);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'Post status updated successfully']);
+    }
+
+    #[Route('/user/details', name: 'coach_details', methods: ['GET'])]
+    public function showProfile(CoachRepository $coachRepository): JsonResponse
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof Coach) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
+        $user = $coachRepository->find($user->getId());
+        if (!$user) {
+            return new JsonResponse(['error' => 'user not found']);
+        }
+        $userData = $this->coachService->coachToJson($user);
+        return new JsonResponse($userData);
+    }
 }

@@ -83,6 +83,7 @@ export class LayoutService {
     );
     if (configFromLocalStorage) {
       try {
+        console.log("that thing", configFromLocalStorage);
         this.layoutConfigSubject.next(JSON.parse(configFromLocalStorage));
         return;
       } catch (error) {

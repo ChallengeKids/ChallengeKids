@@ -118,7 +118,8 @@ class _homeScreenState extends State<homeScreen> {
                             ),
                           ],
                           image: const DecorationImage(
-                            image: AssetImage('image/BG.png'), // Background image
+                            image:
+                                AssetImage('image/BG.png'), // Background image
                             fit: BoxFit.cover, // Adjust the fit as needed
                           ),
                         ),
@@ -164,7 +165,7 @@ class _homeScreenState extends State<homeScreen> {
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
+                              itemBuilder: (BuildContext context, int index) {
                                 final category = snapshot.data![index];
                                 return Card(
                                   color: const Color.fromRGBO(61, 143, 239,
@@ -203,7 +204,8 @@ class _homeScreenState extends State<homeScreen> {
                               child: Tab(
                                 child: Text(
                                   'Challenges',
-                                  style: TextStyle(fontSize: 16), // Change text size here
+                                  style: TextStyle(
+                                      fontSize: 16), // Change text size here
                                 ),
                               ),
                             ),
@@ -212,16 +214,19 @@ class _homeScreenState extends State<homeScreen> {
                               child: Tab(
                                 child: Text(
                                   'Posts',
-                                  style: TextStyle(fontSize: 16), // Change text size here
+                                  style: TextStyle(
+                                      fontSize: 16), // Change text size here
                                 ),
                               ),
                             ),
                           ],
-                          indicatorColor: const Color.fromRGBO(61,143, 239, 1), // Change the indicator color to blue
+                          indicatorColor: const Color.fromRGBO(61, 143, 239,
+                              1), // Change the indicator color to blue
                           indicator: UnderlineTabIndicator(
                             borderSide: BorderSide(
                               width: 5.0,
-                              color: Colors.blue, // Change the indicator color to blue
+                              color: Colors
+                                  .blue, // Change the indicator color to blue
                             ),
                           ),
                         ),
@@ -241,7 +246,8 @@ class _homeScreenState extends State<homeScreen> {
                                         child: CircularProgressIndicator());
                                   } else if (snapshot.hasError) {
                                     return Center(
-                                        child: Text('Error: ${snapshot.error}'));
+                                        child:
+                                            Text('Error: ${snapshot.error}'));
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return const Center(
@@ -249,13 +255,16 @@ class _homeScreenState extends State<homeScreen> {
                                   } else {
                                     return ListView.builder(
                                       itemCount: snapshot.data!.length,
-                                      itemBuilder: (BuildContext context, int index) {
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
                                         final challenge = snapshot.data![index];
                                         return Column(
                                           children: [
                                             Container(
                                               margin: const EdgeInsets.only(
-                                                  left: 16, right: 16, bottom: 8),
+                                                  left: 16,
+                                                  right: 16,
+                                                  bottom: 8),
                                               decoration: BoxDecoration(
                                                 boxShadow: const [
                                                   BoxShadow(
@@ -266,8 +275,10 @@ class _homeScreenState extends State<homeScreen> {
                                                 ],
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                    color: const Color(0xFFE0E0E0)),
-                                                borderRadius: BorderRadius.circular(8.0),
+                                                    color: const Color(
+                                                        0xFFE0E0E0)),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
                                               ),
                                               child: Column(
                                                 crossAxisAlignment:
@@ -278,32 +289,45 @@ class _homeScreenState extends State<homeScreen> {
                                                     height: 225,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          const BorderRadius.vertical(
-                                                              top: Radius.circular(8.0)),
+                                                          const BorderRadius
+                                                              .vertical(
+                                                              top: Radius
+                                                                  .circular(
+                                                                      8.0)),
                                                       image: DecorationImage(
                                                         fit: BoxFit.cover,
                                                         image: NetworkImage(
-                                                            'https://10.0.2.2:8000/uploads/images/${challenge.imageFileName}'),
+                                                            'http://192.168.1.12:8000/uploads/images/${challenge.imageFileName}'),
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Column(
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           challenge.title,
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 18),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 18),
                                                           maxLines: 2,
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
-                                                        const SizedBox(height: 8),
-                                                        Text(challenge.description),
-                                                        const SizedBox(height: 8),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Text(challenge
+                                                            .description),
+                                                        const SizedBox(
+                                                            height: 8),
                                                         Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -311,25 +335,31 @@ class _homeScreenState extends State<homeScreen> {
                                                           children: [
                                                             Row(
                                                               mainAxisSize:
-                                                                  MainAxisSize.min,
+                                                                  MainAxisSize
+                                                                      .min,
                                                               children: [
-                                                                Icons.favorite_border,
+                                                                Icons
+                                                                    .favorite_border,
                                                                 Icons.share,
                                                                 Icons.more_vert
                                                               ].map((icon) {
                                                                 return InkWell(
                                                                   onTap: () {},
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .only(
-                                                                            right: 8.0),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            8.0),
                                                                     child: Icon(
                                                                       icon,
                                                                       size: 30,
                                                                       color: const Color
-                                                                          .fromRGBO(61,
-                                                                              143, 239, 1),
+                                                                          .fromRGBO(
+                                                                          61,
+                                                                          143,
+                                                                          239,
+                                                                          1),
                                                                     ),
                                                                   ),
                                                                 );
@@ -340,22 +370,25 @@ class _homeScreenState extends State<homeScreen> {
                                                                   40, // Adjust height as needed
                                                               child: TextButton(
                                                                 onPressed: () {
-                                                                  Navigator.push(
+                                                                  Navigator
+                                                                      .push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                       builder: (context) =>
                                                                           ChallengeScreen(
-                                                                              challenge:
-                                                                                  challenge),
+                                                                              challenge: challenge),
                                                                     ),
                                                                   );
                                                                 },
-                                                                style:
-                                                                    TextButton.styleFrom(
+                                                                style: TextButton
+                                                                    .styleFrom(
                                                                   backgroundColor:
                                                                       const Color
-                                                                          .fromRGBO(61,
-                                                                              143, 239, 1),
+                                                                          .fromRGBO(
+                                                                          61,
+                                                                          143,
+                                                                          239,
+                                                                          1),
                                                                   shape:
                                                                       RoundedRectangleBorder(
                                                                     borderRadius:
@@ -363,9 +396,11 @@ class _homeScreenState extends State<homeScreen> {
                                                                             8), // Rounded corners
                                                                   ),
                                                                 ),
-                                                                child: const Row(
+                                                                child:
+                                                                    const Row(
                                                                   mainAxisSize:
-                                                                      MainAxisSize.min,
+                                                                      MainAxisSize
+                                                                          .min,
                                                                   children: [
                                                                     SizedBox(
                                                                         width:
@@ -373,14 +408,16 @@ class _homeScreenState extends State<homeScreen> {
                                                                     Text(
                                                                       'Learn More ',
                                                                       style: TextStyle(
-                                                                          fontSize: 16,
-                                                                          color: Colors
-                                                                              .white), // Adjust text size if needed
+                                                                          fontSize:
+                                                                              16,
+                                                                          color:
+                                                                              Colors.white), // Adjust text size if needed
                                                                     ),
                                                                     Icon(
                                                                       Icons
                                                                           .arrow_forward, // Replace with your desired icon
-                                                                      color: Colors.white,
+                                                                      color: Colors
+                                                                          .white,
                                                                       size:
                                                                           20, // Adjust icon size as needed
                                                                     ),
@@ -413,7 +450,8 @@ class _homeScreenState extends State<homeScreen> {
                                         child: CircularProgressIndicator());
                                   } else if (snapshot.hasError) {
                                     return Center(
-                                        child: Text('Error: ${snapshot.error}'));
+                                        child:
+                                            Text('Error: ${snapshot.error}'));
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return const Center(
@@ -421,13 +459,16 @@ class _homeScreenState extends State<homeScreen> {
                                   } else {
                                     return ListView.builder(
                                       itemCount: snapshot.data!.length,
-                                      itemBuilder: (BuildContext context, int index) {
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
                                         final challenge = snapshot.data![index];
                                         return Column(
                                           children: [
                                             Container(
                                               margin: const EdgeInsets.only(
-                                                  left: 16, right: 16, bottom: 8),
+                                                  left: 16,
+                                                  right: 16,
+                                                  bottom: 8),
                                               decoration: BoxDecoration(
                                                 boxShadow: const [
                                                   BoxShadow(
@@ -438,8 +479,10 @@ class _homeScreenState extends State<homeScreen> {
                                                 ],
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                    color: const Color(0xFFE0E0E0)),
-                                                borderRadius: BorderRadius.circular(8.0),
+                                                    color: const Color(
+                                                        0xFFE0E0E0)),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
                                               ),
                                               child: Column(
                                                 crossAxisAlignment:
@@ -450,32 +493,44 @@ class _homeScreenState extends State<homeScreen> {
                                                     height: 225,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          const BorderRadius.vertical(
-                                                              top: Radius.circular(8.0)),
+                                                          const BorderRadius
+                                                              .vertical(
+                                                              top: Radius
+                                                                  .circular(
+                                                                      8.0)),
                                                       image: DecorationImage(
                                                         fit: BoxFit.cover,
                                                         image: NetworkImage(
-                                                            'https://10.0.2.2:8000/uploads/images/${challenge.mediaFileName}'),
+                                                            'http://192.168.1.12:8000/uploads/images/${challenge.mediaFileName}'),
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Column(
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           challenge.title,
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 18),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 18),
                                                           maxLines: 2,
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
-                                                        const SizedBox(height: 8),
+                                                        const SizedBox(
+                                                            height: 8),
                                                         Text(challenge.content),
-                                                        const SizedBox(height: 8),
+                                                        const SizedBox(
+                                                            height: 8),
                                                         Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -483,25 +538,31 @@ class _homeScreenState extends State<homeScreen> {
                                                           children: [
                                                             Row(
                                                               mainAxisSize:
-                                                                  MainAxisSize.min,
+                                                                  MainAxisSize
+                                                                      .min,
                                                               children: [
-                                                                Icons.favorite_border,
+                                                                Icons
+                                                                    .favorite_border,
                                                                 Icons.share,
                                                                 Icons.more_vert
                                                               ].map((icon) {
                                                                 return InkWell(
                                                                   onTap: () {},
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .only(
-                                                                            right: 8.0),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            8.0),
                                                                     child: Icon(
                                                                       icon,
                                                                       size: 30,
                                                                       color: const Color
-                                                                          .fromRGBO(61,
-                                                                              143, 239, 1),
+                                                                          .fromRGBO(
+                                                                          61,
+                                                                          143,
+                                                                          239,
+                                                                          1),
                                                                     ),
                                                                   ),
                                                                 );

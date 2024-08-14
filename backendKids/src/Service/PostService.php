@@ -37,6 +37,7 @@ class PostService
             'user' => $post->getUser()->getFullName(),
             'mediaFileName' => $post->getMediaFileName(),
             'approved' => $post->isApproved(),
+            'challengeIdId' => $post->getChallengeId(),
 
         ];
     }

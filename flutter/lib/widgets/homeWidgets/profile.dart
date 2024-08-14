@@ -88,7 +88,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         final username = snapshot.data ?? 'No username found';
                         return Text(
                           username,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24),
                         );
                       }
                     },
@@ -104,7 +105,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         heroTag: 'ModifyProfile',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Modify Profile", style: TextStyle(color: Colors.white)),
+                        label: const Text("Modify Profile",
+                            style: TextStyle(color: Colors.white)),
                         icon: const Icon(Icons.edit, color: Colors.white),
                       ),
                       const SizedBox(width: 10),
@@ -115,7 +117,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         heroTag: 'Logout',
                         elevation: 0,
                         backgroundColor: const Color.fromRGBO(61, 143, 239, 1),
-                        label: const Text("Log out", style: TextStyle(color: Colors.white)),
+                        label: const Text("Log out",
+                            style: TextStyle(color: Colors.white)),
                         icon: const Icon(Icons.logout, color: Colors.white),
                       ),
                     ],
@@ -127,11 +130,15 @@ class _ProfilePage1State extends State<ProfilePage1> {
                     child: FutureBuilder<List<Post>>(
                       future: postsFuture, // Updated future
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
                           return const Center(child: Text('No posts found'));
                         } else {
                           return ListView.builder(
@@ -141,7 +148,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                               return Column(
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                    margin: const EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 8),
                                     decoration: BoxDecoration(
                                       boxShadow: const [
                                         BoxShadow(
@@ -150,32 +158,40 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                           offset: Offset(0, 2),
                                         ),
                                       ],
-                                      color: Colors.white, // Set container background color to white
-                                      border: Border.all(color: const Color(0xFFE0E0E0)),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xFFE0E0E0)),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           width: double.infinity,
                                           height: 225,
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                                            borderRadius:
+                                                const BorderRadius.vertical(
+                                                    top: Radius.circular(8.0)),
                                             image: DecorationImage(
                                               fit: BoxFit.cover,
-                                              image: NetworkImage('https://10.0.2.2:8000/uploads/images/${post.mediaFileName}'),
+                                              image: NetworkImage(
+                                                  'http://192.168.1.12:8000/uploads/images/${post.mediaFileName}'),
                                             ),
                                           ),
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 post.title,
-                                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -183,15 +199,45 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                               Text(post.content),
                                               const SizedBox(height: 8),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Container(
-                                                    color: post.approved == null ? const Color.fromARGB(255, 54, 244, 63) : const Color.fromARGB(255, 175, 76, 76), // Background color based on validity
-                                                    padding: EdgeInsets.all(8.0),
+                                                    color: post.approved == null
+                                                        ? const Color.fromARGB(
+                                                            255,
+                                                            255,
+                                                            193,
+                                                            7) // Yellow for Pending
+                                                        : post.approved == true
+                                                            ? const Color
+                                                                .fromARGB(
+                                                                255,
+                                                                54,
+                                                                244,
+                                                                63) // Green for Approved
+                                                            : const Color
+                                                                .fromARGB(
+                                                                255,
+                                                                244,
+                                                                54,
+                                                                54), // Red for Disapproved
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
-                                                      post.approved == null ? "Valid" : " Not Valid",
-                                                      style: TextStyle(
-                                                        color: Colors.white, // Text color
+                                                      post.approved == null
+                                                          ? "Pending"
+                                                          : post.approved ==
+                                                                  true
+                                                              ? "Approved"
+                                                              : "Disapproved",
+                                                      style: const TextStyle(
+                                                        color: Colors
+                                                            .white, // Text color
+                                                        fontWeight: FontWeight
+                                                            .bold, // Make the text bold
                                                       ),
                                                     ),
                                                   )
@@ -324,7 +370,8 @@ class _TopPortion extends StatelessWidget {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     child: Container(
                       margin: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                      decoration: const BoxDecoration(
+                          color: Colors.green, shape: BoxShape.circle),
                     ),
                   ),
                 ),

@@ -3,6 +3,7 @@ import { HttpserviceService } from "../../auth/services/httpservice.service";
 import { lastValueFrom } from "rxjs";
 import { OnInit, AfterViewInit, inject } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 declare var $: any;
 
 @Component({
@@ -18,10 +19,16 @@ export class CoachChapterComponent {
   title: any;
   desc: any = "";
   cnumber: number;
+  constructor(
+    private httpservice: HttpserviceService,
+    private router: Router
+  ) {}
+  goToViewChapter(chapterid) {
+    this.router.navigate([`/coach/widgets/viewchapter/${chapterid}`]);
+  }
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();
   }
-  constructor(private httpservice: HttpserviceService) {}
   async savechapter() {
     try {
       const body = {

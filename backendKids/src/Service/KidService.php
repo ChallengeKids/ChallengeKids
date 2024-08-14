@@ -73,10 +73,10 @@ class KidService
         $score = 0;
 
         // get interests titles from the kid
-        $interests = array_map(fn ($category) => $category->getTitle(), $kid->getInterests()->toArray());
+        $interests = array_map(fn($category) => $category->getTitle(), $kid->getInterests()->toArray());
 
         // get category titles from the challenge
-        $categories = array_map(fn ($category) => $category->getTitle(), $challenge->getCategories()->toArray());
+        $categories = array_map(fn($category) => $category->getTitle(), $challenge->getCategories()->toArray());
 
         foreach ($categories as $category) {
             if (in_array($category, $interests))
@@ -91,10 +91,10 @@ class KidService
         $score = 0;
 
         // get interests titles from the kid
-        $interests = array_map(fn ($category) => $category->getTitle(), $kid->getInterests()->toArray());
+        $interests = array_map(fn($category) => $category->getTitle(), $kid->getInterests()->toArray());
 
         // get category titles from the post
-        $categories = array_map(fn ($category) => $category->getTitle(), $post->getCategories()->toArray());
+        $categories = array_map(fn($category) => $category->getTitle(), $post->getCategories()->toArray());
 
         foreach ($categories as $category) {
             if (in_array($category, $interests))

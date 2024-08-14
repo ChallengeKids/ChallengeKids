@@ -5,8 +5,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as p;
+
 final FlutterSecureStorage _storage = FlutterSecureStorage();
-final String baseUrl = 'https://10.0.2.2:8000';
+final String baseUrl = 'http://192.168.1.12:8000';
+
 class ApiService {
   Future<List<Challenge>> fetchChallenges() async {
     final response = await http.get(Uri.parse('$baseUrl/api/challenge'));
@@ -109,6 +111,17 @@ Future<bool> saveSelectedTopics(Set<String> selectedTopics) async {
     }
   }
 
+  Future<List<Post>> fetchPost() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/post'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => Post.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load Lessons');
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/login_check'),
@@ -179,35 +192,37 @@ Future<bool> saveSelectedTopics(Set<String> selectedTopics) async {
     }
   }
 
+  Future<List<Post>> fetchUserPosts() async {
+    try {
+      // Retrieve the token from secure storage
+      final token = await _storage.read(key: 'token');
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
-Future<List<Post>> fetchUserPosts() async {
-  try {
-    // Retrieve the token from secure storage
-    final token = await _storage.read(key: 'token');
-    if (token == null) {
-      throw Exception('Token not found');
+      // Make the HTTP GET request with authorization header
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/post/user'), // Update with the correct URL
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $token', // Include the token in the Authorization header
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Post.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load user posts');
+      }
+    } catch (e) {
+      print('Error fetching user posts: $e');
+      throw Exception('Error fetching user posts');
     }
-
-    // Make the HTTP GET request with authorization header
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/post/user'), // Update with the correct URL
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Include the token in the Authorization header
-      },
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Post.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load user posts');
-    }
-  } catch (e) {
-    print('Error fetching user posts: $e');
-    throw Exception('Error fetching user posts');
   }
 }
+
 
 Future<List<Category>> fetchUserCategories() async {
   final userId = await getUserId(); // Get the user ID
@@ -225,6 +240,7 @@ Future<List<Category>> fetchUserCategories() async {
 }
 
 }
+
 final storage = FlutterSecureStorage();
 
 Future<String?> getToken() async {
@@ -239,7 +255,8 @@ Future<bool> refreshToken() async {
   try {
     final refreshToken = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('$baseUrl/api/auth/refresh-token'), // Update with the correct URL
+      Uri.parse(
+          '$baseUrl/api/auth/refresh-token'), // Update with the correct URL
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'token': refreshToken}),
     );
@@ -258,13 +275,8 @@ Future<bool> refreshToken() async {
   }
 }
 
-
-
-
-
-
-
-Future<bool> upload(int challengeId, String title, String description, String mediaFilePath) async {
+Future<bool> upload(int challengeId, String title, String description,
+    String mediaFilePath) async {
   print('Uploading file: ${p.basename(mediaFilePath)}');
   try {
     String? token = await getToken();
@@ -316,7 +328,8 @@ Future<bool> upload(int challengeId, String title, String description, String me
           print('Upload successful.');
           return true;
         } else {
-          print('Failed to upload after token refresh. Status code: ${retryResponse.statusCode}');
+          print(
+              'Failed to upload after token refresh. Status code: ${retryResponse.statusCode}');
           print('Response Body: $retryResponseBody');
           return false;
         }
@@ -341,10 +354,6 @@ Future<bool> upload(int challengeId, String title, String description, String me
     return false;
   }
 }
-
-
-
-
 
 Future<void> logout(BuildContext context) async {
   try {
@@ -376,13 +385,15 @@ Future<String> getUserName() async {
       Uri.parse('$baseUrl/api/kid/profile'), // Adjust URL to your API endpoint
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Include the token in the Authorization header
+        'Authorization':
+            'Bearer $token', // Include the token in the Authorization header
       },
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      final userName = data['fullName']; // Adjust to match your API response structure
+      final userName =
+          data['fullName']; // Adjust to match your API response structure
       return userName ?? 'User Name not found.';
     } else {
       return 'Failed to fetch user name.';
@@ -392,6 +403,7 @@ Future<String> getUserName() async {
     return 'Error retrieving user name.';
   }
 }
+
 
 Future<int?> getUserId() async {
   try {
@@ -423,7 +435,6 @@ Future<int?> getUserId() async {
     return null;
   }
 }
-
 
 class Challenge {
   final int id;
@@ -545,16 +556,17 @@ class Lesson {
     );
   }
 
-  String get mediaFileName => post.mediaFileName; // Access mediaFileName from Post
+  String get mediaFileName =>
+      post.mediaFileName; // Access mediaFileName from Post
 }
 
-// lib/models/post.dart
 class Post {
   final int id;
   final String title;
   final String content;
   final String mediaFileName;
-  final String approved;
+  final bool? approved;
+  final List<Category> category;
 
   Post({
     required this.id,
@@ -562,15 +574,21 @@ class Post {
     required this.content,
     required this.mediaFileName,
     required this.approved,
+    required this.category,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    var categoryList = json['category'] as List;
+    List<Category> categoryItems =
+        categoryList.map((i) => Category.fromJson(i)).toList();
+
     return Post(
       id: json['id'],
       title: json['title'],
       content: json['content'],
       mediaFileName: json['mediaFileName'] ?? '',
-      approved: json['approved'] ?? '',
+      approved: json['approved'],
+      category: categoryItems,
     );
   }
 

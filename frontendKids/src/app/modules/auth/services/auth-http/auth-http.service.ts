@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { map, Observable } from "rxjs";
+import { map, Observable, of, switchMap } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { UserModel } from "../../models/user.model";
 import { environment } from "../../../../../environments/environment";
@@ -24,15 +24,34 @@ export class AuthHTTPService {
         { headers: new HttpHeaders({ "Content-Type": "application/json" }) }
       )
       .pipe(
-        map((response) => {
+        switchMap((response) => {
           const authModel = new AuthModel();
           authModel.authToken = response.token;
           authModel.refreshToken = response.refresh_token;
           authModel.role = this.getUserRole(authModel.authToken);
-          return authModel;
+  
+          if (authModel.role === 'ROLE_COACH') {
+            // Fetch coach details using the token
+            return this.http.get<{ accepted: boolean }>(
+              `${API_USERS_URL}/coach/user/details`,
+              { headers: new HttpHeaders({ "Authorization": `Bearer ${authModel.authToken}` }) }
+            ).pipe(
+              map((coachData) => {
+                if (coachData.accepted) {
+                  return authModel;
+                } else {
+                  throw new Error('Coach not accepted');
+                }
+              })
+            );
+          } else {
+            return of(authModel);
+          }
         })
       );
   }
+  
+  
 
   // CREATE =>  POST: add a new user to the server
   createUser(user: UserModel) {
@@ -45,7 +64,7 @@ export class AuthHTTPService {
     };
     console.log("we we");
     return this.http.post<any>(
-      `${API_USERS_URL}/registerAdmin`,
+      `${API_USERS_URL}/coach/register`,
       JSON.stringify(newUser)
     );
   }

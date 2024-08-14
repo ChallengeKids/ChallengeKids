@@ -37,6 +37,7 @@ class CoachService
                 return $this->challengeService->challengeToJson($challenge);
             }, $challenges),
             'posts' => $posts,
+            'accepted' => $coach->isAccepted()
         ];
     }
 

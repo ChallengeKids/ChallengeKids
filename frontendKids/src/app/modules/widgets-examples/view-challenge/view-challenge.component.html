@@ -1,3 +1,125 @@
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+  .card {
+    font-family: "Roboto", sans-serif;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .card-text {
+    font-size: 1.1rem;
+  }
+
+  .category-badge {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 25px;
+    background-color: #e0f2ff;
+    color: #0077cc;
+    border: 1px solid #0077cc;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .category-badge:hover {
+    background-color: #0077cc;
+    color: #ffffff;
+  }
+
+  .enrolled-count {
+    font-size: 1.2rem;
+  }
+  .existing-chapters {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .checkbox-item:hover {
+    background-color: #e9ecef;
+  }
+
+  .form-check-input {
+    margin-right: 10px;
+  }
+
+  .form-check-label {
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .card-footer {
+    border-top: 1px solid #dee2e6;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+</style>
+
+<div class="card mb-5 mb-xl-8 shadow-sm">
+  <div class="row g-0">
+    <!-- begin::Image (smaller and to the left) -->
+    <div class="col-md-4 d-flex align-items-center p-3">
+      <img
+        [src]="backendUrl + '/uploads/images/' + challenge.imageFileName"
+        alt="Challenge Image"
+        class="img-fluid rounded"
+        style="width: 100%; height: 100%; object-fit: cover"
+      />
+    </div>
+    <!-- end::Image -->
+
+    <!-- begin::Body (content taking full available space) -->
+    <div class="col-md-8">
+      <div class="card-body d-flex flex-column h-100">
+        <!-- Challenge Title -->
+        <h5 class="card-title mb-4">{{ challenge.title }}</h5>
+
+        <!-- Challenge Description -->
+        <p class="card-text mb-4">
+          {{ challenge.description }}
+        </p>
+
+        <!-- Challenge Categories -->
+        <div class="d-flex flex-wrap mb-4">
+          <span
+            *ngFor="let category of challenge.categories"
+            class="category-badge"
+          >
+            {{ category.title }}
+          </span>
+        </div>
+
+        <!-- Enrolled Kids Count -->
+        <div class="mt-auto">
+          <span class="enrolled-count">Total Kids Enrolled: 50</span>
+        </div>
+      </div>
+    </div>
+    <!-- end::Body -->
+  </div>
+</div>
+
 <div class="card mb-5 mb-xl-8">
   <!-- begin::Header -->
   <div class="card-header border-0 pt-5">
@@ -72,9 +194,6 @@
             </td>
             <td>
               <div class="d-flex align-items-center">
-                <div class="symbol symbol-45px me-5">
-                  <img src="./assets/media/avatars/300-23.jpg" alt="" />
-                </div>
                 <div class="d-flex justify-content-start flex-column">
                   <a
                     href="#"
@@ -117,6 +236,12 @@
             <td>
               <div class="d-flex justify-content-end flex-shrink-0">
                 <a
+                  (click)="goToViewChapter(chapter.id)"
+                  class="btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4 me-2"
+                >
+                  View
+                </a>
+                <a
                   (click)="delete(chapter.id)"
                   class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
                 >
@@ -140,85 +265,135 @@
   <!-- begin::Body -->
 </div>
 <ng-template #content let-modal class="card mb-5 mb-xl-10">
-  <div
-    class="modal-title card-header border-0 cursor-pointer"
-    id="modal-basic-title"
-    role="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#kt_account_profile_details"
-    aria-expanded="true"
-    aria-controls="kt_account_profile_details"
-  >
-    <div class="card-title m-0">
-      <h3 class="fw-bolder m-0 p-5">Add a new chapter:</h3>
-    </div>
+  <div class="modal-header">
+    <h3 class="modal-title">Add a Chapter</h3>
   </div>
-  <div
-    id="kt_account_profile_details"
-    class="collapse show modal-body modal-xl"
-  >
-    <form novalidate="" class="form" (ngSubmit)="savechapter()">
-      <div class="card-body border-top p-9">
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label required fw-bold fs-6"
-            >Title:</label
-          >
-          <div class="col-lg-8 fv-row">
+  <div class="modal-body">
+    <div class="d-flex justify-content-center mb-4">
+      <button
+        type="button"
+        class="btn btn-secondary m-2"
+        (click)="showExistingChapters = true; showForm = false"
+      >
+        Add Existing Chapter
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary m-2"
+        (click)="showForm = true; showExistingChapters = false"
+      >
+        Create Chapter
+      </button>
+    </div>
+
+    <!-- Existing Chapters Selection -->
+    <div *ngIf="showExistingChapters">
+      <div class="card-title mb-4">
+        <h3 class="fw-bolder">Select Existing Chapters:</h3>
+      </div>
+      <div class="form-group">
+        <div class="checkbox-list">
+          <div class="form-check" *ngFor="let chapter of addChapters">
             <input
-              type="text"
-              id="fullname"
-              name="fullname"
-              [(ngModel)]="title"
-              class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
-              required
+              type="checkbox"
+              class="form-check-input"
+              id="chapter-{{ chapter.id }}"
+              [value]="chapter.title"
+              (change)="onChapterSelect($event)"
             />
+            <label class="form-check-label" for="chapter-{{ chapter.id }}">
+              {{ chapter.title }}
+            </label>
           </div>
         </div>
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label required fw-bold fs-6"
-            >Description:</label
+        <div class="card-footer d-flex justify-content-end py-6 px-9">
+          <button
+            type="button"
+            class="btn btn-primary m-2"
+            (click)="addExistingChapter()"
           >
-          <div class="col-lg-8 fv-row">
-            <textarea
-              name="desc"
-              id="description"
-              [(ngModel)]="desc"
-            ></textarea>
-          </div>
-        </div>
-        <div class="row mb-6">
-          <label class="col-lg-4 col-form-label fw-bold fs-6"
-            ><span class="required">ChapterNumber:</span></label
+            Save Changes
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary m-2"
+            (click)="modal.dismiss('Cross click')"
           >
-          <div class="col-lg-8 fv-row">
-            <input
-              type="number"
-              id="password"
-              name="password"
-              [(ngModel)]="cnumber"
-              class="form-control form-control-lg form-control-solid"
-            />
-          </div>
+            Cancel
+          </button>
         </div>
       </div>
-      <div class="card-footer d-flex justify-content-end py-6 px-9">
-        <button
-          type="submit"
-          class="btn btn-primary m-2"
-          (click)="modal.close('Save click')"
-        >
-          Save Changes
-        </button>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="modal.dismiss('Cross click')"
-          class="btn btn-primary m-2"
-        >
-          Cancel
-        </button>
+    </div>
+
+    <!-- New Chapter Form -->
+    <div *ngIf="showForm">
+      <div class="card-title m-0">
+        <h3 class="fw-bolder m-0 p-5">Add a new chapter:</h3>
       </div>
-    </form>
+      <div id="kt_account_profile_details" class="collapse show modal-xl">
+        <form novalidate class="form" (ngSubmit)="savechapter()">
+          <div class="card-body border-top p-9">
+            <div class="row mb-6">
+              <label class="col-lg-4 col-form-label required fw-bold fs-6"
+                >Title:</label
+              >
+              <div class="col-lg-8 fv-row">
+                <input
+                  type="text"
+                  id="fullname"
+                  name="fullname"
+                  [(ngModel)]="title"
+                  class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
+                  required
+                />
+              </div>
+            </div>
+            <div class="row mb-6">
+              <label class="col-lg-4 col-form-label required fw-bold fs-6"
+                >Description:</label
+              >
+              <div class="col-lg-8 fv-row">
+                <textarea
+                  name="desc"
+                  id="description"
+                  [(ngModel)]="desc"
+                  class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row mb-6">
+              <label class="col-lg-4 col-form-label fw-bold fs-6"
+                ><span class="required">Chapter Number:</span></label
+              >
+              <div class="col-lg-8 fv-row">
+                <input
+                  type="number"
+                  id="chapterNumber"
+                  name="chapterNumber"
+                  [(ngModel)]="cnumber"
+                  class="form-control form-control-lg form-control-solid"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-end py-6 px-9">
+            <button
+              type="submit"
+              class="btn btn-primary m-2"
+              (click)="modal.close('Save click')"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary m-2"
+              (click)="modal.dismiss('Cross click')"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </ng-template>

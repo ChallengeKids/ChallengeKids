@@ -19,7 +19,10 @@ import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
 import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
+import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
+import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
 import { SubmissionsComponent } from "./submissions/submissions.component";
+
 
 const routes: Routes = [
   {
@@ -44,6 +47,14 @@ const routes: Routes = [
       {
         path: "viewchallenge/:id",
         component: ViewChallengeComponent,
+      },
+      {
+        path: "viewlesson/:id",
+        component: ViewLessonComponent,
+      },
+      {
+        path: "viewchapter/:id",
+        component: ViewChapterComponent,
       },
       {
         path: "kids",

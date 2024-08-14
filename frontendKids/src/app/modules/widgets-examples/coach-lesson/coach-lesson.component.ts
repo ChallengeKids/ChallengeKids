@@ -11,6 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 declare var $: any;
 
 @Component({
@@ -25,6 +26,9 @@ export class CoachLessonComponent {
   description: any;
   private modalService = inject(NgbModal);
   closeResult: string;
+  goToViewChapter(chapterid) {
+    this.router.navigate([`/coach/widgets/viewlesson/${chapterid}`]);
+  }
   open(content: TemplateRef<any>) {
     this.modalService
       .open(content, {
@@ -68,7 +72,10 @@ export class CoachLessonComponent {
     }
   }
   lessons: any;
-  constructor(private httpservice: HttpserviceService) {}
+  constructor(
+    private httpservice: HttpserviceService,
+    private router: Router
+  ) {}
   @ViewChild("dataTable", { static: false }) tableElement: ElementRef;
   ngAfterViewInit() {
     $(this.tableElement.nativeElement).DataTable();

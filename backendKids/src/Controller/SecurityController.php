@@ -24,13 +24,15 @@ class SecurityController extends AbstractController
 {
     private $jwtManager;
     private $refreshTokenManager;
+    private $security;
+    private $userService;
 
-    public function __construct(JWTTokenManagerInterface $jwtManager, RefreshTokenManagerInterface $refreshTokenManager,Security $security,UserService $userService)
+    public function __construct(JWTTokenManagerInterface $jwtManager, RefreshTokenManagerInterface $refreshTokenManager, Security $security, UserService $userService)
     {
         $this->jwtManager = $jwtManager;
         $this->refreshTokenManager = $refreshTokenManager;
         $this->security = $security;
-        $this->UserService = $userService;
+        $this->userService = $userService;
     }
 
     #[Route(path: '/login_check', name: 'app_login_check', methods: ['POST'])]
@@ -61,7 +63,7 @@ class SecurityController extends AbstractController
 
         $token = $this->jwtManager->create($user);
         $refreshToken = $this->refreshTokenManager->create($user);
-        $role=$user->getRoles();
+        $role = $user->getRoles();
         return new JsonResponse(['authToken' => $token, 'refreshToken' => $refreshToken]);
     }
 
@@ -81,7 +83,7 @@ class SecurityController extends AbstractController
         if (!$user) {
             return new JsonResponse(['error' => 'user not found']);
         }
-        $userData = $this->UserService->userToJson($user);
+        $userData = $this->userService->userToJson($user);
         return new JsonResponse($userData);
     }
 }
