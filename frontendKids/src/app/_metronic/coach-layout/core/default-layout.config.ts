@@ -158,6 +158,9 @@ export const DefaultLayoutConfig: ILayout = {
     type: "default",
     primaryColor: "#009EF7",
     darkSkinEnabled: true,
+    body: {
+      backgroundImage: "url('../../assets/background.svg')",
+    },
   },
   loader: {
     componentName: "loader",
