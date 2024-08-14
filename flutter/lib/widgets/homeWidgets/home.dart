@@ -18,7 +18,7 @@ class _homeScreenState extends State<homeScreen> {
   @override
   void initState() {
     super.initState();
-    categoriesFuture = apiService.fetchUserCategories();
+    categoriesFuture = apiService.fetchCategories();
     challengesFuture = apiService.fetchChallenges();
     postFuture = apiService.fetchPost();
   }

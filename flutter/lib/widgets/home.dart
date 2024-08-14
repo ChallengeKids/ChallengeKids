@@ -13,12 +13,39 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Set background color to white
-      body: _buildBody(),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: const [
+          searcheScreen(),
+          homeScreen(),
+          ProfilePage1(),
+          // Add other pages here if needed
+          // likeScreen(), // Uncomment if you add more pages
+        ],
+      ),
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xff6200ee),
@@ -26,26 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
+            _pageController.jumpToPage(index);
           });
         },
         items: _navBarItems,
       ),
     );
-  }
-
-  Widget _buildBody() {
-    switch (_selectedIndex) {
-      case 0:
-       return const searcheScreen();
-      case 1:
-       return const homeScreen();
-      case 2:
-      return const ProfilePage1();
-      /*case 3:
-        return const likeScreen();*/
-      default:
-        return const Center(child: Text("default Screen"));
-    }
   }
 }
 
@@ -55,11 +68,6 @@ final _navBarItems = [
     title: const Text("Search"),
     selectedColor: const Color.fromRGBO(61, 143, 239, 1),
   ),
-  /*SalomonBottomBarItem(
-    icon: const Icon(Icons.favorite_borde),
-    title: const Text("Likes"),
-    selectedColor: Colors.pink,
-  ),*/
   SalomonBottomBarItem(
     icon: const Icon(Icons.home),
     title: const Text("Home"),
