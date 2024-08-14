@@ -1,8 +1,10 @@
+import 'package:appinio_video_player/appinio_video_player.dart';
+import 'package:challange_kide/services/api_service.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:challange_kide/services/api_service.dart';
 
 File? selectImage;
 
@@ -16,37 +18,25 @@ class LessonScreen extends StatefulWidget {
 }
 
 class _LessonScreenState extends State<LessonScreen> {
-  late VideoPlayerController _videoPlayerController;
-  late Future<void> _initializeVideoPlayerFuture;
+  late CustomVideoPlayerController _customVideoPlayerController;
+  late bool isLoading = true;
+
+  late Uri videoUri;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize the video controller
-    _videoPlayerController = VideoPlayerController.networkUrl(
-      Uri.parse(
-          'http://192.168.1.12:8000/uploads/images/${widget.lesson.post.mediaFileName}'),
-    );
+    // Initialize videoUri here where widget is accessible
+    videoUri = Uri.parse(
+        "http://192.168.1.12:8000/uploads/images/${widget.lesson.post.mediaFileName}");
 
-    _initializeVideoPlayerFuture =
-        _videoPlayerController.initialize().then((_) {
-      setState(() {
-        _videoPlayerController.play();
-        _videoPlayerController.setLooping(true);
-      });
-    }).catchError((error) {
-      // Handle any errors during initialization
-      print('Error initializing video: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading video: $error')),
-      );
-    });
+    initializeVideoPlayer();
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    _customVideoPlayerController.dispose();
     super.dispose();
   }
 
@@ -101,67 +91,97 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 250,
-                width: double.infinity,
-                child: FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (_videoPlayerController.value.isInitialized) {
-                        return AspectRatio(
-                          aspectRatio: _videoPlayerController.value.aspectRatio,
-                          child: VideoPlayer(_videoPlayerController),
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('Failed to load video'),
-                        );
-                      }
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: CustomVideoPlayer(
+                          customVideoPlayerController:
+                              _customVideoPlayerController,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.lesson.title,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.lesson.description,
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.lesson.title,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      widget.lesson.post.mediaFileName,
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
+  }
+
+  void initializeVideoPlayer() {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Initialize the VideoPlayerController and CustomVideoPlayerController
+    // Create a CachedVideoPlayerController for the network video
+    CachedVideoPlayerController videoPlayerController =
+        CachedVideoPlayerController.network(
+      videoUri.toString(),
+    );
+
+// Initialize the CustomVideoPlayerController with the CachedVideoPlayerController
+    _customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: videoPlayerController,
+    );
+
+    _customVideoPlayerController.videoPlayerController.initialize().then((_) {
+      setState(() {
+        isLoading = false;
+      });
+    }).catchError((error) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error initializing video: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading video: $error')),
+      );
+    });
   }
 }
