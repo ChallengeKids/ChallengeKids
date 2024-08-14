@@ -23,6 +23,7 @@ class _searcheScreenState extends State<searcheScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set the background color to white
       appBar: PreferredSize(
         preferredSize:
             const Size.fromHeight(100.0), // Set the desired height here
@@ -95,8 +96,7 @@ class _searcheScreenState extends State<searcheScreen> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       ChallengeScreen(
-                                          challenge:
-                                              challenge),
+                                          challenge: challenge),
                                 ),
                               );
                             },

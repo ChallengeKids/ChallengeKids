@@ -29,6 +29,53 @@ class ApiService {
       throw Exception('Failed to load Categories');
     }
   }
+Future<List<String>> fetchCategoriesRegister() async {
+  final response = await http.get(Uri.parse('$baseUrl/api/category'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body);
+    return data.map((item) => item['title'] as String).toList(); // Extract "title" from each item
+  } else {
+    throw Exception('Failed to load categories');
+  }
+}
+
+
+
+
+
+Future<bool> saveSelectedTopics(Set<String> selectedTopics) async {
+  final token = await getToken();
+  final kidId = await getUserId();
+
+  if (token == null || token.isEmpty) {
+    print('No token available');
+    return false;
+  }
+
+  final url = Uri.parse('$baseUrl/api/kid/$kidId/addInterests');
+  final headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  };
+
+  final body = json.encode({
+    'categoryTitles': selectedTopics.toList(),
+  });
+
+  final response = await http.post(url, headers: headers, body: body);
+
+  if (response.statusCode == 200) {
+    print('Topics saved successfully');
+    return true;
+  } else {
+    print('Failed to save topics: ${response.reasonPhrase}');
+    print('Response body: ${response.body}');
+    return false;
+  }
+}
+
+
 
   Future<List<Chapter>> fetchChapters() async {
     final response = await http.get(Uri.parse('$baseUrl/api/chapter'));
@@ -51,6 +98,16 @@ class ApiService {
       throw Exception('Failed to load Lessons');
     }
   }
+    Future<List<Post>> fetchPost() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/post'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => Post.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load Lessons');
+    }
+  }
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
@@ -67,7 +124,7 @@ class ApiService {
       if (token != null && token.isNotEmpty) {
         // Save the token in SharedPreferences or any other secure storage
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
+        await prefs.setString('token', token);
         await _storage.write(
           key: 'token',
           value: token,
@@ -89,6 +146,7 @@ class ApiService {
 
   Future<bool> register(String username, String email, String password,
       String gender, String birthday) async {
+        final token = await _storage.read(key: 'token');
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/register'),
@@ -108,6 +166,8 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Adjust this according to your API's actual response
+        await _storage.write(key: 'email', value: email);
+        await _storage.write(key: 'token', value: token);
         return data['success'] ?? false;
       } else {
         print('Failed to register. Status code: ${response.statusCode}');
@@ -149,14 +209,32 @@ Future<List<Post>> fetchUserPosts() async {
   }
 }
 
+Future<List<Category>> fetchUserCategories() async {
+  final userId = await getUserId(); // Get the user ID
+  final url = Uri.parse('$baseUrl/api/kid/$userId'); // Construct the URL
+
+  final response = await http.get(url); // Make the GET request
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body); // Parse the JSON response
+    final List<dynamic> interests = data['interests']; // Extract the interests list
+    return interests.map((json) => Category.fromJson(json)).toList(); // Convert to list of Category objects
+  } else {
+    throw Exception('Failed to load user categories');
+  }
 }
 
+}
 final storage = FlutterSecureStorage();
 
 Future<String?> getToken() async {
-  return await storage.read(key: 'token');
+  try {
+    return await storage.read(key: 'token');
+  } catch (e) {
+    print('Error retrieving token: $e');
+    return null;
+  }
 }
-
 Future<bool> refreshToken() async {
   try {
     final refreshToken = await storage.read(key: 'token');
@@ -315,7 +393,36 @@ Future<String> getUserName() async {
   }
 }
 
+Future<int?> getUserId() async {
+  try {
+    final token = await getToken();
+    if (token == null) {
+      print('No token available');
+      return null;
+    }
 
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/kid/profile'), // Adjust URL to your API endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final id = data['id']; // Adjust to match your API response structure
+      return id;
+    } else {
+      print('Failed to fetch user ID. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      return null;
+    }
+  } catch (e) {
+    print('Error fetching user ID: $e');
+    return null;
+  }
+}
 
 
 class Challenge {
@@ -376,7 +483,10 @@ class Category {
       description: json['description'],
     );
   }
+
+  get interests => null;
 }
+
 
 // lib/models/chapter.dart
 class Chapter {
@@ -463,4 +573,10 @@ class Post {
       approved: json['approved'] ?? '',
     );
   }
+
+
 }
+
+
+
+

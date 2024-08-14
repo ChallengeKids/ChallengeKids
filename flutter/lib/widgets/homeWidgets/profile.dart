@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:challange_kide/widgets/signIn.dart';
 import 'package:challange_kide/services/api_service.dart';
-import 'challenge.dart';// Make sure to import the Post model
+import 'challenge.dart'; // Make sure to import the Post model
 
 class ProfilePage1 extends StatefulWidget {
   const ProfilePage1({Key? key}) : super(key: key);
@@ -67,6 +67,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set the background color to white
       body: Column(
         children: [
           const Expanded(flex: 2, child: _TopPortion()),
@@ -149,7 +150,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                                           offset: Offset(0, 2),
                                         ),
                                       ],
-                                      color: Colors.white,
+                                      color: Colors.white, // Set container background color to white
                                       border: Border.all(color: const Color(0xFFE0E0E0)),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),

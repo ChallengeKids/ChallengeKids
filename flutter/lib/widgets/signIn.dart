@@ -191,13 +191,13 @@ class SignInScreen extends StatelessWidget {
                                       child: Text(
                                         'Sign In',
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.white,
                                         ),
                                       ),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFFFE8400), // Background color
+                                        backgroundColor: const Color.fromRGBO(61,143, 239, 1), // Background color
                                         foregroundColor: Colors.white, // Text color
                                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 140), // Adjusted padding
                                         shape: RoundedRectangleBorder(

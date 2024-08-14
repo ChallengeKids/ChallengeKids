@@ -3,6 +3,7 @@ import 'widgets/signIn.dart';
 import 'widgets/testGET.dart';
 import 'widgets/signUp.dart';
 import 'widgets/home.dart';
+import 'widgets/favorite.dart';
 import 'dart:io';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignInScreen(),
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
