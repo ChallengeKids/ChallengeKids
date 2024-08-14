@@ -22,14 +22,14 @@ import { ViewChallengeComponent } from "./view-challenge/view-challenge.componen
 import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
 import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
 import { SubmissionsComponent } from "./submissions/submissions.component";
-
+import { ViewpostComponent } from "./viewpost/viewpost.component";
 
 const routes: Routes = [
   {
     path: "",
     component: WidgetsExamplesComponent,
     children: [
-      { path: "submissions", component: SubmissionsComponent},
+      { path: "submissions", component: SubmissionsComponent },
       { path: "coachesposts", component: CoachesPostsComponent },
       { path: "coachLessons", component: CoachLessonComponent },
       {
@@ -51,6 +51,10 @@ const routes: Routes = [
       {
         path: "viewlesson/:id",
         component: ViewLessonComponent,
+      },
+      {
+        path: "viewpost/:id",
+        component: ViewpostComponent,
       },
       {
         path: "viewchapter/:id",

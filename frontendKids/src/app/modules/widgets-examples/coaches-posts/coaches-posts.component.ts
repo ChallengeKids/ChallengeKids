@@ -12,6 +12,7 @@ import { lastValueFrom } from "rxjs";
 import { HttpserviceService } from "../../auth/services/httpservice.service";
 import { AuthService } from "../../auth";
 import { ModalDismissReasons, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 declare var $: any;
 
 @Component({
@@ -30,11 +31,15 @@ export class CoachesPostsComponent implements AfterViewInit, OnInit {
   confirmPassword: any;
   selectedpost: any = null;
   private modalService = inject(NgbModal);
+  goToViewChallenge(postId) {
+    this.router.navigate([`/coach/widgets/viewpost/${postId}`]);
+  }
 
   constructor(
     private httpservice: HttpserviceService,
     private authservice: AuthService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
     this.postForm = this.formBuilder.group({
       title: ["", Validators.required],
