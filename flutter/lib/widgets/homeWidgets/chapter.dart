@@ -6,7 +6,7 @@ import 'lesson.dart';
 class chapterScreen extends StatelessWidget {
   final Chapter chapter;
 
-  const chapterScreen({super.key, required this.chapter});
+  const chapterScreen({super.key, required this.chapter, required Challenge challenge});
 
   @override
   Widget build(BuildContext context) {

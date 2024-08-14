@@ -67,6 +67,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set the background color to white
       body: Column(
         children: [
           const Expanded(flex: 2, child: _TopPortion()),

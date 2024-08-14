@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import for secure storage
 import 'package:challange_kide/services/api_service.dart'; // Ensure this import is valid
-import 'signIn.dart'; // Import for the SignInScreen
+import 'favorite.dart'; // Import for the SignInScreen
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -321,14 +321,14 @@ try {
   print('success test test: ${success}');
   if (success) {
     // Store a flag indicating successful registration
-    await _storage.write(key: 'email', value: email);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Sign Up Successful')),
     );
-    // Navigate to Sign In Screen
+    bool success = await _apiService.login(email, password);
+    await _storage.write(key: 'loggedIn', value: 'true');
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignInScreen()),
+      MaterialPageRoute(builder: (context) => favoriteScreen()),
     );
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -350,13 +350,13 @@ try {
                                   child: Text(
                                     'Sign Up',
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                     ),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFFE8400), // Background color
+                                    backgroundColor: const Color.fromRGBO(61,143, 239, 1), // Background color
                                     foregroundColor: Colors.white, // Text color
                                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 140), // Adjusted padding
                                     shape: RoundedRectangleBorder(

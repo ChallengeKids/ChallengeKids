@@ -394,8 +394,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                chapterScreen(chapter: chapter),
+                                            builder: (context) => chapterScreen(chapter: chapter, challenge: widget.challenge,),
                                           ),
                                         );
                                       },
