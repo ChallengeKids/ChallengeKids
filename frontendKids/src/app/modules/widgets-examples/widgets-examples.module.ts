@@ -23,13 +23,13 @@ import { CoachesPostsComponent } from "./coaches-posts/coaches-posts.component";
 import { CoachLessonComponent } from "./coach-lesson/coach-lesson.component";
 import { CoachChapterComponent } from "./coach-chapter/coach-chapter.component";
 import { CoachchallengeComponent } from "./coachchallenge/coachchallenge.component";
-import { ReactiveFormsModule } from '@angular/forms';
-import { QuillModule } from 'ngx-quill';
+import { ReactiveFormsModule } from "@angular/forms";
+import { QuillModule } from "ngx-quill";
 import { ViewChallengeComponent } from "./view-challenge/view-challenge.component";
 import { ViewChapterComponent } from "./view-chapter/view-chapter.component";
 import { ViewLessonComponent } from "./view-lesson/view-lesson.component";
 import { SubmissionsComponent } from "./submissions/submissions.component";
-
+import { ViewpostComponent } from "./viewpost/viewpost.component";
 
 @NgModule({
   declarations: [
@@ -54,7 +54,8 @@ import { SubmissionsComponent } from "./submissions/submissions.component";
     CoachchallengeComponent,
     ViewChapterComponent,
     ViewLessonComponent,
-    SubmissionsComponent
+    SubmissionsComponent,
+    ViewpostComponent,
   ],
   imports: [
     CommonModule,

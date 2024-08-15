@@ -109,23 +109,10 @@
             <td>
               <div class="d-flex justify-content-end flex-shrink-0">
                 <a
-                  href="#"
-                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  (click)="goToViewChallenge(post.id)"
+                  class="btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4 me-2"
                 >
-                  <span
-                    [inlineSVG]="
-                      './assets/media/icons/duotune/general/gen019.svg'
-                    "
-                    class="svg-icon svg-icon-3"
-                  ></span>
-                </a>
-                <a
-                  class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                >
-                  <span
-                    [inlineSVG]="'./assets/media/icons/duotune/art/art005.svg'"
-                    class="svg-icon svg-icon-3"
-                  ></span>
+                  View
                 </a>
                 <a
                   (click)="delete(post.id)"
