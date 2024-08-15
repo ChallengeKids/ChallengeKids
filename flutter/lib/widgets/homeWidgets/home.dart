@@ -19,8 +19,8 @@ class _homeScreenState extends State<homeScreen> {
   void initState() {
     super.initState();
     categoriesFuture = apiService.fetchCategories();
-    challengesFuture = apiService.fetchChallenges();
-    postFuture = apiService.fetchPost();
+    challengesFuture = apiService.fetchKidChallenges();
+    postFuture = apiService.fetchKidPosts();
   }
 
   @override
@@ -99,40 +99,40 @@ class _homeScreenState extends State<homeScreen> {
               child: Column(
                 children: [
                   // Event announcement
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      height: 180,
-                      width: 380, // Adjust the height as needed
-                      child: Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(172, 215, 255, 1),
-                          borderRadius:
-                              BorderRadius.circular(12), // Rounded border
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                          image: const DecorationImage(
-                            image:
-                                AssetImage('image/BG.png'), // Background image
-                            fit: BoxFit.cover, // Adjust the fit as needed
-                          ),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                height: 16), // Add space between image and text
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: SizedBox(
+                  //     height: 180,
+                  //     width: 380, // Adjust the height as needed
+                  //     child: Container(
+                  //       padding: const EdgeInsets.all(16.0),
+                  //       decoration: BoxDecoration(
+                  //         color: const Color.fromRGBO(172, 215, 255, 1),
+                  //         borderRadius:
+                  //             BorderRadius.circular(12), // Rounded border
+                  //         boxShadow: const [
+                  //           BoxShadow(
+                  //             color: Colors.black26,
+                  //             blurRadius: 4,
+                  //             offset: Offset(0, 2),
+                  //           ),
+                  //         ],
+                  //         image: const DecorationImage(
+                  //           image:
+                  //               AssetImage('image/BG.png'), // Background image
+                  //           fit: BoxFit.cover, // Adjust the fit as needed
+                  //         ),
+                  //       ),
+                  //       child: const Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           SizedBox(
+                  //               height: 16), // Add space between image and text
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
 
                   // Category title
                   const Padding(

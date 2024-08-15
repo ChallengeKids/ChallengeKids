@@ -9,7 +9,9 @@ use App\Entity\User;
 use App\Form\UserPasswordType;
 use App\Repository\ChallengeRepository;
 use App\Repository\KidRepository;
+use App\Service\ChallengeService;
 use App\Service\KidService;
+use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -166,26 +168,46 @@ class KidController extends AbstractController
         return new JsonResponse(['status' => 'Categories updated successfully']);
     }
 
-    #[Route('/{id}/challenges', name: 'get_challenges_for_kid', methods: ['GET'])]
-    public function getChallenges(int $id): JsonResponse
+    #[Route('/interests/challenges', name: 'get_challenges_for_kid', methods: ['GET'])]
+    public function getChallenges(ChallengeService $challengeService): JsonResponse
     {
-        $test = $this->kidService->getChallengesForKid($id, 10);
+        $kid = $this->security->getUser();
+        if (!$kid instanceof Kid) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
 
-        // Output the result for debugging
-        dd($test);
-
-        return new JsonResponse(true);
+        $limit = 10;
+        try {
+            $challenges = $this->kidService->getChallengesForKid($kid->getId(), $limit);
+            $listJson = [];
+            foreach ($challenges as $key => $value) {
+                $listJson[$key] = $challengeService->challengeToJson($value);
+            }
+            return new JsonResponse($listJson);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
+        }
     }
 
-    #[Route('/{id}/posts', name: 'get_posts_for_kid', methods: ['GET'])]
-    public function getPosts(int $id): JsonResponse
+    #[Route('/interests/posts', name: 'get_posts_for_kid', methods: ['GET'])]
+    public function getPosts(PostService $postService): JsonResponse
     {
-        $test = $this->kidService->getPostsForKid($id, 10);
+        $kid = $this->security->getUser();
+        if (!$kid instanceof Kid) {
+            return new JsonResponse(['error' => 'User not authenticated']);
+        }
 
-        // Output the result for debugging
-        dd($test);
-
-        return new JsonResponse(true);
+        $limit = 10;
+        try {
+            $posts = $this->kidService->getPostsForKid($kid->getId(), $limit);
+            $listJson = [];
+            foreach ($posts as $key => $value) {
+                $listJson[$key] = $postService->postToJson($value);
+            }
+            return new JsonResponse($listJson);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
+        };
     }
 
 

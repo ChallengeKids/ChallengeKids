@@ -121,7 +121,14 @@ class KidService
 
         krsort($scores);
 
-        return $scores;
+        $flattenedChallenges = [];
+        foreach ($scores as $challengeArray) {
+            foreach ($challengeArray as $challenge) {
+                $flattenedChallenges[] = $challenge;
+            }
+        }
+
+        return array_slice($flattenedChallenges, 0, $limit);
     }
 
     public function getPostsForKid(int $kidId, int $limit = 10): array
@@ -141,7 +148,14 @@ class KidService
 
         krsort($scores);
 
-        return $scores;
+        $flattenedPosts = [];
+        foreach ($scores as $postArray) {
+            foreach ($postArray as $post) {
+                $flattenedPosts[] = $post;
+            }
+        }
+
+        return array_slice($flattenedPosts, 0, $limit);
     }
 
     public function getFriends(int $kidId): array
