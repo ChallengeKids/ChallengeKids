@@ -169,8 +169,8 @@ class PostController extends AbstractController
         $title = $request->request->get('title');
         $content = $request->request->get('content');
         $mediaFile = $request->files->get('mediaFileName');
-        // $categoryTitlesJson  = $request->request->get('categories');
-        // $categoryTitles = json_decode($categoryTitlesJson, true);
+        $categoryTitlesJson  = $request->request->get('categories');
+        $categoryTitles = json_decode($categoryTitlesJson, true);
 
         if (!$title || !$content) {
             return new JsonResponse(['success' => false, 'message' => 'Title and content are required.'], 400);
@@ -194,17 +194,17 @@ class PostController extends AbstractController
             return new JsonResponse(['message' => 'File upload failed or not recognized.']);
         }
 
-        // if (is_array($categoryTitles)) {
+        if (is_array($categoryTitles)) {
 
-        //     foreach ($categoryTitles as $categoryTitle) {
-        //         $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
-        //         if ($category) {
-        //             $post->addCategory($category);
-        //         }
-        //     }
-        // } else {
-        //     return new JsonResponse("failed to load categories");
-        // }
+            foreach ($categoryTitles as $categoryTitle) {
+                $category = $this->entityManager->getRepository(Category::class)->findOneBy(['title' => $categoryTitle]);
+                if ($category) {
+                    $post->addCategory($category);
+                }
+            }
+        } else {
+            return new JsonResponse("failed to load categories");
+        }
 
 
         $this->entityManager->persist($post);
