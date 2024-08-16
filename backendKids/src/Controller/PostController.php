@@ -206,6 +206,7 @@ class PostController extends AbstractController
             return new JsonResponse("failed to load categories");
         }
 
+        //testing 
 
         $this->entityManager->persist($post);
         $this->entityManager->flush();
