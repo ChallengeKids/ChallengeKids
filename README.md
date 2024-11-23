@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/2776fa0c-2270-4501-a0a7-6e91ca23c553)# Challenge Kids
+# Challenge Kids
 
 **Challenge Kids** is an innovative educational platform available on both web and mobile, designed to stimulate interactive learning for children.
 
